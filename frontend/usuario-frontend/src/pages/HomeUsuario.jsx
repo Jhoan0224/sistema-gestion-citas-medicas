@@ -1,5 +1,23 @@
+import { useState } from "react"
+import { HistorialCitas } from "../componentes/HistorialCitas.jsx"
+import App from "../application/app.js";
 
 export function HomeUsuario() {
+    const [listaCitas, setListaCitas] = useState([]);
+    const [historialStatus, setHistorialStatus] = useState({isOpen: false, show: false}); 
+
+    const RenderHistorialCitas = async (filtroHistorial) => {
+        setHistorialStatus(prev => ({...prev, isOpen: true}));
+        alert(historialStatus.isOpen)
+
+        const resp = await App.getHistorialCitas(filtroHistorial);
+        
+        if (resp.success) {
+            setListaCitas(resp.historialCitas);
+            setHistorialStatus(prev => ({...prev, show: true}));
+        }        
+    };
+
 
 
     return(
@@ -33,9 +51,21 @@ export function HomeUsuario() {
         </div>
         
         <div className="d-flex gap-3 p-2 mt-auto mb-0">
-            <button type="button" className="btn btn-primary">Citas asistidas</button>
-            <button type="button" className="btn btn-primary">Citas canceladas</button>
-            <button type="button" className="btn btn-primary">Citas perdidas</button>
+            {   
+                historialStatus.isOpen === true
+                && <button onClick={() => setHistorialStatus(prev => ({...prev, isOpen: false, show: false}))} type="button" className="btn btn-danger">Cerrar Historial</button>
+            }
+            
+            <button onClick={() => RenderHistorialCitas("ASISTIDAS")} type="button" className="btn btn-primary">Citas asistidas</button>
+            <button onClick={() => RenderHistorialCitas("CANCELADAS")} type="button" className="btn btn-primary">Citas canceladas</button>
+            <button onClick={() => RenderHistorialCitas("PERDIDAS")} type="button" className="btn btn-primary">Citas perdidas</button>
+        </div>
+
+        <div id='div-historial-citas'>
+            {
+                historialStatus.show === true
+                && <HistorialCitas listaCitas={listaCitas} />
+            }
         </div>
     </div>
     </>

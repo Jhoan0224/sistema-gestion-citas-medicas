@@ -3,9 +3,8 @@ import { Routes, Route, Outlet } from 'react-router-dom'
 import { LoginUsuario } from './pages/LoginUsuario'
 import { HomeUsuario } from './pages/HomeUsuario'
 import { LoadingSpinner } from './componentes/LoadingTmpls'
-import { verificarAuth } from './application/Authentication'
+import { validarSesionUsuario, } from './application/Authentication'
 import { Navbar, Footer } from './componentes/NavbarFooter'
-import { validarAuth } from './api/auth'
 import { CrearCuentaUsuario } from './pages/CrearCuentaUsuario'
 
 export default function App() {
@@ -15,8 +14,10 @@ export default function App() {
     <Routes>
         <Route path='/login' element={<LoginUsuario />} />
         <Route path='/crear-cuenta' element={<CrearCuentaUsuario />}/>
+        
         <Route path="/" element={<TemplateUsuario />}>
             <Route index element={<HomeUsuario />} />
+            <Route path='home' element={<HomeUsuario />} />
         </Route>
 
     </Routes>
@@ -26,11 +27,21 @@ export default function App() {
 
 
 function TemplateUsuario() {
-    const [authIsValid, setAuthIsValid] = useState(null);
+    const [authIsValid, setAuthIsValid] = useState(true);
+    const [userBasicInfo, setUserBasicInfo] = useState({});
 
-    useEffect(() => {
-        setAuthIsValid(verificarAuth())
-    }, []);
+    // useEffect(() => {
+    //     const validarSesion = async () => {
+    //         const resp = await validarSesionUsuario();
+    //         if (resp.success) {
+    //             setUserBasicInfo({...resp.usuarioBasicInfo});
+    //             setAuthIsValid(resp.success);
+    //         } else {
+    //             setAuthIsValid(false);
+    //         }
+    //     };
+    //     validarSesion();
+    // }, []);
 
     if (authIsValid === null) { return <LoadingSpinner /> }
 
@@ -39,7 +50,7 @@ function TemplateUsuario() {
     if (authIsValid) {
         return(
         <>
-        <Navbar />
+        <Navbar userBasicInfo={userBasicInfo} />
             <div className='d-flex flex-grow-1 '>
                 <Outlet />
             </div>
