@@ -1,10 +1,11 @@
-export function Navbar() {
+export function Navbar({userBasicInfo}) {
     return(
     <>
     <nav className="navbar navbar-expand-md bg-body-tertiary w-100">
         <div className="container-fluid">
-            <a className="navbar-brand" href="#">Inicio App</a>
-            <p className="px-1 m-auto">Nombre del Usuario de la App</p>
+            <a className="navbar-brand fs-4 fw-semibold" href="#">Centro Salud</a>
+            {/* <p className="px-1 m-auto">Nombre del Usuario de la App</p> */}
+            <p className="px-1 fs-5 fw-medium px-4 m-auto">{userBasicInfo.nombre} {userBasicInfo.apellido}</p>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
             </button>
