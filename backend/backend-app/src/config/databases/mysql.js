@@ -1,10 +1,11 @@
-import mysql from "mysql2/promise.js"
+import mysql from "mysql2/promise"
 
 // coneccion para mysqlPool
-export const connPool = mysql.createPool({
+export const mysqlConnPool = mysql.createPool({
     host: 'localhost',
-    user: '', // poner pass
     database: 'centro_salud_db',
+    user: 'admin_centro_salud',
+    password: 'CentroSalud2023',
     waitForConnections: true,
     connectionLimit: 10,
     maxIdle: 10, 

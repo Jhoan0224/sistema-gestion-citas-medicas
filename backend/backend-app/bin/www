@@ -3,10 +3,11 @@
 /**
  * Module dependencies.
  */
+import app from '../app.js';
+import debugLib from 'debug';
+import http from 'http';
 
-var app = require('../app');
-var debug = require('debug')('backend-app:server');
-var http = require('http');
+var debug = debugLib('backend-app:server');
 
 /**
  * Get port from environment and store in Express.
