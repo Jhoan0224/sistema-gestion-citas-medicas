@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { HistorialCitas } from "../componentes/HistorialCitas.jsx"
+import { UsuarioSinCita } from "../componentes/CitasForms.jsx";
 import App from "../application/app.js";
 
 export function HomeUsuario() {
@@ -24,8 +25,8 @@ export function HomeUsuario() {
     <>
     <div className="d-flex flex-column py-3 px-4 w-100">
         
-        <div className="flex-grow-1 p-3 border border-2 rounded-2">
-            <h5 className="fs-5">Cita Medica Pendiente</h5>
+        <div className="d-flex flex-column flex-grow-1 p-3 border border-2 rounded-2">
+            {/* <h5 className="fs-5">Cita Medica Pendiente</h5>
             <div className="ps-3 mb-5">
                 <p className="fs-6"><b>Cita:</b> Checkeo de control anual</p>
 
@@ -37,16 +38,18 @@ export function HomeUsuario() {
 
                 <p className="mb-0"><b>Centro de Atencion:</b></p>
                 <p className="mt-0 ms-3">Centro Medico de Santa Ana, 25 Av. Norte --- <a href="https://maps.app.goo.gl/3aTaLmdXXvt9Uiyr7">Ver Ubicacion</a></p>
-            </div>
+            </div> */}
         
-            <p><b>Informacion importante:</b></p>
-            <ul>
-                <li><span>La Confirmacion de la Cita es maximo 5 Horas antes o el dia previo a la Cita.</span></li>
-                <li><span>El Tiempo maximo de espero por paciente Sin Confirmacion es de 10 min.</span></li>
-                <li><span>El Tiempo maximo de espero por paciente con Cita Confirmada es de 20 min.</span></li>
-            </ul>
-
-
+            <UsuarioSinCita />
+            <div className="mt-auto mb-1">
+                <p><b>Informacion importante:</b></p>
+                <ul>
+                    <li><span>La Confirmacion de la Cita es maximo 5 Horas antes o el dia previo a la Cita.</span></li>
+                    <li><span>El Tiempo maximo de espero por paciente Sin Confirmacion es de 10 min.</span></li>
+                    <li><span>El Tiempo maximo de espero por paciente con Cita Confirmada es de 20 min.</span></li>
+                </ul>
+                <p className="text-center fw-medium">Si necesitas atención médica de urgencia, por favor acude a este o al centro de salud más cercano.</p>
+            </div>
         
         </div>
         
