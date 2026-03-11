@@ -6,6 +6,7 @@ import { LoadingSpinner } from './componentes/LoadingTmpls'
 import { validarSesionUsuario, } from './application/Authentication'
 import { Navbar, Footer } from './componentes/NavbarFooter'
 import { CrearCuentaUsuario } from './pages/CrearCuentaUsuario'
+import { AgendarCitaUsuario } from './pages/FormsCitasUsuario'
 
 export default function App() {
 
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/" element={<TemplateUsuario />}>
             <Route index element={<HomeUsuario />} />
             <Route path='home' element={<HomeUsuario />} />
+            <Route path='agendar-cita' element={<AgendarCitaUsuario />} />
         </Route>
 
     </Routes>
