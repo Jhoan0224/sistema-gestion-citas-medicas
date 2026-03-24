@@ -42,18 +42,21 @@ export function formCrearCuenta(form) {
         VALIDATION_RESULT.message = 'La Contraseña debe tener entre 12 y 20 caracteres, sin espacios en los extremos.';
         return VALIDATION_RESULT;        
     }
-    if (!textZonaResidenciaIsValid(form.zonaResidencia)) {
-        VALIDATION_RESULT.message = 'La Zona de Residencia solo puede contener: letras, numeros y guiones.';
+    if (!idIsValid(form.departamentoId)) {
+        // VALIDATION_RESULT.message = 'La Zona de Residencia solo puede contener: letras, numeros y guiones.';
+        VALIDATION_RESULT.message = 'El departamento seleccionado no es valido.';
         return VALIDATION_RESULT; 
     }
     
-    if (!inputIsBoolean(form.estadoLaboralFormal)) {
-        VALIDATION_RESULT.message = 'El estado laboral debe ser booleano.';
+    if (!idIsValid(form.ocupacionId)) {
+        // VALIDATION_RESULT.message = 'El estado laboral debe ser booleano.';
+        VALIDATION_RESULT.message = 'La ocupacion seleccionada no es valida.';
         return VALIDATION_RESULT;      
     }
     
-    if (!inputIsBoolean(form.condicionMedica)) {
-        VALIDATION_RESULT.message = 'El campo condicion medica debe ser booleano';
+    if (!idIsValid(form.condicionId)) {
+        // VALIDATION_RESULT.message = 'El campo condicion medica debe ser booleano';
+        VALIDATION_RESULT.message = 'La condicion seleccionada no es valida.';
         return VALIDATION_RESULT; 
     }
 
@@ -71,6 +74,12 @@ function textZonaResidenciaIsValid(textInput) {
     const regexTextZonaResidencia = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]+$/;
 
     return regexTextZonaResidencia.test(textInput.trim());
+}
+
+function idIsValid(textId) {
+    const regexIsInteger = /^\d+$/;
+
+    return regexIsInteger.test(textId.trim());
 }
 
 function emailIsValid(email) {

@@ -46,6 +46,26 @@ export const usuarioBasicInfo = async (idUsuario) => {
     } finally {conn?.release();}
 }
 
+export const usuarioAccountInfo = async (idUsuario) => {
+    const PROCESS_RESULT = {success: false, message: 'No se ha encontrado informacion.', usuarioAccountInfo: {}};
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        const result = await UsuarioEntity.accountInfoById(conn, idUsuario);
+        if (!result) {
+            return PROCESS_RESULT;
+        }
+
+        PROCESS_RESULT.success = true;
+        PROCESS_RESULT.message = "Informacion cuenta de usuario."
+        PROCESS_RESULT.usuarioAccountInfo = result;
+
+        return PROCESS_RESULT;
+
+    } catch (error) {
+        throw error;
+    } finally {conn?.release();}
+}
+
 export const createUserAccount = async (form) => {
     const PROCESS_RESULT = {success: false, message: 'Ocurrio un error, la cuenta No se registro, intentelo de nuevo más tarde.'}
     let conn = await mysqlConnPool.getConnection();
@@ -64,7 +84,7 @@ export const createUserAccount = async (form) => {
         const passwordHash = await PasswordSecurity.getPasswordHash(form.pass1);
 
         const values = [form.dui, form.nombre, form.apellido, form.fechaNacimiento,
-            form.email, passwordHash, form.zonaResidencia, form.estadoLaboralFormal , form.condicionMedica
+            form.email, passwordHash, form.departamentoId, form.ocupacionId , form.condicionId
         ];
         
         const usuarioDb = new UsuarioEntity(conn);

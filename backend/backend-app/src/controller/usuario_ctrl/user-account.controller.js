@@ -1,5 +1,5 @@
 import {FORBIDDEN_STATUS, SERVER_ERROR} from '../../utils/http-status-messages.js'
-import { citaPendienteUsuario, createUserAccount, usuarioBasicInfo } from '../../services/usuario_svc/user-account.svc.js';
+import { citaPendienteUsuario, createUserAccount, usuarioAccountInfo, usuarioBasicInfo } from '../../services/usuario_svc/user-account.svc.js';
 
 
 export const userCrearCuentaCtrl = async (req, res) => {
@@ -57,6 +57,29 @@ export const userBasicInfoCtrl = async (req, res) => {
         return res.status(500).json(SERVER_ERROR);
     }
 };
+
+export const userAccountInfoCtrl = async (req, res) => {
+    const ROLES_REQUERIDOS = ["USUARIO"];
+    try {
+        const userData = req.params.userData;
+        console.log(req.params.userData);
+        if (hasRolesRequeridos(userData.roles, ROLES_REQUERIDOS) === false) {
+            return res.status(403).json(FORBIDDEN_STATUS);
+        }
+       
+        const processResult = await usuarioAccountInfo(req.params.id);
+
+        return processResult.success
+            ? res.status(200).json(processResult)
+            : res.status(400).json(processResult);
+
+    } catch (error) {
+        console.error("Error en controller usuariAccountInfo >> " + error);
+        return res.status(500).json(SERVER_ERROR);
+    }
+};
+
+
 
 function hasRolesRequeridos(rolesUsuario, rolesRequeridos) {
 
