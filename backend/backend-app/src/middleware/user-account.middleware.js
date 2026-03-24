@@ -12,7 +12,7 @@ export const userCrearCuentaValidations = (req, res, next) => {
             : res.status(400).json(validationResult);
 
     } catch (error) {
-        console.error("Error en middlware userCrearCuentaValidations >> " + error);
+        console.error("Error en middlware userCrearCuentaValidations >> " + error.stack);
         return res.status(500).json(SERVER_ERROR);
     }
 };

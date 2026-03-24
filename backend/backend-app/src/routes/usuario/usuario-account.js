@@ -22,4 +22,9 @@ userAuthRouter.get('/cita-pendiente/user-id/:id',
     userAccountCtrl.userBasicInfoCtrl
 );
 
+userAuthRouter.get('/account-info/user-id/:id',
+    userAccountMiddleWare.verifyAuthValidation,
+    userAccountCtrl.userAccountInfoCtrl
+);
+
 export default userAccountRouter;

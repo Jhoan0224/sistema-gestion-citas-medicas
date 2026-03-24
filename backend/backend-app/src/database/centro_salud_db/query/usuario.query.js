@@ -2,7 +2,7 @@ export default class UsuarioQuery {
 
     static createAccount = `
     INSERT INTO
-        usuario(dui, nombre, apellido, fecha_nacimiento, email, pass, zona_residencia, estado_laboral_formal, condicion_medica)
+        usuario(dui, nombre, apellido, fecha_nacimiento, email, pass, id_departamento, id_ocupacion, id_condicion)
     VALUES
         (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
@@ -29,6 +29,19 @@ export default class UsuarioQuery {
     SELECT user.id, user.dui, user.nombre, user.apellido, user.email
     FROM
         usuario user
+    WHERE
+        user.id = ?
+    `;
+
+    static usuarioAccountInfo = `
+    SELECT user.id, user.dui, user.nombre, user.apellido, user.email, user.fecha_nacimiento,
+        user.id_departamento, cond.nombre as condicion, ocup.nombre as ocupacion
+    FROM
+        usuario user
+    JOIN
+        condiciones cond on cond.id = user.id_condicion
+    JOIN
+        ocupaciones ocup on ocup.id = user.id_ocupacion
     WHERE
         user.id = ?
     `;

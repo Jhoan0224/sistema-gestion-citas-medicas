@@ -8,7 +8,7 @@ import cors from 'cors';
 // rutas de la API
 import userAccountRouter from './src/routes/usuario/usuario-account.js';
 import userAuthRouter from './src/routes/usuario/auth-usuario.js';
-
+import publicRouter from './src/routes/public-routes.js'
 
 const app = express();
 const logger = morgan;
@@ -27,6 +27,7 @@ app.get('/', (req, res) => { res.send("Centro de salud");});
 
 app.use('/user', userAccountRouter);
 app.use('/user', userAuthRouter);
+app.use('/public', publicRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res) {

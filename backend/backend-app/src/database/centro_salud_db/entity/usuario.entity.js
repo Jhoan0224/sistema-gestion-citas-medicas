@@ -49,5 +49,11 @@ export default class UsuarioEntity {
         
         return result[0] ?? null;
     }
+
+    static async accountInfoById(conn, id) {
+        const [result] = await conn.execute(UsuarioQuery.usuarioAccountInfo, [id]);
+        
+        return result[0] ?? null;
+    }
 };
 
