@@ -7,6 +7,7 @@ import { validarSesionUsuario, } from './application/Authentication'
 import { Navbar, Footer } from './componentes/NavbarFooter'
 import { CrearCuentaUsuario } from './pages/CrearCuentaUsuario'
 import { AgendarCitaUsuario } from './pages/FormsCitasUsuario'
+import { UsuarioAccount } from './pages/UsuarioAccount'
 
 export default function App() {
 
@@ -20,6 +21,7 @@ export default function App() {
             <Route index element={<HomeUsuario />} />
             <Route path='home' element={<HomeUsuario />} />
             <Route path='agendar-cita' element={<AgendarCitaUsuario />} />
+            <Route path='user-account' element={<UsuarioAccount />} />
         </Route>
 
     </Routes>
@@ -32,18 +34,18 @@ function TemplateUsuario() {
     const [authIsValid, setAuthIsValid] = useState(true);
     const [userBasicInfo, setUserBasicInfo] = useState({});
 
-    // useEffect(() => {
-    //     const validarSesion = async () => {
-    //         const resp = await validarSesionUsuario();
-    //         if (resp.success) {
-    //             setUserBasicInfo({...resp.usuarioBasicInfo});
-    //             setAuthIsValid(resp.success);
-    //         } else {
-    //             setAuthIsValid(false);
-    //         }
-    //     };
-    //     validarSesion();
-    // }, []);
+    useEffect(() => {
+        const validarSesion = async () => {
+            const resp = await validarSesionUsuario();
+            if (resp.success) {
+                setUserBasicInfo({...resp.usuarioBasicInfo});
+                setAuthIsValid(resp.success);
+            } else {
+                setAuthIsValid(false);
+            }
+        };
+        validarSesion();
+    }, []);
 
     if (authIsValid === null) { return <LoadingSpinner /> }
 

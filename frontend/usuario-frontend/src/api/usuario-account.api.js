@@ -14,11 +14,11 @@ const ID_USER = () => {
     return localStorage.getItem(ID_NAME);
 };
 
-
-export async function getUsuarioBasicInfo(){
+export async function createAccount(formData){
     try {
-        const httpResquest = `${URL_USER_ACCOUNT}/basic-info/user-id/${ID_USER()}`;
-        const resp = await axios.get(httpResquest, HEADER_USUARIO());
+        console.log(formData);
+        
+        const resp = await axios.post(`${URL_USER_ACCOUNT}/create-account`, formData);
         return resp.data;
         
     } catch (error) {
@@ -26,12 +26,13 @@ export async function getUsuarioBasicInfo(){
     }
 };
 
-export async function getCitaPendienteUsuario(){
+export async function getUserAccountData(){
     try {
-        const resp = await axios.get(`${URL_USER_ACCOUNT}/cita-pendiente/user-id/${ID_USER()}`, HEADER_USUARIO());
-        return resp.data;
+        const resp = await axios.get(`${URL_USER_ACCOUNT}/account-info/user-id/${ID_USER()}`, HEADER_USUARIO());
         
+        return resp.data;
     } catch (error) {
         return false;
     }
 };
+
