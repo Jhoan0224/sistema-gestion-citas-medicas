@@ -1,4 +1,4 @@
-import { loginUsuario, validarTokenAuth } from "../api/auth";
+import { loginUsuario, validarTokenAuth } from "../api/auth.js";
 import { getUsuarioBasicInfo } from "../api/usuario-api.js";
 
 const TOKEN_NAME = import.meta.env.VITE_TOKEN_NAME;

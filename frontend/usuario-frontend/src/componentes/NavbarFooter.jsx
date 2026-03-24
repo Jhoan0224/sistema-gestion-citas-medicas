@@ -19,7 +19,7 @@ export function Navbar({userBasicInfo}) {
                         Opciones
                     </a>
                     <ul className="dropdown-menu dropdown-menu-end">
-                        <li><a className="dropdown-item" href="#">Configuración</a></li>
+                        <li><a className="dropdown-item" href="user-account">Configuración</a></li>
                         <li><a className="dropdown-item" href="#">Cerrar Sessión</a></li>
                     </ul>
                 </li>
