@@ -4,15 +4,15 @@ import App from "../application/app.js";
 export function CrearCuentaUsuario() {
     const [formAddUsuario, setFormAddUsuario] = useState({
         nombre: '', apellido: '', dui: '', fechaNacimiento: '', email: '', pass1: '', pass2: '',
-        departamentoId: '', ocupacionId: '', condicionId: ''
+        zonaResidencia: '', ocupacionId: '', condicionId: ''
     });
-    const [dataCrearCuenta, setDataCrearCuenta] = useState({departamentos: [], ocupaciones: [], condiciones: []})
+    const [dataCrearCuenta, setDataCrearCuenta] = useState({ocupaciones: [], condiciones: []})
     useEffect(() => {
             const loadData = async () => {
                 const data = await App.loadDataCrearCuenta();
                 
                 if (data.success) {
-                    setDataCrearCuenta(({departamentos: data.departamentosList,
+                    setDataCrearCuenta(({
                         ocupaciones: data.ocupacionesList, condiciones: data.condicionesList
                     }));
                 }
@@ -88,7 +88,7 @@ export function CrearCuentaUsuario() {
                     <label htmlFor="pass2" className="form-label">Confirmar contrasena</label>
                     <input type="text" id="pass2" name="pass2" className="form-control" required 
                         value={formAddUsuario.pass2} onChange={updateForm}
-                    />
+                        />
                 </div>
             </div>
      
@@ -104,15 +104,6 @@ export function CrearCuentaUsuario() {
                     </select>
                 </div>
                 <div>
-                    <label htmlFor="departamentoId" className="form-label">Zona de residencia</label>
-                    <select name="departamentoId" id="departamentoId" className="form-select" onChange={updateForm} required defaultValue="">
-                        <option value="" disabled>Seleccionar</option>
-                        {dataCrearCuenta.departamentos.map(dep => 
-                            <option key={dep.id} value={dep.id}>{dep.nombre}</option>
-                        )}
-                    </select>
-                </div>
-                <div>
                     <label htmlFor="condicionId" className="form-label">¿Tienes alguna condicion?</label>
                     <select name="condicionId" id="condicionId" className="form-select" onChange={updateForm} required defaultValue="">
                         <option value="" disabled>Seleccionar</option>
@@ -121,11 +112,18 @@ export function CrearCuentaUsuario() {
                         )}
                     </select>
                 </div>
-
+                <div>
+                    <label htmlFor="zonaResidencia" className="form-label">Zona de residencia</label>
+                    <textarea name="zonaResidencia" id="zonaResidencia" className="form-control" required
+                        value={formAddUsuario.zonaResidencia} onChange={updateForm}
+                    />
+                </div>
             </div>
+
             <div className="d-flex m-auto mt-3">
                 <button type="submit" className="btn btn-primary">Crear Cuenta</button>
             </div>
+            
             <a href="/login">Ya tengo una cuenta</a>
         </form>
     </div>

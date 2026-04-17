@@ -8,6 +8,8 @@ import { Navbar, Footer } from './componentes/NavbarFooter'
 import { CrearCuentaUsuario } from './pages/CrearCuentaUsuario'
 import { AgendarCitaUsuario } from './pages/FormsCitasUsuario'
 import { UsuarioAccount } from './pages/UsuarioAccount'
+import { LoginCs } from './pages_cs/LoginCs.jsx'
+import { PersonalOfficeCs } from './pages_cs/PersonalCs.jsx'
 
 export default function App() {
 
@@ -24,11 +26,28 @@ export default function App() {
             <Route path='user-account' element={<UsuarioAccount />} />
         </Route>
 
+        <Route path='/cs-admin' element={<TempalteAdminCs />} >
+            <Route index element={<LoginCs />}/>
+            <Route path='home' element={<PersonalOfficeCs />}/>
+            
+
+        </Route>
+
+
     </Routes>
     </>
   )
 }
 
+
+function TempalteAdminCs() {
+
+    return(
+        <div className='d-flex flex-grow-1 '>
+            <Outlet />
+        </div>  
+    )
+}
 
 function TemplateUsuario() {
     const [authIsValid, setAuthIsValid] = useState(true);

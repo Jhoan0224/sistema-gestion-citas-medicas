@@ -84,7 +84,7 @@ export const createUserAccount = async (form) => {
         const passwordHash = await PasswordSecurity.getPasswordHash(form.pass1);
 
         const values = [form.dui, form.nombre, form.apellido, form.fechaNacimiento,
-            form.email, passwordHash, form.departamentoId, form.ocupacionId , form.condicionId
+            form.email, passwordHash, form.zonaResidencia, form.ocupacionId , form.condicionId
         ];
         
         const usuarioDb = new UsuarioEntity(conn);

@@ -15,7 +15,7 @@ export async function loginUsuario(formAuth) {
             return CREDENTIALS_NOT_VALID;
         }
         console.log(dataUserLogin[0]);
-        if (await PasswordSecurity.passwordMatches(formAuth.pass, dataUserLogin[0].pass) === false) {
+        if (await PasswordSecurity.passwordMatches(formAuth.pass, dataUserLogin[0].pass_hash) === false) {
             return CREDENTIALS_NOT_VALID;
         }
 
