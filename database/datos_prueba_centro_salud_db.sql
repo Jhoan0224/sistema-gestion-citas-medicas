@@ -14,6 +14,7 @@ insert into signos(nombre) values
 ('Taquicardia'),
 ('Edema');
 
+/*
 insert into departamentos(nombre) values
 ('Ahuachapán'),
 ('Santa Ana'),
@@ -29,6 +30,7 @@ insert into departamentos(nombre) values
 ('San Miguel'),
 ('Morazán'),
 ('La Unión');
+*/
 
 insert into ocupaciones(nombre) values
 ('Empleado sector privado'),
@@ -52,6 +54,8 @@ insert into condiciones(nombre) values
 ('Otra condición'),
 ('Prefiero no decirlo');
 
+insert into estado_cita(nombre) values
+('Agendada'), ('Confirmada'), ('Cancelada');
 
 
 

@@ -23,14 +23,12 @@ export default class App {
     }
 
     static async loadDataCrearCuenta() {
-        const RESP = {success: false, departamentosList: [], ocupacionesList: [], condicionesList: []};
+        const RESP = {success: false, ocupacionesList: [], condicionesList: []};
 
-        const departamentosData = await getDepartamentosList();
         const ocupacionesData = await getOcupacionesList();
         const condicionesData = await getCondicionesList();
         
-        if (departamentosData.success && ocupacionesData.success && condicionesData.success) {
-                RESP.departamentosList = departamentosData.departamentos;
+        if (ocupacionesData.success && condicionesData.success) {
                 RESP.ocupacionesList = ocupacionesData.ocupaciones;
                 RESP.condicionesList = condicionesData.condiciones;
                 RESP.success = true;

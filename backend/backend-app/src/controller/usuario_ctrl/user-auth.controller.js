@@ -17,7 +17,7 @@ export const verifyTokenCtrl = async (req, res) => {
         return res.status(401).json(TOKEN_NOT_VALID);
 
     } catch (error) {
-        console.error("Error en controller userCrearCuenta >> " + error);
+        console.error("Error en controller Verify Token >> " + error);
         return res.status(500).json(SERVER_ERROR);
     }
 };
@@ -32,7 +32,7 @@ export const userLoginCtrl = async (req, res) => {
         return res.status(400).json(processResult);
 
     } catch (error) {
-        console.error("Error en controller userCrearCuenta >> " + error);
+        console.error("Error en controller UserLogin >> " + error);
         return res.status(500).json(SERVER_ERROR);
     }
 };

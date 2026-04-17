@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react"
 import App from "../application/app.js";
+import { useNavigate } from "react-router-dom";
 
 
 export function AgendarCitaUsuario() {
+    const navigate = useNavigate();
     const [formAgendarCita, setFormAgendarCita] = useState({
         titulo: '', motivo: '', tipoAtencion: '', horarioPreferido: '', signosIds: [], sintomasIds: []
     });
@@ -10,8 +12,7 @@ export function AgendarCitaUsuario() {
 
     useEffect(() => {
         const loadData = async () => {
-            const data = await App.loadDataAgendarCita();
-            
+            const data = await App.loadDataAgendarCita();            
             if (data.success) {
                 setListSignosSintomas(({signos: data.signosList, sintomas: data.sintomasList}));
             }
@@ -19,24 +20,24 @@ export function AgendarCitaUsuario() {
         loadData();
     }, []);
     
-
     const updateForm = (e) => {
         setFormAgendarCita(prev => ({...prev, [e.target.name]: e.target.value}));
     };
 
     const updateFormIds = (e) => {
-        const {name, id, checked } = e.target;
+        const {name, id, checked } = e.target;      
         setFormAgendarCita(prev => {
             const listActual = prev[name] || [];
-
+            console.log(listActual);
+            
             return {
                 ...prev,
                 [name]: checked
-                ? [...listActual, id]
-                : listActual.filter(ids => ids !== id)
+                ? [...listActual, id.split('-')[1]]
+                : listActual.filter(ids => ids !== id.split('-')[1])
             };
         });
-        console.log(formAgendarCita)
+        console.log(formAgendarCita);
     };
 
     const sendForm = async (e) => {
@@ -45,8 +46,12 @@ export function AgendarCitaUsuario() {
     }
     return(
     <>
-    <div className="d-flex flex-column align-items-center p-3 w-100">
-        <h5 className="fs-5">Formulario de Agenda de Cita Médica</h5>
+    <div className="d-flex flex-column align-items-center p-3">
+        <div className="d-flex justify-content-between w-75 py-2">
+            <h5 className="fs-5">Formulario de Agenda de Cita Médica</h5>
+            <button onClick={() => navigate('/home')} className="btn btn-outline-secondary me-2"><i className="bi bi-x-lg"></i></button>
+        </div>
+
         <form onSubmit={(event) => sendForm(event)} className="border rounded-3 p-4 w-75 shadow-sm">
         <div className="row g-3">
             <div className="col-md-6">
@@ -128,8 +133,8 @@ export function AgendarCitaUsuario() {
                 </div>
                 <textarea rows="2" className="form-control flex-grow-1" readOnly 
                     value={listSignosSintomas.sintomas
-                            .filter(s => formAgendarCita.sintomasIds.some(id => id.split('-')[1] == s.id))
-                            .map(s => s.nombre).join(', ')
+                        .filter(s => formAgendarCita.sintomasIds.some(id => id == s.id))
+                        .map(s => s.nombre).join(', ')
                     }
                 />
             </div>
@@ -154,8 +159,8 @@ export function AgendarCitaUsuario() {
                 </div>
                 <textarea rows="2" className="form-control flex-grow-1" readOnly 
                     value={listSignosSintomas.signos
-                            .filter(s => formAgendarCita.signosIds.some(id => id.split('-')[1] == s.id))
-                            .map(s => s.nombre).join(', ')
+                        .filter(s => formAgendarCita.signosIds.some(id => id == s.id))
+                        .map(s => s.nombre).join(', ')
                     }
                 />
             </div>
@@ -163,7 +168,7 @@ export function AgendarCitaUsuario() {
             </div>
 
             <div className="col-12 d-flex flex-wrap-reverse flex-md-nowrap justify-content-between gap-3 px-3">
-                <button type="button" className="btn btn-warning flex-grow-1 flex-md-grow-0">
+                <button onClick={() => navigate('/home')} type="button" className="btn btn-warning flex-grow-1 flex-md-grow-0">
                     Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary flex-grow-1 flex-md-grow-0">

@@ -42,9 +42,9 @@ export function formCrearCuenta(form) {
         VALIDATION_RESULT.message = 'La Contraseña debe tener entre 12 y 20 caracteres, sin espacios en los extremos.';
         return VALIDATION_RESULT;        
     }
-    if (!idIsValid(form.departamentoId)) {
-        // VALIDATION_RESULT.message = 'La Zona de Residencia solo puede contener: letras, numeros y guiones.';
-        VALIDATION_RESULT.message = 'El departamento seleccionado no es valido.';
+    if (!textZonaResidenciaIsValid(form.zonaResidencia)) {
+        VALIDATION_RESULT.message = 'La Zona de Residencia solo puede contener: letras, numeros y guiones.';
+        // VALIDATION_RESULT.message = 'El departamento seleccionado no es valido.';
         return VALIDATION_RESULT; 
     }
     

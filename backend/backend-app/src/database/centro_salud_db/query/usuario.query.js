@@ -2,7 +2,7 @@ export default class UsuarioQuery {
 
     static createAccount = `
     INSERT INTO
-        usuario(dui, nombre, apellido, fecha_nacimiento, email, pass, id_departamento, id_ocupacion, id_condicion)
+        usuario(dui, nombre, apellido, fecha_nacimiento, email, pass_hash, zona_residencia, id_ocupacion, id_condicion)
     VALUES
         (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
@@ -50,7 +50,7 @@ export default class UsuarioQuery {
 export class UsuarioSecurityQuery {
 
     static dataLoginByEmail = `
-    SELECT user.id, user.pass
+    SELECT user.id, user.pass_hash
     FROM
         usuario user
     WHERE user.email = ?
