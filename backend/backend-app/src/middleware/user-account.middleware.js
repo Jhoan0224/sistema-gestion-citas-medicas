@@ -2,6 +2,20 @@ import { SERVER_ERROR, TOKEN_NOT_VALID } from '../utils/http-status-messages.js'
 import * as userAccountValidations from '../utils/validations/user-account.validation.js'
 import JwtToken from '../services/security_svc/jwt-token.svc.js';
 
+export const userUpdateSecurityValidations = (req, res, next) => {
+    try {
+        const validationResult = userAccountValidations.formUpdateSecurityAccount(req.body);
+        
+        return validationResult.success 
+            ?  next() 
+            : res.status(400).json(validationResult);
+
+    } catch (error) {
+        console.error("Error en middlware userUpdateSecurityValidations >> " + error.stack);
+        return res.status(500).json(SERVER_ERROR);
+    }
+};
+
 export const userCrearCuentaValidations = (req, res, next) => {
     try {
         

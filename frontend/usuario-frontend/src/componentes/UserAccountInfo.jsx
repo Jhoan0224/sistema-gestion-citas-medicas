@@ -9,9 +9,7 @@ export default function UsuarioAccountData() {
 
     useEffect(() => {
         const loadData = async () => {
-            const resp = await getUserAccountData();
-            console.log("ok >> ", resp);
-            
+            const resp = await getUserAccountData();           
             if (resp.success) { setUserData(resp.usuarioAccountInfo); }
         };
         loadData();
@@ -26,7 +24,7 @@ export default function UsuarioAccountData() {
         <li className="list-group-item"><b>DUI: </b>{userData.dui}</li>
         <li className="list-group-item"><b>Email: </b>{userData.email}</li>
         <li className="list-group-item"><b>Ocupacion actual:</b> {userData.ocupacion}</li>
-        <li className="list-group-item"><b>Zona de residencia: </b>{userData.departamento}</li>
+        <li className="list-group-item"><b>Zona de residencia: </b>{userData.zona_residencia}</li>
         <li className="list-group-item"><b>Condicion medica: </b>{userData.condicion}</li>
     </ul>
     </>

@@ -17,7 +17,7 @@ export function LoginUsuario() {
         const authResult = await sendLoginUsuario(formLogin);
 
         if (authResult.success) {
-            return navigate("/home");
+            return navigate("/user/home");
         } else {
             alert(authResult.message);
         }

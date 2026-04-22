@@ -49,7 +49,7 @@ export function AgendarCitaUsuario() {
     <div className="d-flex flex-column align-items-center p-3">
         <div className="d-flex justify-content-between w-75 py-2">
             <h5 className="fs-5">Formulario de Agenda de Cita Médica</h5>
-            <button onClick={() => navigate('/home')} className="btn btn-outline-secondary me-2"><i className="bi bi-x-lg"></i></button>
+            <button onClick={() => navigate('/user/home')} className="btn btn-outline-secondary me-2"><i className="bi bi-x-lg"></i></button>
         </div>
 
         <form onSubmit={(event) => sendForm(event)} className="border rounded-3 p-4 w-75 shadow-sm">
@@ -168,7 +168,7 @@ export function AgendarCitaUsuario() {
             </div>
 
             <div className="col-12 d-flex flex-wrap-reverse flex-md-nowrap justify-content-between gap-3 px-3">
-                <button onClick={() => navigate('/home')} type="button" className="btn btn-warning flex-grow-1 flex-md-grow-0">
+                <button onClick={() => navigate('/user/home')} type="button" className="btn btn-warning flex-grow-1 flex-md-grow-0">
                     Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary flex-grow-1 flex-md-grow-0">

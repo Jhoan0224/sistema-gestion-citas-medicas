@@ -10,6 +10,7 @@ import { AgendarCitaUsuario } from './pages/FormsCitasUsuario'
 import { UsuarioAccount } from './pages/UsuarioAccount'
 import { LoginCs } from './pages_cs/LoginCs.jsx'
 import { PersonalOfficeCs } from './pages_cs/PersonalCs.jsx'
+import { useLocation } from 'react-router-dom';
 
 export default function App() {
 
@@ -19,7 +20,7 @@ export default function App() {
         <Route path='/login' element={<LoginUsuario />} />
         <Route path='/crear-cuenta' element={<CrearCuentaUsuario />}/>
         
-        <Route path="/" element={<TemplateUsuario />}>
+        <Route path="/user" element={<TemplateUsuario />}>
             <Route index element={<HomeUsuario />} />
             <Route path='home' element={<HomeUsuario />} />
             <Route path='agendar-cita' element={<AgendarCitaUsuario />} />
@@ -52,7 +53,8 @@ function TempalteAdminCs() {
 function TemplateUsuario() {
     const [authIsValid, setAuthIsValid] = useState(true);
     const [userBasicInfo, setUserBasicInfo] = useState({});
-
+    const location = useLocation(); 
+    
     useEffect(() => {
         const validarSesion = async () => {
             const resp = await validarSesionUsuario();
@@ -64,7 +66,7 @@ function TemplateUsuario() {
             }
         };
         validarSesion();
-    }, []);
+    }, [location]);
 
     if (authIsValid === null) { return <LoadingSpinner /> }
 

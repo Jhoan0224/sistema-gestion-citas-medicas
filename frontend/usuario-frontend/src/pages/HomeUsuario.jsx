@@ -19,8 +19,6 @@ export function HomeUsuario() {
         }        
     };
 
-
-
     return(
     <>
     <div className="d-flex flex-column py-3 px-4 w-100">
