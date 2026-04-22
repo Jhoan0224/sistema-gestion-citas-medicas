@@ -1,4 +1,5 @@
 import UsuarioQuery from "../query/usuario.query.js";
+import { UsuarioSecurityQuery } from "../query/usuario.query.js";
 
 export default class UsuarioEntity {
     // objeto con campos de la tabla usuario
@@ -55,5 +56,29 @@ export default class UsuarioEntity {
         
         return result[0] ?? null;
     }
+
+    static async credentialsAccountVerifyByEmail(conn, email) {
+        const [result] = await conn.execute(UsuarioSecurityQuery.passHashByEmail, [email]);
+        
+        return result[0].pass_hash ?? null;
+    }
+
+    static async updateCredentialsEmail(conn, values) {
+        const [result] = await conn.execute(UsuarioSecurityQuery.updateCredentialsEmail , values);
+        return result.changedRows === 0 ? false : true;
+    }
+
+    static async updateCredentialsPass(conn, values) {
+        const [result] = await conn.execute(UsuarioSecurityQuery.updateCredentialsPass , values);
+        console.log(result);
+        
+        return result.changedRows === 0 ? false : true;
+    }
+
+    static async updateCredentialsEmailPass(conn, values) {
+        const [result] = await conn.execute(UsuarioSecurityQuery.updateCredentialsEmailPass , values);
+        return result.changedRows > 0;
+    }
 };
+
 

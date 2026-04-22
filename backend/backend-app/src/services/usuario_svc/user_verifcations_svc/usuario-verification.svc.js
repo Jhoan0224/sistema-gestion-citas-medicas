@@ -14,4 +14,6 @@ export default class UsuarioVerficication {
         const result = await UsuarioEntity.findIdUsuarioByDui(conn, duiCheck);
         return result.length === 0;
     }
+
+
 }

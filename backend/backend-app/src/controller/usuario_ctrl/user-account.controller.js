@@ -1,6 +1,23 @@
 import {FORBIDDEN_STATUS, SERVER_ERROR} from '../../utils/http-status-messages.js'
-import { citaPendienteUsuario, createUserAccount, usuarioAccountInfo, usuarioBasicInfo } from '../../services/usuario_svc/user-account.svc.js';
+import { citaPendienteUsuario, createUserAccount, usuarioAccountInfo, usuarioBasicInfo, userUpdateSecurityAccount } from '../../services/usuario_svc/user-account.svc.js';
 
+
+export const userUpdateSecurityAccountCtrl = async (req, res) => {
+    try {
+        const form = req.body;
+        form.idUser = req.params.userData.id;
+
+        const processResult = await userUpdateSecurityAccount(form);
+        if (processResult.success) {
+            return res.status(200).json(processResult);
+        }
+        return res.status(400).json(processResult);
+
+    } catch (error) {
+        console.error("Error en controller userCrearCuenta >> " + error);
+        return res.status(500).json(SERVER_ERROR);
+    }
+};
 
 export const userCrearCuentaCtrl = async (req, res) => {
     try {

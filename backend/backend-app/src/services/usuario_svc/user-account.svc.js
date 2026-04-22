@@ -104,3 +104,61 @@ export const createUserAccount = async (form) => {
         conn?.release();
     }
 };
+
+export const userUpdateSecurityAccount = async (form) => {
+    const PROCESS_RESULT = {success: false, message: 'Ocurrio un error, la cuenta No se registro, intentelo de nuevo más tarde.'}
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        
+        if (form.newPassCheck1 !== form.newPassCheck2) {return BAD_REQUEST;}  
+
+        const passHash = await UsuarioEntity.credentialsAccountVerifyByEmail(conn, form.email);
+        
+        if(!passHash || !PasswordSecurity.passwordMatches(form.pass, passHash)) {
+            PROCESS_RESULT.message = "Tu Email o Contraseña no coinciden, intentalo de nuevo."
+            return PROCESS_RESULT
+        }
+
+        const newPasswordHash = await PasswordSecurity.getPasswordHash(form.newPassCheck1);
+        
+        if (form.isEmailModified) {
+            if (await UsuarioVerficication.emailIsAvailable(conn, form.newEmail) === false) {
+                PROCESS_RESULT.message = "El Nuevo Email al que deseas actualizar no esta disponible";
+                return PROCESS_RESULT;
+            }
+    console.log("ok1");
+            
+            const values = [form.newEmail, newPasswordHash, form.idUser];
+            const credentialsUpdated = await UsuarioEntity.updateCredentialsEmailPass(conn, values);
+            
+            if (credentialsUpdated) {
+                PROCESS_RESULT.success = true;
+                PROCESS_RESULT.message = "Las credenciales de seguridad se actualizaron con exito."
+                return PROCESS_RESULT;
+            } else {
+                PROCESS_RESULT.message = "Ocurrio un error al actualizar las credeciales de seguridad."
+                return PROCESS_RESULT;   
+            }
+        }
+        console.log("ok2");
+
+        const values = [newPasswordHash, form.idUser];   
+        const credentialsUpdated = await UsuarioEntity.updateCredentialsPass(conn,values);
+    
+        console.log("ok" + credentialsUpdated);
+
+        if (credentialsUpdated) {
+            PROCESS_RESULT.success = true;
+            PROCESS_RESULT.message = "Las credenciales de seguridad se actualizaron con exito."
+            return PROCESS_RESULT;
+        } else {
+            PROCESS_RESULT.message = "Ocurrio un error al actualizar las credeciales de seguridad."
+            return PROCESS_RESULT;   
+        }
+
+    } catch (error) {
+        throw error;
+    } finally {
+        conn?.release();
+    }
+};

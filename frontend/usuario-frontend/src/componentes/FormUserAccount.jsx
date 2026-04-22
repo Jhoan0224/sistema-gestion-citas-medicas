@@ -1,35 +1,35 @@
 import { useState } from "react";
+import {updateSecurityAccount} from '../api/usuario-account.api.js'
 
-
-export function FormSecurityUserAccount({setCancelar}) {
+export function FormSecurityUserAccount({userData, setCancelar}) {
     const [updateEmail, setUpdateEmail] = useState(false);
     const [formUpdSecurity, setFormUpdSecurity] = useState({
-       isEmailModified: false, email: 'myemail@gmail.com', newEmail: '', pass: '', newPassCheck1: '', newPassCheck2: ''
+       isEmailModified: false, email: '', newEmail: '', pass: '', newPassCheck1: '', newPassCheck2: ''
     });
 
     const updateForm = (e) => {
-        setFormUpdSecurity({...formUpdSecurity, [e.target.name]: e.target.value});
+        setFormUpdSecurity(prev => ({...prev, [e.target.name]: e.target.value}));
     };
 
-    const sendForm = (event) => {
+    const sendForm = async (event) => {
         event.preventDefault();
         const formSecurity = {...formUpdSecurity};
-
-        if (updateEmail) { formSecurity.isEmailModified = true;}
-
+        formSecurity.email = userData.email;
+        if (updateEmail) {formSecurity.isEmailModified = true}
+        const resp = await updateSecurityAccount(formSecurity);
     };
-
+    
     return(
     <>
     <h5 className="fs-6">Actualizando seguridad de la cuenta</h5>
 
-    <form className="m-3">
+    <form onSubmit={(e) => sendForm(e)} className="m-3">
         <div className="d-flex gap-3 flex-wrap flex-md-nowrap mb-3">
             <div className="d-inline-flex align-items-end">
                 <div>
                     <label htmlFor="email" className="form-label">Email actual</label>
                     <input type="email" id="email" name="email" className="form-control w-auto" readOnly required 
-                        value={formUpdSecurity.email}
+                        value={userData.email}
                     />
                 </div>
                 <button type="button" onClick={() => setUpdateEmail(prev => (!prev))} className="btn btn-primary mx-1"><i className="bi bi-pencil-square"></i></button>
@@ -38,9 +38,8 @@ export function FormSecurityUserAccount({setCancelar}) {
                 updateEmail &&
                 <div>
                     <label htmlFor="newEmail" className="form-label">Nuevo Email</label>
-                    <input type="email" id="newEmail" name="newEmail" className="form-control w-auto" readOnly required 
-                        value={formUpdSecurity.newEmail}
-                        onChange={updateForm}
+                    <input type="email" id="newEmail" name="newEmail" className="form-control w-auto" autoComplete="on"
+                        value={formUpdSecurity.newEmail} onChange={updateForm}
                     />
                 </div>
             }
@@ -48,28 +47,28 @@ export function FormSecurityUserAccount({setCancelar}) {
 
         <div className="d-flex flex-wrap flex-md-nowrap gap-4">
             <div>
-                <label htmlFor="passCheck1" className="form-label">Contrasena</label>
-                <input type="text" id="passCheck1" name="passCheck1" className="form-control" required 
+                <label htmlFor="pass" className="form-label">Contrasena</label>
+                <input type="text" id="pass" name="pass" className="form-control" required 
+                    value={formUpdSecurity.pass} onChange={updateForm}
+                />
+            </div>
+            <div>
+                <label htmlFor="newPassCheck1" className="form-label">Nueva contrasena</label>
+                <input type="text" id="newPassCheck1" name="newPassCheck1" className="form-control" required 
                     value={formUpdSecurity.newPassCheck1} onChange={updateForm}
                 />
             </div>
             <div>
-                <label htmlFor="passCheck2" className="form-label">Nueva contrasena</label>
-                <input type="text" id="passCheck2" name="passCheck2" className="form-control" required 
+                <label htmlFor="newPassCheck2" className="form-label">Confirmar nueva contrasena</label>
+                <input type="text" id="newPassCheck2" name="newPassCheck2" className="form-control" required 
                     value={formUpdSecurity.newPassCheck2} onChange={updateForm}
-                />
-            </div>
-            <div>
-                <label htmlFor="passCheck2" className="form-label">Confirmar nueva contrasena</label>
-                <input type="text" id="passCheck2" name="passCheck2" className="form-control" required 
-                    value={formUpdSecurity.pass} onChange={updateForm}
                 />
             </div>
         </div>
 
         <div className="d-flex gap-3 flex-column flex-md-row justify-content-md-between mt-4 mb-3">
             <button type="button" onClick={() => setCancelar(null)} className="btn btn-warning">Cancelar</button>
-            <button className="btn btn-primary">Guardar Cambios</button>
+            <button type="submit" className="btn btn-primary">Guardar Cambios</button>
         </div>
     </form>
     </>

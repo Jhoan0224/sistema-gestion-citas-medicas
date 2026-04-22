@@ -14,6 +14,19 @@ const ID_USER = () => {
     return localStorage.getItem(ID_NAME);
 };
 
+
+export async function updateSecurityAccount(formData){
+    try {
+        console.log(formData);
+        
+        const resp = await axios.post(`${URL_USER_ACCOUNT}/update-security-account`, formData, HEADER_USUARIO());
+        return resp.data;
+        
+    } catch (error) {
+        return false;
+    }
+};
+
 export async function createAccount(formData){
     try {
         console.log(formData);

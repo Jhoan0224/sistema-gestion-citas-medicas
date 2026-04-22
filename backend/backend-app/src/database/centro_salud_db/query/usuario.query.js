@@ -35,7 +35,7 @@ export default class UsuarioQuery {
 
     static usuarioAccountInfo = `
     SELECT user.id, user.dui, user.nombre, user.apellido, user.email, user.fecha_nacimiento,
-        user.id_departamento, cond.nombre as condicion, ocup.nombre as ocupacion
+        user.zona_residencia, cond.nombre as condicion, ocup.nombre as ocupacion
     FROM
         usuario user
     JOIN
@@ -54,5 +54,24 @@ export class UsuarioSecurityQuery {
     FROM
         usuario user
     WHERE user.email = ?
-    `
+    `;
+
+    static passHashByEmail = `
+    SELECT user.pass_hash
+    FROM
+        usuario user
+    WHERE user.email = ?
+    `;
+
+    static updateCredentialsPass = `
+    UPDATE usuario SET email = ? WHERE id = ?
+    `;
+
+    static updateCredentialsPass = `
+    UPDATE usuario SET pass_hash = ? WHERE id = ?
+    `;
+
+    static updateCredentialsEmailPass = `
+    UPDATE usuario SET email = ?, pass_hash = ? WHERE id = ?
+    `;
 }
