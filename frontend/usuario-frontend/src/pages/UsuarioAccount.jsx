@@ -39,7 +39,7 @@ export function UsuarioAccount() {
         <h5 className="fs-5 py-2">Configuración de Cuenta</h5>
         <div className="d-flex gap-3 mb-3">
             <button onClick={() => setCurrentConfig("Security")} className="btn btn-outline-primary">Seguridad de la cuenta</button>
-            <button onClick={() => setCurrentConfig("Security")} className="btn btn-outline-primary">Actulizar mi infomarción</button>
+            <button onClick={() => setCurrentConfig("PersonalInfo")} className="btn btn-outline-primary">Actulizar mi infomarción</button>
             <button onClick={() => setCurrentConfig("DeleteAccount")} className="btn btn-outline-danger ms-auto me-0">Eliminar mi cuenta</button>
         </div>
         {

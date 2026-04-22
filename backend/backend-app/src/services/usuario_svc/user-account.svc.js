@@ -46,6 +46,26 @@ export const usuarioBasicInfo = async (idUsuario) => {
     } finally {conn?.release();}
 }
 
+export const usuarioInfoUpdateAccount = async (idUsuario) => {
+    const PROCESS_RESULT = {success: false, message: 'No se ha encontrado informacion.', usuarioInfo: {}};
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        const result = await UsuarioEntity.infoUpdateAccountById(conn, idUsuario);
+        if (!result) {
+            return PROCESS_RESULT;
+        }
+
+        PROCESS_RESULT.success = true;
+        PROCESS_RESULT.message = "Informacion de actualizacion de cuenta de usuario."
+        PROCESS_RESULT.usuarioInfo = result;
+
+        return PROCESS_RESULT;
+
+    } catch (error) {
+        throw error;
+    } finally {conn?.release();}
+}
+
 export const usuarioAccountInfo = async (idUsuario) => {
     const PROCESS_RESULT = {success: false, message: 'No se ha encontrado informacion.', usuarioAccountInfo: {}};
     let conn = await mysqlConnPool.getConnection();
@@ -97,6 +117,36 @@ export const createUserAccount = async (form) => {
         }
         
         return PROCESS_RESULT;
+
+    } catch (error) {
+        throw error;
+    } finally {
+        conn?.release();
+    }
+};
+
+export const userUpdateDataAccount = async (form) => {
+    const PROCESS_RESULT = {success: false, message: 'Ocurrio un error, no se pudo actualizar la informacion de la cuenta, intentelo de nuevo más tarde.'}
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        
+        const values = [
+            form.dui, form.nombre, form.apellido, form.fecha_nacimiento.split("T")[0], form.zona_residencia,
+            form.idCondicion, form.idOcupacion, form.id
+        ];
+
+        const dataAccountUpdated = await UsuarioEntity.updateDataAccount(conn, values);
+            
+        if (dataAccountUpdated) {
+            PROCESS_RESULT.success = true;
+            PROCESS_RESULT.message = "La infomacion de la Cuenta se actualizo con exito."
+            return PROCESS_RESULT;   
+        }
+        else {
+            PROCESS_RESULT.message = "Ocurrio un error al actualizar la infomacion de la Cuenta."
+            return PROCESS_RESULT; 
+        }
+        
 
     } catch (error) {
         throw error;

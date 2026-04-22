@@ -27,6 +27,58 @@ export function formUpdateSecurityAccount(form) {
     return VALIDATION_RESULT;
 }
 
+export function formUpdateInfoCuenta(form) {
+    const VALIDATION_RESULT = {success: false, message: ''};
+    
+    // validar todos los campos completos
+    if (hayCamposVacios(form)) {
+        VALIDATION_RESULT.message = 'Asegurate que completar todos las entradas.';
+        return VALIDATION_RESULT;
+    }
+
+    if (hayNombresNoValidos(form.nombre)) {
+        VALIDATION_RESULT.message = 'El nombre solo puede incluir Letras.';
+        return VALIDATION_RESULT;
+    }
+
+    if (hayNombresNoValidos(form.apellido)) {
+        VALIDATION_RESULT.message = 'El nombre solo puede incluir Letras.';
+        return VALIDATION_RESULT;
+    }
+    
+    if (!duiIsValid(form.dui)) {
+        VALIDATION_RESULT.message = 'El DUI debe tener el formato 00000000-0.';
+        return VALIDATION_RESULT; 
+    }
+    
+    if (!esMayorDeEdad(form.fecha_nacimiento)) {
+        VALIDATION_RESULT.message = 'La Edad minima debe ser 18 años.';
+        return VALIDATION_RESULT; 
+    }
+        
+    if (!textZonaResidenciaIsValid(form.zona_residencia)) {
+        VALIDATION_RESULT.message = 'La Zona de Residencia solo puede contener: letras, numeros y guiones.';
+        // VALIDATION_RESULT.message = 'El departamento seleccionado no es valido.';
+        return VALIDATION_RESULT; 
+    }
+    
+    if (!idIsValid(form.idOcupacion)) {
+        // VALIDATION_RESULT.message = 'El estado laboral debe ser booleano.';
+        VALIDATION_RESULT.message = 'La ocupacion seleccionada no es valida.';
+        return VALIDATION_RESULT;      
+    }
+    
+    if (!idIsValid(form.idCondicion)) {
+        // VALIDATION_RESULT.message = 'El campo condicion medica debe ser booleano';
+        VALIDATION_RESULT.message = 'La condicion seleccionada no es valida.';
+        return VALIDATION_RESULT; 
+    }
+
+    VALIDATION_RESULT.success = true;
+    VALIDATION_RESULT.message = "EL Formulario es valido.";
+    return VALIDATION_RESULT;
+};
+
 export function formCrearCuenta(form) {
     const VALIDATION_RESULT = {success: false, message: ''};
     
@@ -107,7 +159,7 @@ function textZonaResidenciaIsValid(textInput) {
 function idIsValid(textId) {
     const regexIsInteger = /^\d+$/;
 
-    return regexIsInteger.test(textId.trim());
+    return regexIsInteger.test(textId.toString().trim());
 }
 
 function emailIsValid(email) {
@@ -132,9 +184,9 @@ function passAreEquals(pass1, pass2) {
 }
 
 function esMayorDeEdad(fechaNacimientoUser) {
-    const EDAD_MINIMA = 18;
-
-    const [year, month, day] = fechaNacimientoUser.split("-").map(Number);
+    const EDAD_MINIMA = 18;   
+    const [year, month, day] = fechaNacimientoUser.split("T")[0].split("-").map(Number);
+    
     const fechaActual = new Date();
     const fechaNacimiento = new Date(year, month, day);
     let edad = fechaActual.getFullYear() - fechaNacimiento.getFullYear();
