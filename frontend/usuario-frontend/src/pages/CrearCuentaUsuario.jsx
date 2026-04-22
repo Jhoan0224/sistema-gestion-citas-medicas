@@ -10,7 +10,6 @@ export function CrearCuentaUsuario() {
     useEffect(() => {
             const loadData = async () => {
                 const data = await App.loadDataCrearCuenta();
-                
                 if (data.success) {
                     setDataCrearCuenta(({
                         ocupaciones: data.ocupacionesList, condiciones: data.condicionesList

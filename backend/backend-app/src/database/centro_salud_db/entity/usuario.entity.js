@@ -51,6 +51,12 @@ export default class UsuarioEntity {
         return result[0] ?? null;
     }
 
+    static async infoUpdateAccountById(conn, id) {
+        const [result] = await conn.execute(UsuarioQuery.usuarioInfoUpdateAccount, [id]);
+        
+        return result[0] ?? null;
+    }
+
     static async accountInfoById(conn, id) {
         const [result] = await conn.execute(UsuarioQuery.usuarioAccountInfo, [id]);
         
@@ -77,6 +83,11 @@ export default class UsuarioEntity {
 
     static async updateCredentialsEmailPass(conn, values) {
         const [result] = await conn.execute(UsuarioSecurityQuery.updateCredentialsEmailPass , values);
+        return result.changedRows > 0;
+    }
+
+    static async updateDataAccount(conn, values) {
+        const [result] = await conn.execute(UsuarioSecurityQuery.updateDataAccountById , values);
         return result.changedRows > 0;
     }
 };

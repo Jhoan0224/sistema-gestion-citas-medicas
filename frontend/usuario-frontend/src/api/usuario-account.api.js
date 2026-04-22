@@ -15,6 +15,17 @@ const ID_USER = () => {
 };
 
 
+export async function updateInfoAccount(formData){
+    try {
+        console.log(formData);        
+        const resp = await axios.post(`${URL_USER_ACCOUNT}/update-info-account`, formData, HEADER_USUARIO());
+        return resp.data;
+        
+    } catch (error) {
+        return false;
+    }
+};
+
 export async function updateSecurityAccount(formData){
     try {
         console.log(formData);
@@ -34,6 +45,16 @@ export async function createAccount(formData){
         const resp = await axios.post(`${URL_USER_ACCOUNT}/create-account`, formData);
         return resp.data;
         
+    } catch (error) {
+        return false;
+    }
+};
+
+export async function getInfoUpdadeAccount(){
+    try {
+        const resp = await axios.get(`${URL_USER_ACCOUNT}/info-update-account/user-id/${ID_USER()}`, HEADER_USUARIO());
+        
+        return resp.data;
     } catch (error) {
         return false;
     }

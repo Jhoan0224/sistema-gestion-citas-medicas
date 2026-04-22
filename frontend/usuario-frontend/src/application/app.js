@@ -1,5 +1,5 @@
 import { getSignosList, getSintomasList, getCondicionesList, getDepartamentosList, getOcupacionesList } from "../api/public-api.js";
-import { createAccount, getUserAccountData } from "../api/usuario-account.api.js";
+import { createAccount, getInfoUpdadeAccount, getUserAccountData } from "../api/usuario-account.api.js";
 
 export default class App {
 
@@ -29,6 +29,21 @@ export default class App {
         const condicionesData = await getCondicionesList();
         
         if (ocupacionesData.success && condicionesData.success) {
+                RESP.ocupacionesList = ocupacionesData.ocupaciones;
+                RESP.condicionesList = condicionesData.condiciones;
+                RESP.success = true;
+        }
+        return RESP;
+    }
+
+    static async loadDataUpdateCuenta() {
+        const RESP = {success: false, usuarioInfo: {}, ocupacionesList: [], condicionesList: []};
+        const usuarioData = await getInfoUpdadeAccount();
+        const ocupacionesData = await getOcupacionesList();
+        const condicionesData = await getCondicionesList();
+        
+        if (usuarioData.success && ocupacionesData.success && condicionesData.success) {
+                RESP.usuarioInfo = usuarioData.usuarioInfo;
                 RESP.ocupacionesList = ocupacionesData.ocupaciones;
                 RESP.condicionesList = condicionesData.condiciones;
                 RESP.success = true;

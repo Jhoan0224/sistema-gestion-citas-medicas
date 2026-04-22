@@ -7,6 +7,12 @@ const userAccountRouter = express.Router();
 userAccountRouter.use(express.json());
 
 
+userAccountRouter.post('/update-info-account',
+    userAccountMiddleWare.verifyAuthValidation,
+    userAccountMiddleWare.userUpdateInfoAccountValidations,
+    userAccountCtrl.userUpdateInfoAccountCtrl
+);
+
 userAccountRouter.post('/update-security-account',
     userAccountMiddleWare.verifyAuthValidation,
     userAccountMiddleWare.userUpdateSecurityValidations,
@@ -16,6 +22,11 @@ userAccountRouter.post('/update-security-account',
 userAccountRouter.post('/create-account',
     userAccountMiddleWare.userCrearCuentaValidations,
     userAccountCtrl.userCrearCuentaCtrl
+);
+
+userAuthRouter.get('/info-update-account/user-id/:id',
+    userAccountMiddleWare.verifyAuthValidation,
+    userAccountCtrl.userInfoUpdateAccountCtrl
 );
 
 userAuthRouter.get('/basic-info/user-id/:id',
