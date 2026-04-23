@@ -4,6 +4,7 @@ import UsuarioEntity from "../../database/centro_salud_db/entity/usuario.entity.
 import PasswordSecurity from "../security_svc/password-security.js";
 import UsuarioVerficication from "./user_verifcations_svc/usuario-verification.svc.js";
 import CitaEntity from "../../database/centro_salud_db/entity/cita.entity.js";
+import { log } from "console";
 
 export const citaPendienteUsuario = async (idUsuario) => {
     const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes ninguna cita medica pendiente.', citaInfo: {}};
@@ -141,12 +142,32 @@ export const userUpdateDataAccount = async (form) => {
             PROCESS_RESULT.success = true;
             PROCESS_RESULT.message = "La infomacion de la Cuenta se actualizo con exito."
             return PROCESS_RESULT;   
-        }
-        else {
+        } else {
             PROCESS_RESULT.message = "Ocurrio un error al actualizar la infomacion de la Cuenta."
             return PROCESS_RESULT; 
         }
         
+    } catch (error) {
+        throw error;
+    } finally {
+        conn?.release();
+    }
+};
+
+export const userDeleteAccount = async (form) => {
+    const PROCESS_RESULT = {success: false, message: 'Ocurrio un error, al eliminar la cuenta, intentelo de nuevo o comunicate con soporte.'}
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        console.log("ok1");
+        
+        const accountDeleted = await UsuarioEntity.userDeleteAccountByEmail(conn, [form.email]);
+            
+        if (accountDeleted) {
+            PROCESS_RESULT.success = true;
+            PROCESS_RESULT.message = "Tu Cuenta ha sido eliminada correctamente."
+            return PROCESS_RESULT;   
+        }        
+        return PROCESS_RESULT; 
 
     } catch (error) {
         throw error;

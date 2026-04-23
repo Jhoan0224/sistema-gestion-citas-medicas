@@ -23,7 +23,7 @@ export function UsuarioAccount() {
     const RenderAccountConfig = {
         Security: <FormSecurityUserAccount userData={userData} setCancelar={setCurrentConfig} />,
         PersonalInfo: <FormPersonalInfo setCancelar={setCurrentConfig} />,
-        DeleteAccount: <FormDeleteAccount setCancelar={setCurrentConfig}/>
+        DeleteAccount: <FormDeleteAccount userData={userData} setCancelar={setCurrentConfig}/>
     };
 
     return(

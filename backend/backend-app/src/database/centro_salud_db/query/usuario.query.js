@@ -93,4 +93,8 @@ export class UsuarioSecurityQuery {
         id_condicion = ?, id_ocupacion = ?
     WHERE id = ?
     `;
+
+    static deleteAccountByEmail = `
+    DELETE FROM usuario WHERE email = ?
+    `;
 }

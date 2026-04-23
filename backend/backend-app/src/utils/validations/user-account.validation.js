@@ -79,6 +79,19 @@ export function formUpdateInfoCuenta(form) {
     return VALIDATION_RESULT;
 };
 
+export function formDeleteUserAccount(form) {
+    const VALIDATION_RESULT = {success: false, message: ''};
+
+    if (!emailIsValid(form.email)) {
+        VALIDATION_RESULT.message = 'No es Valido el formulario de eliminación de la Cuenta, intentalo de nuevo o comunicate con soporte/';
+        return VALIDATION_RESULT;
+    }
+
+    VALIDATION_RESULT.success = true;
+    VALIDATION_RESULT.message = "EL Formulario es valido.";
+    return VALIDATION_RESULT;
+};
+
 export function formCrearCuenta(form) {
     const VALIDATION_RESULT = {success: false, message: ''};
     
@@ -164,10 +177,6 @@ function idIsValid(textId) {
 
 function emailIsValid(email) {
     const regexEmail = /^[a-zA-Z0-9._-]{2,}@[a-zA-Z0-9.-]{2,}\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/;
-    console.log(email);
-    
-    console.log(regexEmail.test(email));
-    
     return regexEmail.test(email);
 }
 
