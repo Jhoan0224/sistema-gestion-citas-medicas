@@ -90,6 +90,11 @@ export default class UsuarioEntity {
         const [result] = await conn.execute(UsuarioSecurityQuery.updateDataAccountById , values);
         return result.changedRows > 0;
     }
+
+    static async userDeleteAccountByEmail(conn, values) {
+        const [result] = await conn.execute(UsuarioSecurityQuery.deleteAccountByEmail , values);
+        return result.affectedRows > 0;
+    }
 };
 
 

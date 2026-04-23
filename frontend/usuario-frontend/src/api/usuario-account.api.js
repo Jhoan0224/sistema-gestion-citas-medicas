@@ -15,6 +15,17 @@ const ID_USER = () => {
 };
 
 
+export async function deleteUserAccount(formData){
+    try {
+        console.log(formData);        
+        const resp = await axios.post(`${URL_USER_ACCOUNT}/delete-user-account`, formData, HEADER_USUARIO());
+        return resp.data;
+        
+    } catch (error) {
+        return false;
+    }
+};
+
 export async function updateInfoAccount(formData){
     try {
         console.log(formData);        

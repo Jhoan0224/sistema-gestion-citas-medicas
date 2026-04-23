@@ -1,5 +1,5 @@
 import { use, useEffect, useState } from "react"
-import {updateSecurityAccount, getUserAccountData, updateInfoAccount} from '../api/usuario-account.api.js'
+import {updateSecurityAccount, getUserAccountData, updateInfoAccount, deleteUserAccount} from '../api/usuario-account.api.js'
 import App from "../application/app.js";
 
 export function FormSecurityUserAccount({userData, setCancelar}) {
@@ -180,7 +180,26 @@ export function FormPersonalInfo({setCancelar}) {
 }
 
 
-export function FormDeleteAccount({setCancelar}) {
+export function FormDeleteAccount({userData, setCancelar}) {
+    const securityCheck = {securityWord: "Si Eliminar Cuenta", inputWord: "w"}
+    const [formDeleteAccount, setFormDeleteAccount] = useState({email: ''});
+
+    useEffect(() => {
+        setFormDeleteAccount(prev => ({...prev, email: userData.email}));
+    }, [userData]);
+
+    const sendForm = async (event) => {
+        event.preventDefault();
+        const securityIsChecked = securityCheck.inputWord === securityCheck.securityWord ? true : false;
+        console.log(securityIsChecked );
+        if (securityIsChecked) {
+            console.log(formDeleteAccount);
+            const resp = await deleteUserAccount(formDeleteAccount);
+            console.log(resp);
+            
+        }
+                
+    }
 
     return(
     <>
@@ -189,15 +208,16 @@ export function FormDeleteAccount({setCancelar}) {
         <p className="text-center">Al Elimnar tú cuenta se desactivara durante 15 días, durante este periodo de tiempo aún puedes volver Activar tu cuenta.
             Pasado ese periodo de tiempo, tu cuenta y los datos relacionados no se podran recuperar.
         </p>
-        <p className="text-center">La Frase de seguridad es: <i className="fw-medium">Si Eliminar Cuenta</i></p>
-        <form className="border border-danger rounded-2 px-4 py-2 mx-auto">
+        <p className="text-center">La Frase de seguridad es: <i className="fw-medium">{securityCheck.securityWord}</i></p>
+        <form onSubmit={(e) => sendForm(e)} className="border border-danger rounded-2 px-4 py-2 mx-auto">
             <div className="form-floating my-3">
-                <input type="text" name="check1" id="check1" className="form-control fw-medium" placeholder="Frase de seguridad"/>
+                <input type="text" name="check1" id="check1" className="form-control fw-medium" placeholder="Frase de seguridad"
+                    onChange={(e) => {securityCheck.inputWord = e.target.value}}   />
                 <label htmlFor="check1">Frase de seguridad</label>
             </div>
             <div className="d-flex gap-3 mb-2">
-                <button onClick={() => setCancelar(null)} className="btn btn-primary mx-auto">Cancelar</button>
-                <button className="btn btn-danger mx-auto">Eliminar Cuenta</button>
+                <button type="button" onClick={() => setCancelar(null)} className="btn btn-primary mx-auto">Cancelar</button>
+                <button type="submit" className="btn btn-danger mx-auto">Eliminar Cuenta</button>
             </div>
         </form>
     </div>

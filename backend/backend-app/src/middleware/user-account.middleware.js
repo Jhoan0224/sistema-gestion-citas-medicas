@@ -31,6 +31,21 @@ export const userUpdateInfoAccountValidations = (req, res, next) => {
     }
 };
 
+export const userDeleteAccountValidations = (req, res, next) => {
+    try {
+        
+        const validationResult = userAccountValidations.formDeleteUserAccount(req.body);
+
+        return validationResult.success
+            ?  next()
+            : res.status(400).json(validationResult);
+
+    } catch (error) {
+        console.error("Error en middlware userDeleteAccountValidations >> " + error.stack);
+        return res.status(500).json(SERVER_ERROR);
+    }
+};
+
 export const userCrearCuentaValidations = (req, res, next) => {
     try {
         

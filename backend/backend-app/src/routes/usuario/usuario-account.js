@@ -7,6 +7,18 @@ const userAccountRouter = express.Router();
 userAccountRouter.use(express.json());
 
 
+userAccountRouter.post('/delete-user-account',
+    userAccountMiddleWare.verifyAuthValidation,
+    userAccountMiddleWare.userDeleteAccountValidations,
+    userAccountCtrl.userDeleteAccountCtrl
+);
+
+userAccountRouter.post('/update-info-account',
+    userAccountMiddleWare.verifyAuthValidation,
+    userAccountMiddleWare.userUpdateInfoAccountValidations,
+    userAccountCtrl.userUpdateInfoAccountCtrl
+);
+
 userAccountRouter.post('/update-info-account',
     userAccountMiddleWare.verifyAuthValidation,
     userAccountMiddleWare.userUpdateInfoAccountValidations,
