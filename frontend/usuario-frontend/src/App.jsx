@@ -11,12 +11,15 @@ import { UsuarioAccount } from './pages/UsuarioAccount'
 import { LoginCs } from './pages_cs/LoginCs.jsx'
 import { PersonalOfficeCs } from './pages_cs/PersonalCs.jsx'
 import { useLocation } from 'react-router-dom';
+import { Home } from './pages/Home.jsx'
 
 export default function App() {
 
   return (
     <>
     <Routes>
+        <Route index element={<Home />} />
+        <Route path='/' element={<Home />} />
         <Route path='/login' element={<LoginUsuario />} />
         <Route path='/crear-cuenta' element={<CrearCuentaUsuario />}/>
         

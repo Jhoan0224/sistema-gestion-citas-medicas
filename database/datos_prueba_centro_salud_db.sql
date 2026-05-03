@@ -2,6 +2,19 @@
 
 use centro_salud_db;
 
+insert into especialidad(nombre) values
+('Medicina General'),
+('Cardiología'),
+('Pediatría'),
+('Dermatología'),
+('Ginecología y Obstetricia'),
+('Neurología'),
+('Psiquiatría'),
+('Oftalmología'),
+('Traumatología'),
+('Oncología'),
+('Endocrinología');
+
 insert into sintomas(nombre) values
 ('Cefalea'),
 ('Náuseas'),
@@ -13,24 +26,6 @@ insert into signos(nombre) values
 ('Ictericia'),
 ('Taquicardia'),
 ('Edema');
-
-/*
-insert into departamentos(nombre) values
-('Ahuachapán'),
-('Santa Ana'),
-('Sonsonate'),
-('Chalatenango'),
-('La Libertad'),
-('San Salvador'),
-('Cuscatlán'),
-('La Paz'),
-('Cabañas'),
-('San Vicente'),
-('Usulután'),
-('San Miguel'),
-('Morazán'),
-('La Unión');
-*/
 
 insert into ocupaciones(nombre) values
 ('Empleado sector privado'),
@@ -55,7 +50,7 @@ insert into condiciones(nombre) values
 ('Prefiero no decirlo');
 
 insert into estado_cita(nombre) values
-('Agendada'), ('Confirmada'), ('Cancelada');
+('Agendada'), ('Confirmada'), ('Asistida'), ('Cancelada'), ('Inasistida');
 
 
 

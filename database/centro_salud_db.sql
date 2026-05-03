@@ -69,20 +69,22 @@ create table cita(
 create table cita_signos(
 	id int auto_increment primary key,
 	id_cita int,
+	id_signo int,
 	constraint fkCita_CitaSignos foreign key (id_cita) references cita(id)
+		on delete cascade,
+	constraint fkSigno_CitaSignos foreign key (id_signo) references cita_signos(id)
 		on delete cascade
 );
 
 create table cita_sintomas(
 	id int auto_increment primary key,
+	id_cita int,
 	id_sintoma int,
 	constraint fkSintoma_CitaSintomas foreign key (id_sintoma) references sintomas(id)
+		on delete cascade,
+	constraint fkCita_CitaSintomas foreign key (id_cita) references cita_sintomas(id)
 		on delete cascade
 );
-
-
-
-
 
 
 

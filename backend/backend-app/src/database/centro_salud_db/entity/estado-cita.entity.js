@@ -2,7 +2,7 @@
 export default class EstadoCita {
 
     static ESTADO = {
-        PENDIENTE: 1, ASISTIDA:2 , CANCELADA: 3
+        AGENDADA: 1, CONFIRMADA: 2, ASISTIDA: 5 , CANCELADA: 3, INASISTIDA: 4
     };
 
 

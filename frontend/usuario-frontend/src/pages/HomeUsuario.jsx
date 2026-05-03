@@ -1,44 +1,48 @@
-import { useState } from "react"
+import { use, useEffect, useState } from "react"
 import { HistorialCitas } from "../componentes/HistorialCitas.jsx"
 import { UsuarioSinCita } from "../componentes/CitasForms.jsx";
 import App from "../application/app.js";
+import { getCitaPendienteUsuario } from '../api/usuario-api.js'
 
 export function HomeUsuario() {
     const [listaCitas, setListaCitas] = useState([]);
+    const [citasHistorialMessage, setCitasHistorialMessage] = useState("");
     const [historialStatus, setHistorialStatus] = useState({isOpen: false, show: false}); 
+    const [userCita, setUseCita] = useState({});
+    const [userHasAppoitment,setUserHasAppoitment] = useState(null);
 
     const RenderHistorialCitas = async (filtroHistorial) => {
         setHistorialStatus(prev => ({...prev, isOpen: true}));
-        alert(historialStatus.isOpen)
-
         const resp = await App.getHistorialCitas(filtroHistorial);
-        
+        console.log(resp);        
         if (resp.success) {
             setListaCitas(resp.historialCitas);
+            setCitasHistorialMessage(resp.message);
             setHistorialStatus(prev => ({...prev, show: true}));
         }        
     };
 
+    useEffect(() => {
+        const verifyPendingAppoitment = async () => {
+            console.log("checking");
+            const resp = await getCitaPendienteUsuario();
+            if (resp.success) {
+                setUseCita(resp.citaInfo);
+                setUserHasAppoitment(true);
+            }
+        }
+        verifyPendingAppoitment();
+    }, []);
     return(
     <>
     <div className="d-flex flex-column py-3 px-4 w-100">
         
         <div className="d-flex flex-column flex-grow-1 p-3 border border-2 rounded-2">
-            {/* <h5 className="fs-5">Cita Medica Pendiente</h5>
-            <div className="ps-3 mb-5">
-                <p className="fs-6"><b>Cita:</b> Checkeo de control anual</p>
-
-                <p className="mb-0"><b>Motivo:</b></p>
-                <p className="mt-0 ms-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis recusandae repellat delectus iure at, odit officia numquam facilis ipsum nemo!</p>
-
-                <p className="mb-0"><b>Fecha y Hora de Atencion:</b></p>
-                <p className="mt-0 ms-3">Miercoles, 15 de Enero de 2025 — 10:30 AM</p>
-
-                <p className="mb-0"><b>Centro de Atencion:</b></p>
-                <p className="mt-0 ms-3">Centro Medico de Santa Ana, 25 Av. Norte --- <a href="https://maps.app.goo.gl/3aTaLmdXXvt9Uiyr7">Ver Ubicacion</a></p>
-            </div> */}
-        
-            <UsuarioSinCita />
+            {
+                userHasAppoitment === true 
+                ? <UsuarioPendingAppoitment userCita={userCita} />
+                : <UsuarioSinCita />
+            }
             <div className="mt-auto mb-1">
                 <p><b>Informacion importante:</b></p>
                 <ul>
@@ -48,9 +52,7 @@ export function HomeUsuario() {
                 </ul>
                 <p className="text-center fw-medium">Si necesitas atención médica de urgencia, por favor acude a este o al centro de salud más cercano.</p>
             </div>
-        
         </div>
-        
         <div className="d-flex gap-3 p-2 mt-auto mb-0">
             {   
                 historialStatus.isOpen === true
@@ -61,14 +63,47 @@ export function HomeUsuario() {
             <button onClick={() => RenderHistorialCitas("CANCELADAS")} type="button" className="btn btn-primary">Citas canceladas</button>
             <button onClick={() => RenderHistorialCitas("PERDIDAS")} type="button" className="btn btn-primary">Citas perdidas</button>
         </div>
-
         <div id='div-historial-citas'>
             {
                 historialStatus.show === true
-                && <HistorialCitas listaCitas={listaCitas} />
+                && <HistorialCitas listaCitas={listaCitas} citaMessage={citasHistorialMessage}/>
             }
         </div>
     </div>
+    </>
+    )
+}
+
+function UsuarioPendingAppoitment({userCita}) {
+    const [fechaHoraCita, setFechaHoraCita] = useState("");
+    
+    useEffect(() => {
+        const formatDateTimeCita = () => {
+            const options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true}
+            const date = new Date(userCita.fecha_hora_atencion);
+            setFechaHoraCita(date.toLocaleString(undefined, options));
+        }
+        formatDateTimeCita();
+    }, []);
+
+    return(
+    <>
+        <h5 className="fs-5">Cita Medica {userCita.estado_cita}</h5>
+        <div className="ps-3 mb-3">
+            <p className="fs-6"><b>Cita:</b> {userCita.titulo}</p>
+
+            <p className="mb-0"><b>Motivo:</b></p>
+            <p className="mt-0 ms-3">{userCita.motivo}</p>
+
+            <p className="mb-0"><b>Fecha y Hora de Atencion:</b></p>
+            <p className="mt-0 ms-3">{fechaHoraCita}</p>
+
+            <p className="mb-0"><b>Espcialidad medica:</b></p>
+            <p className="mt-0 ms-3">{userCita.especialidad}</p>
+
+            <p className="mb-0"><b>Centro de Atencion:</b></p>
+            <p className="mt-0 ms-3">Centro Medico de Santa Ana, 25 Av. Norte --- <a href="https://maps.app.goo.gl/3aTaLmdXXvt9Uiyr7">Ver Ubicacion</a></p>
+        </div> 
     </>
     )
 }
