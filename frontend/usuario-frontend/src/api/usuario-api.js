@@ -26,7 +26,7 @@ export async function getUsuarioBasicInfo(){
     }
 };
 
-export async function getCitaPendienteUsuario(){
+export async function  getCitaPendienteUsuario(){
     try {
         const resp = await axios.get(`${URL_USER_ACCOUNT}/cita-pendiente/user-id/${ID_USER()}`, HEADER_USUARIO());
         return resp.data;
@@ -35,3 +35,31 @@ export async function getCitaPendienteUsuario(){
         return false;
     }
 };
+
+export async function  getHistoriaCitasAsistidasUsuario(){
+    try {
+        const resp = await axios.get(`${URL_USER_ACCOUNT}/historial-citas-asistidas/user-id/${ID_USER()}`, HEADER_USUARIO());
+        return resp.data;        
+    } catch (error) {
+        return false;
+    }
+};
+
+export async function  getHistoriaCitasCanceladasUsuario(){
+    try {
+        const resp = await axios.get(`${URL_USER_ACCOUNT}/historial-citas-canceladas/user-id/${ID_USER()}`, HEADER_USUARIO());
+        return resp.data;        
+    } catch (error) {
+        return false;
+    }
+};
+
+export async function  getHistoriaCitasInasistidasUsuario(){
+    try {
+        const resp = await axios.get(`${URL_USER_ACCOUNT}/historial-citas-inasistidas/user-id/${ID_USER()}`, HEADER_USUARIO());
+        return resp.data;        
+    } catch (error) {
+        return false;
+    }
+};
+

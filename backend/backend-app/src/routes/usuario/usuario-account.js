@@ -48,7 +48,22 @@ userAuthRouter.get('/basic-info/user-id/:id',
 
 userAuthRouter.get('/cita-pendiente/user-id/:id',
     userAccountMiddleWare.verifyAuthValidation,
-    userAccountCtrl.userBasicInfoCtrl
+    userAccountCtrl.citaPendienteUsuarioCtrl
+);
+
+userAuthRouter.get('/historial-citas-asistidas/user-id/:id',
+    userAccountMiddleWare.verifyAuthValidation,
+    userAccountCtrl.historialCitasAsistidasUsuarioCtrl
+);
+
+userAuthRouter.get('/historial-citas-canceladas/user-id/:id',
+    userAccountMiddleWare.verifyAuthValidation,
+    userAccountCtrl.historialCitasCanceladasUsuarioCtrl
+);
+
+userAuthRouter.get('/historial-citas-inasistidas/user-id/:id',
+    userAccountMiddleWare.verifyAuthValidation,
+    userAccountCtrl.historialCitasInasistidasUsuarioCtrl
 );
 
 userAuthRouter.get('/account-info/user-id/:id',

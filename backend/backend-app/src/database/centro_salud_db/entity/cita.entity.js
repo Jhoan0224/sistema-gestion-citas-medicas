@@ -25,4 +25,22 @@ export default class CitaEntity {
         const [result] = await conn.execute(CitaQuery.citaPendienteUsuarioById, [idUsuario]);
         return result[0] ?? null;
     }
+
+    static async historialCitasAsistidasByUsuarioId(conn, idUsuario) {
+        const [result] = await conn.execute(CitaQuery.historialCitasAsistidasByUserId, [idUsuario]);
+        console.log(result);
+        return result;
+    }
+
+    static async historialCitasCanceladasByUsuarioId(conn, idUsuario) {
+        const [result] = await conn.execute(CitaQuery.historialCitasCanceladasByUserId, [idUsuario]);
+        console.log(result);
+        
+        return result;
+    }
+
+    static async historialCitasPerdidasByUsuarioId(conn, idUsuario) {
+        const [result] = await conn.execute(CitaQuery.historialCitasPerdidasByUserId, [idUsuario]);       
+        return result;
+    }
 }

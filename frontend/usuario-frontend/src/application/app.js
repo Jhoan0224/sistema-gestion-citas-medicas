@@ -1,25 +1,22 @@
 import { getSignosList, getSintomasList, getCondicionesList, getDepartamentosList, getOcupacionesList } from "../api/public-api.js";
 import { createAccount, getInfoUpdadeAccount, getUserAccountData } from "../api/usuario-account.api.js";
+import { getHistoriaCitasAsistidasUsuario, getHistoriaCitasCanceladasUsuario, getHistoriaCitasInasistidasUsuario } from "../api/usuario-api.js";
 
 export default class App {
 
     // metodos static de la App, no necesitan estado
-    static async getHistorialCitas() {
-        const RESP = {success: true, hasHistory: false, historialCitas: [  {
-    "cita": "C001",
-    "motivo": "Control anual",
-    "especialidad": "Cardiología",
-    "fecha": "2024-03-05",
-    "opciones": "Ver detalles"
-  },
-  {
-    "cita": "C002",
-    "motivo": "Dolor persistente",
-    "especialidad": "Traumatología",
-    "fecha": "2024-03-06",
-    "opciones": "Editar"
-        }]}
-        return RESP;
+    static async getHistorialCitas(filtroHistorial) {
+        switch (filtroHistorial) {
+            case 'ASISTIDAS':
+            return await getHistoriaCitasAsistidasUsuario();
+                break;
+            case 'CANCELADAS':
+                return await getHistoriaCitasCanceladasUsuario();
+                break;
+            case 'PERDIDAS':
+                return await getHistoriaCitasInasistidasUsuario();
+                break;
+        }
     }
 
     static async loadDataCrearCuenta() {

@@ -6,10 +6,79 @@ import UsuarioVerficication from "./user_verifcations_svc/usuario-verification.s
 import CitaEntity from "../../database/centro_salud_db/entity/cita.entity.js";
 import { log } from "console";
 
+export const historialCitasAsistidasUsuario = async (idUsuario) => {
+    const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes historial de citas medicas Asistidas.', historialCitas: {}};
+    let conn = await mysqlConnPool.getConnection();
+    try {       
+        const result = await CitaEntity.historialCitasAsistidasByUsuarioId(conn, idUsuario);
+        if (result.length === 0) {
+            PROCESS_RESULT.success = true;
+            return PROCESS_RESULT;
+        }
+
+        PROCESS_RESULT.success = true;
+        PROCESS_RESULT.message = "Historial de citas medicas Asistidas."
+        PROCESS_RESULT.historialCitas = result;
+
+        return PROCESS_RESULT;
+
+    } catch (error) {
+        throw error;
+    } finally {conn?.release();}
+}
+
+export const historialCitasCanceladasUsuario = async (idUsuario) => {
+    const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes historial de citas medicas Canceladas.', historialCitas: {}};
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        console.log("data");
+        
+        const result = await CitaEntity.historialCitasCanceladasByUsuarioId(conn, idUsuario);
+        if (result.length === 0) {
+            PROCESS_RESULT.success = true;
+            return PROCESS_RESULT;
+        }
+
+        PROCESS_RESULT.success = true;
+        PROCESS_RESULT.message = "Historial de citas medicas Canceladas."
+        PROCESS_RESULT.historialCitas = result;
+
+        return PROCESS_RESULT;
+
+    } catch (error) {
+        throw error;
+    } finally {conn?.release();}
+}
+
+export const historialCitasInasistidasUsuario = async (idUsuario) => {
+    const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes historial de citas medicas Inasistidas.', historialCitas: []};
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        console.log("data");
+        
+        const result = await CitaEntity.historialCitasPerdidasByUsuarioId(conn, idUsuario);      
+        if (result.length === 0) {
+            PROCESS_RESULT.success = true;
+            return PROCESS_RESULT;
+        }
+
+        PROCESS_RESULT.success = true;
+        PROCESS_RESULT.message = "Historial de citas medicas Inasistidas."
+        PROCESS_RESULT.historialCitas = result;
+
+        return PROCESS_RESULT;
+
+    } catch (error) {
+        throw error;
+    } finally {conn?.release();}
+}
+
 export const citaPendienteUsuario = async (idUsuario) => {
     const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes ninguna cita medica pendiente.', citaInfo: {}};
     let conn = await mysqlConnPool.getConnection();
     try {
+        console.log("data");
+        
         const result = await CitaEntity.citaPendienteByUsuarioId(conn, idUsuario);
         if (!result) {
             PROCESS_RESULT.success = true;
@@ -157,9 +226,7 @@ export const userUpdateDataAccount = async (form) => {
 export const userDeleteAccount = async (form) => {
     const PROCESS_RESULT = {success: false, message: 'Ocurrio un error, al eliminar la cuenta, intentelo de nuevo o comunicate con soporte.'}
     let conn = await mysqlConnPool.getConnection();
-    try {
-        console.log("ok1");
-        
+    try {       
         const accountDeleted = await UsuarioEntity.userDeleteAccountByEmail(conn, [form.email]);
             
         if (accountDeleted) {
