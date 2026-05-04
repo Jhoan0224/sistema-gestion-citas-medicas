@@ -25,7 +25,7 @@ export async function loginUsuario(formLogin){
         console.log(resp.data);
         return resp.data;
     } catch (error) {
-        console.dir( error);
+        console.dir( error.response.data);
         return error.response.data;
     }
 }

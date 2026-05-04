@@ -68,5 +68,29 @@ export default class CitaQuery {
     WHERE
         ct.id_estado_cita = ${EstadoCita.ESTADO.INASISTIDA} AND ct.id_usuario = ?
     `;
+
+
+    /* Agendar Cita Medica SQL Transaccion */
+    static agendarCitaByUserId = `
+    INSERT INTO
+        cita(titulo, motivo, fecha_hora_atencion, id_tipo_atencion_medica, id_espcialidad, id_estado_cita, id_usuario)
+    VALUES
+        (?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    static citaSignosByCitaID = `
+    INSERT INTO
+        cita_signos(id_cita, id_signo)
+    VALUES
+        (?, ?)
+    `;
+
+    static citaSintomasByCitaID = `
+    INSERT INTO
+        cita_signos(id_cita, id_signo)
+    VALUES
+        (?, ?)
+    `;
     
+
 }

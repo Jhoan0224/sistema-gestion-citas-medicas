@@ -28,7 +28,7 @@ export function FormSecurityUserAccount({userData, setCancelar}) {
             <div className="d-inline-flex align-items-end">
                 <div>
                     <label htmlFor="email" className="form-label">Email actual</label>
-                    <input type="email" id="email" name="email" className="form-control w-auto" readOnly required 
+                    <input type="email" id="email" name="email" className="form-control" readOnly required 
                         value={userData.email}
                     />
                 </div>
@@ -45,7 +45,7 @@ export function FormSecurityUserAccount({userData, setCancelar}) {
             }
         </div>
 
-        <div className="d-flex flex-wrap flex-md-nowrap gap-4">
+        <div className="d-flex flex-wrap flex-md-nowrap gap-2 gap-md-3">
             <div>
                 <label htmlFor="pass" className="form-label">Contrasena</label>
                 <input type="text" id="pass" name="pass" className="form-control" required 
@@ -66,7 +66,7 @@ export function FormSecurityUserAccount({userData, setCancelar}) {
             </div>
         </div>
 
-        <div className="d-flex gap-3 flex-column flex-md-row justify-content-md-between mt-4 mb-3">
+        <div className="d-flex gap-2 flex-column-reverse flex-md-row justify-content-md-between mt-4 mb-3">
             <button type="button" onClick={() => setCancelar(null)} className="btn btn-warning">Cancelar</button>
             <button type="submit" className="btn btn-primary">Guardar Cambios</button>
         </div>
@@ -115,8 +115,8 @@ export function FormPersonalInfo({setCancelar}) {
     return(
     <>
     <h5 className="fs-6">Actualizando información personal</h5>
-    <form onSubmit={(e) => sendForm(e)} className="m-3">
-        <ul className="list-group list-group-flush">
+    <form onSubmit={(e) => sendForm(e)} className="ms-0">
+        <ul className="list-group list-group-flush ">
             <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.nombre, userData.nombre)}>
                 <b>Nombres: </b>
                 <input type="text" name="nombre" id="nombre" className="form-control w-auto"
@@ -127,26 +127,21 @@ export function FormPersonalInfo({setCancelar}) {
                 <input type="text" name="apellido" id="apellido" className="form-control w-auto"
                     value={formPersonalInfo.apellido} onChange={updateForm} />
             </li>
+           
+            <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.dui, userData.dui)}>
+                <b>DUI: </b>
+                <input type="text" name="dui" id="dui" className="form-control w-auto"
+                    value={formPersonalInfo.dui} onChange={updateForm} />
+            </li>
 
             <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.fecha_nacimiento.split("T")[0], userData.fecha_nacimiento.split("T")[0])}>
                 <b>Fecha de nacimiento: </b>
                 <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" className="form-control w-auto"
                     value={formPersonalInfo.fecha_nacimiento.split('T')[0].split("-").join("-") || ""} onChange={updateForm} />
             </li>
-            
-            <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.dui, userData.dui)}>
-                <b>DUI: </b>
-                <input type="text" name="dui" id="dui" className="form-control w-auto"
-                    value={formPersonalInfo.dui} onChange={updateForm} />
-            </li>
-            {/* <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.email, userData.email)}>
-                <b>Email: </b>
-                <input type="text" name="email" id="email" className="form-control w-25"
-                    value={formPersonalInfo.email} onChange={updateForm} />
-            </li> */}
-
-            <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.idOcupacion, userData.idOcupacion)}>
-                <b>Ocupacion actual: </b>
+  
+            <li className="list-group-item d-flex flex-column flex-sm-row align-items-center justify-content-start gap-3" style={changeAlertBg(formPersonalInfo.idOcupacion, userData.idOcupacion)}>
+                <span className="fw-medium ms-0 me-auto m-sm-0">Ocupacion actual:</span>
                 <select name="idOcupacion" id="idOcupacion" className="form-select w-auto" onChange={updateForm} required value={formPersonalInfo.idOcupacion}>
                     <option value="" disabled>Seleccionar</option>
                     {dataUserCuenta.ocupaciones.map(ocup =>                       
@@ -154,8 +149,8 @@ export function FormPersonalInfo({setCancelar}) {
                     )}
                 </select>
             </li>
-            <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.idCondicion, userData.idCondicion)}>
-                <b>Condicion medica: </b>
+            <li className="list-group-item d-flex flex-column flex-sm-row align-items-center justify-content-start gap-3" style={changeAlertBg(formPersonalInfo.idCondicion, userData.idCondicion)}>
+                <span className="fw-medium ms-0 me-auto m-sm-0">Condicion medica:</span>
                 <select name="idCondicion" id="idCondicion" className="form-select w-auto" onChange={updateForm} required value={formPersonalInfo.idCondicion}>
                     <option value="" disabled>Seleccionar</option>
                     {dataUserCuenta.condiciones.map(cond =>                       
@@ -163,14 +158,14 @@ export function FormPersonalInfo({setCancelar}) {
                     )}
                 </select>
             </li>
-            <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.zona_residencia, userData.zona_residencia)}>
-                <b>Zona de residencia: </b>
-                <input type="text" name="zona_residencia" id="zona_residencia" className="form-control w-50"
+            <li className="list-group-item d-flex flex-column flex-sm-row align-items-center justify-content-start gap-3" style={changeAlertBg(formPersonalInfo.zona_residencia, userData.zona_residencia)}>
+                <span className="fw-medium ms-0 me-auto m-sm-0">Zona de residencia:</span>
+                <textarea type="text" name="zona_residencia" id="zona_residencia" className="form-control"
                     value={formPersonalInfo.zona_residencia || ""} onChange={updateForm} />
             </li>
         </ul>
 
-        <div className="d-flex gap-3 flex-column flex-md-row justify-content-md-between mt-4 mb-3">
+        <div className="d-flex gap-3 flex-column-reverse flex-md-row justify-content-md-between mt-4 mb-3">
             <button type="button" onClick={() => setCancelar(null)} className="btn btn-warning">Cancelar</button>
             <button type="submit" className="btn btn-primary">Guardar Cambios</button>
         </div>
@@ -215,9 +210,10 @@ export function FormDeleteAccount({userData, setCancelar}) {
                     onChange={(e) => {securityCheck.inputWord = e.target.value}}   />
                 <label htmlFor="check1">Frase de seguridad</label>
             </div>
-            <div className="d-flex gap-3 mb-2">
-                <button type="button" onClick={() => setCancelar(null)} className="btn btn-primary mx-auto">Cancelar</button>
-                <button type="submit" className="btn btn-danger mx-auto">Eliminar Cuenta</button>
+
+            <div className="d-flex gap-2 flex-column-reverse flex-md-row justify-content-md-between mt-4 mb-3">
+                <button type="button" onClick={() => setCancelar(null)} className="btn btn-primary">Cancelar</button>
+                <button type="submit" className="btn btn-danger">Eliminar Cuenta</button>
             </div>
         </form>
     </div>

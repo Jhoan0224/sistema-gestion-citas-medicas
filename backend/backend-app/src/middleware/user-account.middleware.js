@@ -31,6 +31,20 @@ export const userUpdateInfoAccountValidations = (req, res, next) => {
     }
 };
 
+export const agendarCitaUsuarioValidations = (req, res, next) => {
+    try {        
+        const validationResult = userAccountValidations.formAgendarCitaUsuario(req.body);
+
+        return validationResult.success
+            ?  next()
+            : res.status(400).json(validationResult);
+
+    } catch (error) {
+        console.error("Error en middlware agendarCitaUsuarioValidations >> " + error.stack);
+        return res.status(500).json(SERVER_ERROR);
+    }
+};
+
 export const userDeleteAccountValidations = (req, res, next) => {
     try {
         
