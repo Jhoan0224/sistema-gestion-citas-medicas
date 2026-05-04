@@ -57,7 +57,7 @@ export async function createAccount(formData){
         return resp.data;
         
     } catch (error) {
-        return false;
+        return error.response.data;
     }
 };
 

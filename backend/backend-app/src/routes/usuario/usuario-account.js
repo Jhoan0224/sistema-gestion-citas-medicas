@@ -7,6 +7,12 @@ const userAccountRouter = express.Router();
 userAccountRouter.use(express.json());
 
 
+userAccountRouter.post('/agendar-cita-user',
+    userAccountMiddleWare.verifyAuthValidation,
+    userAccountMiddleWare.agendarCitaUsuarioValidations,
+    userAccountCtrl.agendarCitaUsuarioCtrl
+);
+
 userAccountRouter.post('/delete-user-account',
     userAccountMiddleWare.verifyAuthValidation,
     userAccountMiddleWare.userDeleteAccountValidations,
@@ -70,5 +76,6 @@ userAuthRouter.get('/account-info/user-id/:id',
     userAccountMiddleWare.verifyAuthValidation,
     userAccountCtrl.userAccountInfoCtrl
 );
+
 
 export default userAccountRouter;

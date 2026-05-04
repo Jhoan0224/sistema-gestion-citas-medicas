@@ -3,7 +3,7 @@ export function HistorialCitas({listaCitas, citaMessage}) {
     if (listaCitas.length === 0) {
         return(
         <>
-        <h1 className="fs-4 p-2 text-center">{citaMessage}</h1>
+        <h1 className="fs-5 fw-normal p-2 text-center text-body-secondary">{citaMessage}</h1>
         </>
         )
     }

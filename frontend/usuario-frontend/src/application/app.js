@@ -61,10 +61,6 @@ export default class App {
         }
         return RESP;
     }
-
-    static async userCreateAccount(formData) {
-        await createAccount(formData);
-    }
     
     static async loadUserAccountData() {
 

@@ -1,6 +1,19 @@
 import {FORBIDDEN_STATUS, SERVER_ERROR} from '../../utils/http-status-messages.js'
-import { citaPendienteUsuario, createUserAccount, usuarioAccountInfo, usuarioBasicInfo, userUpdateSecurityAccount, usuarioInfoUpdateAccount, userUpdateDataAccount, userDeleteAccount, historialCitasAsistidasUsuario, historialCitasCanceladasUsuario, historialCitasInasistidasUsuario } from '../../services/usuario_svc/user-account.svc.js';
+import { citaPendienteUsuario, createUserAccount, usuarioAccountInfo, usuarioBasicInfo, userUpdateSecurityAccount, usuarioInfoUpdateAccount, userUpdateDataAccount, userDeleteAccount, historialCitasAsistidasUsuario, historialCitasCanceladasUsuario, historialCitasInasistidasUsuario, agendarCitaUsuario } from '../../services/usuario_svc/user-account.svc.js';
 
+export const agendarCitaUsuarioCtrl = async (req, res) => {
+    try {
+        const processResult = await agendarCitaUsuario(req.body);
+        if (processResult.success) {
+            return res.status(200).json(processResult);
+        }
+        return res.status(400).json(processResult);
+
+    } catch (error) {
+        console.error("Error en controller agendarCitaUsuarioCtrl >> " + error);
+        return res.status(500).json(SERVER_ERROR);
+    }
+};
 
 export const userUpdateSecurityAccountCtrl = async (req, res) => {
     try {

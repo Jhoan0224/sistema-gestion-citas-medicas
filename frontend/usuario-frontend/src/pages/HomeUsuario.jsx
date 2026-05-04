@@ -1,8 +1,8 @@
 import { use, useEffect, useState } from "react"
 import { HistorialCitas } from "../componentes/HistorialCitas.jsx"
 import { UsuarioSinCita } from "../componentes/CitasForms.jsx";
-import App from "../application/app.js";
 import { getCitaPendienteUsuario } from '../api/usuario-api.js'
+import App from "../application/app.js";
 
 export function HomeUsuario() {
     const [listaCitas, setListaCitas] = useState([]);
@@ -24,15 +24,17 @@ export function HomeUsuario() {
 
     useEffect(() => {
         const verifyPendingAppoitment = async () => {
-            console.log("checking");
             const resp = await getCitaPendienteUsuario();
-            if (resp.success) {
+
+            if (resp.success && resp.userHasCita) {
                 setUseCita(resp.citaInfo);
                 setUserHasAppoitment(true);
             }
         }
         verifyPendingAppoitment();
     }, []);
+
+    
     return(
     <>
     <div className="d-flex flex-column py-3 px-4 w-100">
@@ -53,15 +55,16 @@ export function HomeUsuario() {
                 <p className="text-center fw-medium">Si necesitas atención médica de urgencia, por favor acude a este o al centro de salud más cercano.</p>
             </div>
         </div>
-        <div className="d-flex gap-3 p-2 mt-auto mb-0">
+        <div className="d-flex flex-wrap gap-3 p-2 my-2">
             {   
                 historialStatus.isOpen === true
-                && <button onClick={() => setHistorialStatus(prev => ({...prev, isOpen: false, show: false}))} type="button" className="btn btn-danger">Cerrar Historial</button>
+                && <button onClick={() => setHistorialStatus(prev => ({...prev, isOpen: false, show: false}))} type="button" className="btn btn-danger flex-grow-1 flex-sm-grow-0">Cerrar Historial</button>
             }
-            
-            <button onClick={() => RenderHistorialCitas("ASISTIDAS")} type="button" className="btn btn-primary">Citas asistidas</button>
-            <button onClick={() => RenderHistorialCitas("CANCELADAS")} type="button" className="btn btn-primary">Citas canceladas</button>
-            <button onClick={() => RenderHistorialCitas("PERDIDAS")} type="button" className="btn btn-primary">Citas perdidas</button>
+            <div className="d-flex gap-2 gap-sm-3">
+                <button onClick={() => RenderHistorialCitas("ASISTIDAS")} type="button" className="btn btn-primary">Citas asistidas</button>
+                <button onClick={() => RenderHistorialCitas("CANCELADAS")} type="button" className="btn btn-primary">Citas canceladas</button>
+                <button onClick={() => RenderHistorialCitas("PERDIDAS")} type="button" className="btn btn-primary">Citas perdidas</button>
+            </div>
         </div>
         <div id='div-historial-citas'>
             {
@@ -75,13 +78,13 @@ export function HomeUsuario() {
 }
 
 function UsuarioPendingAppoitment({userCita}) {
+    const optionsDate = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true}
     const [fechaHoraCita, setFechaHoraCita] = useState("");
     
     useEffect(() => {
         const formatDateTimeCita = () => {
-            const options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true}
             const date = new Date(userCita.fecha_hora_atencion);
-            setFechaHoraCita(date.toLocaleString(undefined, options));
+            setFechaHoraCita(date.toLocaleString(undefined, optionsDate));
         }
         formatDateTimeCita();
     }, []);

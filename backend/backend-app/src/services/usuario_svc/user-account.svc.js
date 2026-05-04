@@ -5,9 +5,79 @@ import PasswordSecurity from "../security_svc/password-security.js";
 import UsuarioVerficication from "./user_verifcations_svc/usuario-verification.svc.js";
 import CitaEntity from "../../database/centro_salud_db/entity/cita.entity.js";
 import { log } from "console";
+import JwtToken from "../security_svc/jwt-token.svc.js";
+
+export const agendarCitaUsuario = async (form, idUsuario) => {
+    const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes historial de citas medicas Asistidas.', historialCitas: {}};
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        const DEFAULT_ID_ESTADO_CITA = 1; /* ESTADO_CITA AGENDADA */ 
+        
+        /* Verifcicar que el Usuario actual no tenga ninguna Cita Medica en estado Agendada o Confirmada */
+        const userCanScheduleAppoitment = false;
+
+        /* Notificar la usuario que no puede agendar cita */ 
+        if (userCanScheduleAppoitment === false) {
+        }
+
+
+
+        /* Analisis de Agenda de Cita utilizando el Motor de Regla
+        - El Analisis se basa en: signosIds, sintomasIds, horarioPreferido y tipoAtencion
+        - El Analisis devolvera: id_especialidad, fecha_hora_atencion
+        */
+        
+        const fecha_hora_atencion = '10 am'
+        const id_espcialidad = "medica general"
+
+        const valuesCita = [form.titulo, form.motivo, fecha_hora_atencion, form.tipoAtencion,
+            id_espcialidad, DEFAULT_ID_ESTADO_CITA, idUsuario
+        ];
+        
+        /* Iniciar Transaccion SQL */
+        conn.beginTransaction();
+
+        const resultAgendarCita = await CitaEntity.agendarCitaUsuarioById(conn, valuesCita);
+        const idCitaAgendada = resultAgendarCita.insertId;
+
+        if (idCitaAgendada == 0) {
+            /* Cancelar la Transaccion*/
+            conn.rollback();
+        }
+
+        const valuesMatrizCitaSintomas = form.sintomasIds.map(idSintoma => [idCitaAgendada, idSintoma]);
+        const valuesMatrizCitaSignos = form.signosIds.map(idSigno => [idCitaAgendada, idSigno]);
+        
+        /* Insertar IDs de sintomas y signos basados en ID de la cita agendada */
+        const resultCitaSintomas = await CitaEntity.citaSintomasByCitaId(conn, valuesMatrizCitaSintomas);
+        const resultCitaSignos = await CitaEntity.citaSignosByCitaId(conn, valuesMatrizCitaSignos);
+
+        /* Verifcicar registros de Signos y Sintomas */
+        if (resultCitaSintomas.affectedRows !== valuesMatrizCitaSintomas.length
+            && resultCitaSignos.affectedRows !== valuesMatrizCitaSignos.length) {
+            
+            /* Hacer rollback ya que algo fallo en el registro correcto de datos */
+            conn.rollback();
+        }
+
+        /* Finalmente podemos informal al Usuario que su cita se agendo correctamente 
+        - Hacemos un commit de la Transaccion SQL
+        */
+        conn.commit();
+
+        PROCESS_RESULT.success = true;
+        PROCESS_RESULT.message = "Historial de citas medicas Asistidas."
+        PROCESS_RESULT.historialCitas = result;
+
+        return PROCESS_RESULT;
+
+    } catch (error) {
+        throw error;
+    } finally {conn?.release();}
+}
 
 export const historialCitasAsistidasUsuario = async (idUsuario) => {
-    const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes historial de citas medicas Asistidas.', historialCitas: {}};
+    const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes historial de citas medicas Asistidas.', historialCitas: []};
     let conn = await mysqlConnPool.getConnection();
     try {       
         const result = await CitaEntity.historialCitasAsistidasByUsuarioId(conn, idUsuario);
@@ -28,7 +98,7 @@ export const historialCitasAsistidasUsuario = async (idUsuario) => {
 }
 
 export const historialCitasCanceladasUsuario = async (idUsuario) => {
-    const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes historial de citas medicas Canceladas.', historialCitas: {}};
+    const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes historial de citas medicas Canceladas.', historialCitas: []};
     let conn = await mysqlConnPool.getConnection();
     try {
         console.log("data");
@@ -74,7 +144,7 @@ export const historialCitasInasistidasUsuario = async (idUsuario) => {
 }
 
 export const citaPendienteUsuario = async (idUsuario) => {
-    const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes ninguna cita medica pendiente.', citaInfo: {}};
+    const PROCESS_RESULT = {success: false, userHasCita: false, message: 'Al parecer no tienes ninguna cita medica pendiente.', citaInfo: {}};
     let conn = await mysqlConnPool.getConnection();
     try {
         console.log("data");
@@ -88,6 +158,7 @@ export const citaPendienteUsuario = async (idUsuario) => {
         PROCESS_RESULT.success = true;
         PROCESS_RESULT.message = "Tienes una cita medica pendiente."
         PROCESS_RESULT.citaInfo = result;
+        PROCESS_RESULT.userHasCita = result;
 
         return PROCESS_RESULT;
 
@@ -157,7 +228,7 @@ export const usuarioAccountInfo = async (idUsuario) => {
 }
 
 export const createUserAccount = async (form) => {
-    const PROCESS_RESULT = {success: false, message: 'Ocurrio un error, la cuenta No se registro, intentelo de nuevo más tarde.'}
+    const PROCESS_RESULT = {success: false, id: "", token: "",  message: 'Ocurrio un error, la cuenta No se registro, intentelo de nuevo más tarde.'}
     let conn = await mysqlConnPool.getConnection();
     try {
         
@@ -181,8 +252,21 @@ export const createUserAccount = async (form) => {
         const result = await usuarioDb.createAccount(values);
         
         if (result.insertId) {
+
+            // build the Token payload
+            const DEFAULT_USUARIO_ROL = ["USUARIO"];
+            const TOKEN_PAYLOAD = {
+                id: result.insertId,
+                roles: DEFAULT_USUARIO_ROL
+            }
+
+            const TOKEN = await JwtToken.generateJwt(TOKEN_PAYLOAD);
+
             PROCESS_RESULT.success = true;
+            PROCESS_RESULT.token = TOKEN;
+            PROCESS_RESULT.id = result.insertId;
             PROCESS_RESULT.message = "La cuenta de usuario se registo con exito."
+            
             return PROCESS_RESULT;
         }
         

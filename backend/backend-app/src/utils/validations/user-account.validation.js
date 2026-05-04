@@ -1,4 +1,50 @@
 
+export function formAgendarCitaUsuario(form) {
+    const VALIDATION_RESULT = {success: false, message: ''};
+    
+    // validar todos los campos completos
+    if (hayCamposVacios(form)) {
+        VALIDATION_RESULT.message = 'Asegurate que completar todos las entradas.';
+        return VALIDATION_RESULT;
+    }
+
+    if (!textDescripcionIsValid(form.titulo)) {
+        VALIDATION_RESULT.message = 'Debes agregar un titulo valido.';
+        return VALIDATION_RESULT;
+    }
+
+    if (!textDescripcionIsValid(form.motivo)) {
+        VALIDATION_RESULT.message = 'Debes agregar un descripción valida.';
+        return VALIDATION_RESULT;
+    }
+        
+    if (!idIsValid(form.tipoAtencion)) {
+        VALIDATION_RESULT.message = 'Ha ocurrido un error en el formulario (Tipo de atencion).';
+        return VALIDATION_RESULT; 
+    }
+
+    if (!idIsValid(form.horarioPreferido)) {
+        VALIDATION_RESULT.message = 'Ha ocurrido un error en el formulario (Horario preferido).';
+        return VALIDATION_RESULT; 
+    }
+
+    if (!form.signosIds.every(id => idIsValid(id))) {
+        VALIDATION_RESULT.message = 'Ha ocurrido un error en el formulario (Signos Ids).';
+        return VALIDATION_RESULT; 
+    }
+
+    if (!form.sintomasIds.every(id => idIsValid(id))) {
+        VALIDATION_RESULT.message = 'Ha ocurrido un error en el formulario (Sintomas Ids).';
+        return VALIDATION_RESULT; 
+    }
+
+    VALIDATION_RESULT.success = true;
+    VALIDATION_RESULT.message = "EL Formulario es valido.";
+    return VALIDATION_RESULT;
+};
+
+
+
 export function formUpdateSecurityAccount(form) {
     const VALIDATION_RESULT = {success: false, message: ''};
     
@@ -161,6 +207,12 @@ export function formCrearCuenta(form) {
 
 function inputIsBoolean(input) {
     return typeof input === 'boolean';
+}
+
+function textDescripcionIsValid(textInput) {
+    const regexTextDescripcion = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s._,-]+$/;
+    
+    return regexTextDescripcion.test(textInput.trim());
 }
 
 function textZonaResidenciaIsValid(textInput) {
