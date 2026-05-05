@@ -52,18 +52,6 @@ insert into condiciones(nombre) values
 insert into estado_cita(nombre) values
 ('Agendada'), ('Confirmada'), ('Asistida'), ('Cancelada'), ('Inasistida');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+insert into rol(nombre) values
+('USUARIO'), ('PERSONAL_MEDICO'), ('ADMIN'), ('AUDITOR');
 
