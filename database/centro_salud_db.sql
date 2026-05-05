@@ -86,7 +86,45 @@ create table cita_sintomas(
 		on delete cascade
 );
 
+create table privilegio(
+	id int auto_increment primary key,
+	nombre varchar(50)
+);
+
+create table rol(
+	id int auto_increment primary key,
+	nombre varchar(50)
+);
+
+create table usuario_sistema(
+	id int auto_increment primary key,
+	nombre varchar(50),
+	apellido varchar(50),
+	dui varchar(15),
+	fecha_nacimiento date,
+	email varchar(256),
+	pass_hash varchar(256),
+	zona_residencia varchar(50)
+);
 
 
+create table rol_usuario_sistema(
+	id int auto_increment primary key,
+	id_rol int,
+	id_usuario_sistema int,
+	constraint fkRol_RolUsuarioSistema foreign key (id_rol) references rol(id)
+		on delete cascade,
+	constraint fkUsuarioSistema_RolUsuarioSistema foreign key (id_usuario_sistema) references usuario_sistema(id)
+		on delete cascade
+);
 
 
+create table privilegio_usuario_sistema(
+	id int auto_increment primary key,
+	id_privilegio int,
+	id_usuario_sistema int,
+	constraint fkPrivilegio_PrivilegioUsuarioSistema foreign key (id_privilegio) references privilegio(id)
+		on delete cascade,
+	constraint fkUsuarioSistema_PrivilegioUsuarioSistema foreign key (id_usuario_sistema) references usuario_sistema(id)
+		on delete cascade
+);
