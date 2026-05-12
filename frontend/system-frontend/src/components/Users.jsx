@@ -1,0 +1,53 @@
+
+export function Users() {
+    
+
+    return(
+    <>
+    <div className="container d-flex flex-column px-3">
+        <div className="d-flex justify-content-between my-3">
+            <span className="fs-5 fw-normal m-2">Usuarios</span>
+            {/* <button type="button" className="btn btn-success">
+                <i className="bi bi-person-vcard" /> Crear Usuario
+            </button> */}
+        </div>
+        
+        <form className="row m-0 align-items-end border-top border-bottom border-2 py-3">
+            <div className="col-sm-1 p-0">
+                <label htmlFor="typeRol" className="form-label">Buscar por:</label>
+                <select name="typeRol" id="typeRol" className="form-select">
+                    <option value="">DUI</option>
+                    <option value="">Email</option>
+                    <option value="">Nombres</option>
+                </select>
+            </div>
+            <div className="col-sm-4">
+                <input name="textSearch" id="textSearch" type="text" className="form-control"
+                    />
+            </div>
+            <div className="col-sm-2">
+                <button type="submit" className="btn btn-primary"><i className="bi bi-search me-1" />Buscar</button>
+            </div>
+        </form>
+        
+        <div className="flex-grow-1 mt-2">
+            <table className="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>DUI</th>
+                        <th>Email</th>
+                        <th>Detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>   
+    </>
+    )
+}

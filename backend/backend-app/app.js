@@ -6,9 +6,13 @@ import morgan from 'morgan';
 import cors from 'cors';
 
 // rutas de la API
+import publicRouter from './src/routes/public-routes.js'
 import userAccountRouter from './src/routes/usuario/usuario-account.js';
 import userAuthRouter from './src/routes/usuario/auth-usuario.js';
-import publicRouter from './src/routes/public-routes.js'
+import personalMedicoAuthRouter from './src/routes/personal-medico/auth-personal-medico.js'
+import adminAuthRouter from './src/routes/admin/auth-admin.js'
+import systemRouter from './src/routes/system-routes.js';
+import personalMedRouter from './src/routes/personal-medico/personal-medico.route.js';
 
 const app = express();
 const logger = morgan;
@@ -25,9 +29,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => { res.send("Centro de salud");});
 
+app.use('/public', publicRouter);
 app.use('/user', userAccountRouter);
 app.use('/user', userAuthRouter);
-app.use('/public', publicRouter);
+app.use('/system', systemRouter);
+app.use('/system-personal-medico', personalMedRouter);
+app.use('/system-admin', adminAuthRouter);
+app.use('/system-auth', personalMedicoAuthRouter);
+app.use('/system-auth', adminAuthRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res) {

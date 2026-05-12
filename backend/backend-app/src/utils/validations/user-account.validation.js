@@ -43,8 +43,6 @@ export function formAgendarCitaUsuario(form) {
     return VALIDATION_RESULT;
 };
 
-
-
 export function formUpdateSecurityAccount(form) {
     const VALIDATION_RESULT = {success: false, message: ''};
     
