@@ -1,0 +1,98 @@
+import { useState, useEffect } from "react";
+import { CurrentSystemUserProfile, SystemUserProfile } from "../components/SystemUser.jsx";
+import { SystemDataBase, SystemVariables } from "../components/SystemConfig.jsx";
+import { Users } from "../components/Users.jsx";
+import { AuthApp } from "../app/auth.app.js";
+
+export function HomeAdmin() {
+    const [renderView, setRenderView] = useState("PANEL_MAIN");
+
+    const RenderContent = {
+        "CURRECT_SYSTEM_USER_PROFILE": <CurrentSystemUserProfile />,
+        "SYSTEM_VARIABLES": <SystemVariables />,
+        "SYSTEM_DATABASE": <SystemDataBase />,
+        "SYSTEM_USERS" : <SystemUserProfile />,
+        "USERS": <Users />
+    };
+
+
+    return(
+    <>
+    <div className="row w-100 m-0">
+        <div className="col-sm-2 d-flex flex-column p-0">
+           <PanelLeft setRenderView={setRenderView} />
+        </div>
+        
+
+        <div className="col-sm-10 p-0">
+            <div className="d-flex bg-body-secondary p-2">
+                <PanelTop />
+            </div>
+            {
+                RenderContent[renderView]
+            }
+        </div>
+    </div>
+    </>
+    )
+};
+
+function PanelTop() {
+  const dtOptions = {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true};
+  const [dateTime, setDateTime] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const date = new Date();
+      setDateTime(date.toLocaleDateString(undefined, dtOptions));
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  return (
+    <>
+      <span className="fw-bold">SGCM</span>
+      <span className="ms-5">Jhoan Alberto</span>
+      <span className="ms-auto me-2"><b>Cambiar tema</b> {dateTime}</span>
+    </>
+  )
+}
+
+function PanelLeft({setRenderView}) {
+
+
+    return(
+    <>
+    <div className="d-inline-flex flex-column mt-2 mx-auto">
+        <img src="/image1.webp" alt="Logo del sistema." />
+        <span className="mx-auto">SGCM</span>
+    </div>
+
+    <hr className="border-2 border-secondary m-2"/>
+    <div className="d-inline-flex flex-column gap-2 align-items-start mt-5 m-auto">
+        <button onClick={() => setRenderView("SYSTEM_VARIABLES")} type="button" className="btn btn-outline-primary border-0">
+            <i className="bi bi-gear" /> Variables del Sistema
+        </button>
+        <button type="button" onClick={() => setRenderView("SYSTEM_USERS")} className="btn btn-outline-primary border-0">
+            <i className="bi bi-person-vcard" /> Usuarios del Sistema
+        </button>
+        <button onClick={() => setRenderView("SYSTEM_DATABASE")} type="button" className="btn btn-outline-primary border-0">
+            <i className="bi bi-database" /> DataBase del Sistema
+        </button>
+        <button onClick={() => setRenderView("USERS")} type="button" className="btn btn-outline-primary border-0">
+            <i className="bi bi-people" /> Usuarios
+        </button>
+    </div>
+    <hr className="border-2 border-secondary m-2"/>
+
+    <div className="d-inline-flex flex-column gap-2 mb-2 mx-auto">
+        <button onClick={() => setRenderView("CURRECT_SYSTEM_USER_PROFILE")} type="button" className="btn btn-outline-primary border-0">
+            <i className="bi bi-person-circle me-1" />Mi perfil</button>
+        <button onClick={() => AuthApp.handleSignOut() } type="button" className="btn btn-outline-warning border-0">
+            <i className="bi bi-box-arrow-right" /> Cerrar Sesión
+        </button>
+    </div>
+    </>
+    )
+}

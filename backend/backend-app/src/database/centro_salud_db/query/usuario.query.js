@@ -16,6 +16,36 @@ export default class UsuarioQuery {
         user.id = ?
     `;
 
+    static findIdByEmailAndAge = `
+    SELECT
+        user.id, user.dui, user.nombre, user.apellido, user.fecha_nacimiento, user.email 
+    FROM
+        usuario user
+    WHERE
+        user.email LIKE ? AND
+        TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) BETWEEN (? - 10) AND (? + 10)
+    `;
+
+    static findIdByDuiAndAge = `
+    SELECT
+        user.id, user.dui, user.nombre, user.apellido, user.fecha_nacimiento, user.email 
+    FROM
+        usuario user
+    WHERE
+        user.dui LIKE ? AND
+        TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) BETWEEN (? - 10) AND (? + 10)
+    `;
+
+    static findIdByFullNameAndAge = `
+    SELECT
+        user.id, user.dui, user.nombre, user.apellido, user.fecha_nacimiento, user.email 
+    FROM
+        usuario user
+    WHERE
+        CONCAT(user.nombre, ' ',user.apellido) LIKE ? AND
+        TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) BETWEEN (? - 10) AND (? + 10)
+    `;
+
     static findIdByEmail = `
     SELECT user.id FROM usuario user WHERE user.email = ?
     `;

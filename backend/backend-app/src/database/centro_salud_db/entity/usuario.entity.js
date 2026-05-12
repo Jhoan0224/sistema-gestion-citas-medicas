@@ -24,12 +24,32 @@ export default class UsuarioEntity {
     }
 
     async createAccount(arrayValues) {
-        const [result] = await await this.#connPool.execute(UsuarioQuery.createAccount, arrayValues);
+        const [result] = await this.#connPool.execute(UsuarioQuery.createAccount, arrayValues);
         return result;
     }
 
 
     // metodos statics sin estados
+
+    static async findUserByFullNameAndAge(conn, values) {
+        console.log(values);
+        const [result] = await conn.execute(UsuarioQuery.findIdByFullNameAndAge, values);
+        return result;
+    }
+
+    static async findUserByEmailAndAge(conn, values) {
+        console.log(values);
+        
+        const [result] = await conn.execute(UsuarioQuery.findIdByEmailAndAge, values);
+        return result;
+    }
+
+    static async findUserByDuiAndAge(conn, values) {
+        console.log(values);
+        const [result] = await conn.execute(UsuarioQuery.findIdByDuiAndAge, values);
+        return result;
+    }
+
     static async findUsuarioById(conn, id) {
         const [result] = await conn.execute(UsuarioQuery.findById, [id]);
         return result;
@@ -95,6 +115,7 @@ export default class UsuarioEntity {
         const [result] = await conn.execute(UsuarioSecurityQuery.deleteAccountByEmail , values);
         return result.affectedRows > 0;
     }
+
+
+
 };
-
-
