@@ -40,6 +40,6 @@ export const TOKEN_NOT_VALID = {
 };
 
 export const TOKEN_IS_VALID = {
-    success: false,
+    success: true,
     message: "La Sessión está activa."
 };

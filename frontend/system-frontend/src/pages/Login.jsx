@@ -1,14 +1,29 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthApp } from "../app/auth.app.js";
 
 export function LoginHome() {
+	const navigate = useNavigate();
 	const [formLogin, setFormLogin] = useState({typeLogin: "PERSONAL_MEDICO", email: "", pass: ""});
 
 	const updateForm = (e) => { setFormLogin(prev => ({...prev, [e.target.name]: e.target.value} ))}; 
 
+	const typeLoginSendRequest = {
+		"ADMIN": (formLogin) => AuthApp.loginAdmin(formLogin),
+		"PERSONAL_MEDICO": (formLogin) => AuthApp.loginPersMed(formLogin)
+	};
+
+	const typeLoginSuccessRedirect = {
+		"ADMIN": () => navigate("/system-admin/home", {replace: true}),
+		"PERSONAL_MEDICO": () => navigate("/personal-med/home", {replace: true})
+	};
+
 	const sendForm = async (event) => {
 		event.preventDefault();
-		console.log(formLogin)
+		const resp = await typeLoginSendRequest[formLogin.typeLogin](formLogin);
+		if (resp.success) {			
+			typeLoginSuccessRedirect[formLogin.typeLogin]();
+		}		
 	}
 
 	return(

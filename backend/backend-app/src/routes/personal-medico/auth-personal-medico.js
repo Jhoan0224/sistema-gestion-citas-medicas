@@ -11,7 +11,7 @@ personalMedAuthRouter.post("/login-personal-medico",
     persMedLoginCtrl    
 );
 
-personalMedAuthRouter.post("/verify-login-personal-medico",
+personalMedAuthRouter.get("/verify-login-personal-medico",
     persMedVerifyLoginCtrl
 );
 

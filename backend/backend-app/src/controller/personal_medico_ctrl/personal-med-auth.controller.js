@@ -4,16 +4,15 @@ import * as persMedSercuritySvc from '../../services/personal_medico_svc/pers-me
 
 
 export const persMedVerifyLoginCtrl = async (req, res) => {
-    try {
+    try {        
         const authHeader = req.headers['authorization'];
         const token = authHeader.split(" ")[1];
 
         const TOKEN_VERIFCATION = await JwtToken.jwtVerfyDecoded(token);
-        
-        if (TOKEN_VERIFCATION !== null) {
-            return res.status(200).json(TOKEN_IS_VALID);
-        }
-        return res.status(401).json(TOKEN_NOT_VALID);
+
+        return TOKEN_VERIFCATION === null
+            ? res.status(401).json(TOKEN_NOT_VALID)
+            : res.status(200).json(TOKEN_IS_VALID);
 
     } catch (error) {
         console.error("Error en controller adminVerifyLoginCtrl >> " + error);

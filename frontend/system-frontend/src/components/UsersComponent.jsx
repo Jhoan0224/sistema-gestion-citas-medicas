@@ -130,6 +130,7 @@ export function SearchUser({setRenderView}) {
     e.preventDefault();
     console.log(formSearchUser)
     const resp = await PersonalMedApp.searchUserForm(formSearchUser);
+    setUserList(resp.userList)
     console.log(resp);
     
 
