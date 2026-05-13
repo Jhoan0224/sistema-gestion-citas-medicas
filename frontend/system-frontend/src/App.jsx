@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
+import { Routes, Route, Outlet, Navigate, useLocation, useNavigate, replace } from 'react-router-dom'
 import { Home } from './pages/Home.jsx'
 import { HomePersonalMed } from './pages/HomePersonalMed.jsx'
 import { HomeAdmin } from './pages/HomeAdmin.jsx'
 import { LoginHome } from './pages/Login.jsx'
 import { SpinerLoading } from './components/UiComponent.jsx'
 import { AuthApp } from './app/auth.app.js'
+
 function App() {
 
 	return (
@@ -36,56 +37,53 @@ function App() {
 
 
 function TemplateAdmin() {
+	const navigate = useNavigate();
+	const location = useLocation();
 	const [adminIsLogged, setAdminIsLogged] = useState(null);
-
+	
 	useEffect(() => {
 		let isMounted = true;
 		const verifyLogin = async () => {
-			//const resp = await AuthApp.verifyAdminIsLogged();
-			const resp = true;
+			const resp = await AuthApp.verifyAdminIsLogged();
 			if (isMounted) {
-				resp === true ? setAdminIsLogged(true) : setAdminIsLogged(false);
+				setAdminIsLogged(resp.success);
+				return <SpinerLoading />;
 			}
 		};
 		verifyLogin();
-		return () => {isMounted = false;}
-	}, []);
+		return () => { isMounted = false }
+	}, [location]);
 
 	// CAMBIAR SOLO EN CAMBIO DE URL
 	if (adminIsLogged === null) { return <SpinerLoading /> }
 	if (adminIsLogged === false) { return <Navigate to="/login" /> }
 
-	return(
-		<div className='d-flex vh-100'>
-			<Outlet />
-		</div>
-	)
+	return( <div className='d-flex vh-100'> <Outlet /> </div> );
 }
 
 function TemplatePersonalMedico() {
+	const navigate = useNavigate();
+	const urlChanges = useLocation();
 	const [persMedIsLogged, setPersMedIsLogged] = useState(null);
 
 	useEffect(() => {
-		let isMounted = true;
+		let isMounted = true;		
 		const verifyLogin = async () => {
-			// const resp = await AuthApp.verifyPersonalMedIsLogged();
-			const resp = true;
+			const resp = await AuthApp.verifyPersonalMedIsLogged();
 			if (isMounted) {
-				resp === true ?	setPersMedIsLogged(true) : setPersMedIsLogged(false);
-			}
+				setPersMedIsLogged(resp.success);
+				return <SpinerLoading />;
+			}		
 		};
 		verifyLogin();
 		return () => { isMounted = false }
-	}, []);
+	}, [urlChanges.pathname]);
 
 	if (persMedIsLogged === null) { return <SpinerLoading /> }
-	if (persMedIsLogged === false) { return <Navigate to="/login" /> }
+	
+	if (persMedIsLogged === false) { return navigate("/login") }
 
-	return (
-	<div className='d-flex vh-100'>
-		<Outlet />	
-	</div>
-	)
+	return ( <div className='d-flex vh-100'> <Outlet /> </div> );
 }
 
 export default App;

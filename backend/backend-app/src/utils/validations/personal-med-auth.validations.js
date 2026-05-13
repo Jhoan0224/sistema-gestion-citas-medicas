@@ -3,7 +3,7 @@
 export function formLoginPersonalMed(form) {
     const VALIDATION_RESULT = {success: false, message: ''};
     const TYPE_LOGIN = "PERSONAL_MEDICO";
-
+    
     if (form.typeLogin !== TYPE_LOGIN) {
         VALIDATION_RESULT.message = 'EL inicio de sesion seleccionado es incorrecto.';
         return VALIDATION_RESULT;
