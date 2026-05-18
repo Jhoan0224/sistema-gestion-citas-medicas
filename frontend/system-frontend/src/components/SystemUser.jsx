@@ -1,23 +1,43 @@
+import { useEffect, useState } from "react"
+import { AuthApp } from "../app/auth.app.js";
 
 
-export function CurrentSystemUserProfile() {
+export function CurrentSystemUserProfile({setRenderView}) {
+    const [userProfile, setUserProfile] = useState({
+        id: null, nombre: "", apellido: "", dui: "", email: "", fecha_nacimiento: "", roles: [], zona_residencia: ""
+    });
+
+    useEffect(() => {
+        let isMounted = true;
+        const loadUserProfile = async () => {
+            const resp = await AuthApp.currentUserProfile();
+            if (isMounted && resp.success) {
+                setUserProfile(resp.userProfile);
+            }
+            console.log(resp);            
+        };
+        loadUserProfile();
+        return () => {isMounted = false;}
+    }, []);
 
     return(
     <>
     <div className="container d-flex flex-column h-100 p-sm-4">
         <div className="d-flex align-items-center justify-content-between w-75 m-2">
             <span className="fs-5 fw-medium">Mi perfil</span>
-            <button className="btn btn-outline-secondary border-2"><i className="bi bi-x-lg"></i></button>
+            <button onClick={() => setRenderView("PANEL_MAIN")} type="button" className="btn btn-outline-secondary border-2">
+                <i className="bi bi-x-lg" />
+            </button>
         </div>
 
         <ul className="list-group m-2 w-75">
-            <li className="list-group-item"><span className="fw-medium">ID:</span> </li>
-            <li className="list-group-item"><span className="fw-medium">Nombres:</span> </li>
-            <li className="list-group-item"><span className="fw-medium">Apellidos:</span> </li>
-            <li className="list-group-item"><span className="fw-medium">Fecha de nacimiento:</span> </li>
-            <li className="list-group-item"><span className="fw-medium">DUI:</span> </li>
-            <li className="list-group-item"><span className="fw-medium">EMAIL:</span> </li>
-            <li className="list-group-item"><span className="fw-medium">Tipo de usuario:</span> </li>
+            <li className="list-group-item"><span className="fw-medium">ID:</span> {userProfile.id} </li>
+            <li className="list-group-item"><span className="fw-medium">Nombres:</span> {userProfile.nombre} </li>
+            <li className="list-group-item"><span className="fw-medium">Apellidos:</span> {userProfile.apellido} </li>
+            <li className="list-group-item"><span className="fw-medium">Fecha de nacimiento:</span> {userProfile.fecha_nacimiento} </li>
+            <li className="list-group-item"><span className="fw-medium">DUI:</span> {userProfile.dui} </li>
+            <li className="list-group-item"><span className="fw-medium">EMAIL:</span> {userProfile.email} </li>
+            <li className="list-group-item"><span className="fw-medium">Roles de usuario:</span> {userProfile.roles} </li>
         </ul>
         
         <span className="fs-6 fw-medium m-2">Documentación</span>

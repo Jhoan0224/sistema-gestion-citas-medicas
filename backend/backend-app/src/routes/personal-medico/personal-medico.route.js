@@ -16,13 +16,44 @@ personalMedRouter.post("/search-user-form",
 personalMedRouter.post("/create-user-account",
     verifyAuthJWT,
     persMedMiddleware.createUserAccountValidations,
-    persMedCtrl.searchUserCtrl
+    persMedCtrl.createUserAccountCtrl
 );
 
 personalMedRouter.post("/agendar-cita-user",
     verifyAuthJWT,
     persMedMiddleware.agendarCitaUserValidations,
     persMedCtrl.createUserAccountCtrl
+);
+
+personalMedRouter.get("/agenda-citas-hoy",
+    verifyAuthJWT,
+    persMedCtrl.agendaCitasHoyCtrl
+);
+
+// Endpint de coniguracion de usuarios
+personalMedRouter.get("/usuario-account-data/:idUsuario",
+    verifyAuthJWT,
+    persMedCtrl.userAccountDataCtrl
+);
+
+personalMedRouter.get("/usuario-citas-asistidas/:idUsuario",
+    verifyAuthJWT,
+    persMedCtrl.userCitasAsistidasCtrl
+);
+
+personalMedRouter.get("/usuario-citas-inasistidas/:idUsuario",
+    verifyAuthJWT,
+    persMedCtrl.userCitasInasistidasCtrl
+);
+
+personalMedRouter.get("/usuario-citas-canceladas/:idUsuario",
+    verifyAuthJWT,
+    persMedCtrl.userCitasCanceladasCtrl
+);
+
+personalMedRouter.get("/usuario-cita-pendiente/:idUsuario",
+    verifyAuthJWT,
+    persMedCtrl.userCitaPendienteCtrl
 );
 
 

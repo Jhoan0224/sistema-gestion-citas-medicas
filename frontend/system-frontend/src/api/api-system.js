@@ -2,11 +2,11 @@ import axios from "axios";
 
 const API_SYSTEM = import.meta.env.VITE_API_SYSTEM;
 
-import { HTTP_HEADERS } from "../app/auth.app.js";
+import { HTTP_HEADERS, ID_USER_SESSION } from "../app/auth.app.js";
 
 export async function getCurrentUserProfile() {
     try {
-        const resp = await axios.get(`${API_SYSTEM}/current-user-profile`, HTTP_HEADERS());
+        const resp = await axios.get(`${API_SYSTEM}/current-user-profile/${ID_USER_SESSION()}`, HTTP_HEADERS());
         return resp.data;
     } catch (error) {
         return error.response.data;

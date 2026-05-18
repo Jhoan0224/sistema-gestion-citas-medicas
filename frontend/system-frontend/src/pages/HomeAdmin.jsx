@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { CurrentSystemUserProfile, SystemUserProfile } from "../components/SystemUser.jsx";
 import { SystemDataBase, SystemVariables } from "../components/SystemConfig.jsx";
-import { Users } from "../components/Users.jsx";
 import { AuthApp } from "../app/auth.app.js";
 
 export function HomeAdmin() {
@@ -12,7 +11,6 @@ export function HomeAdmin() {
         "SYSTEM_VARIABLES": <SystemVariables />,
         "SYSTEM_DATABASE": <SystemDataBase />,
         "SYSTEM_USERS" : <SystemUserProfile />,
-        "USERS": <Users />
     };
 
 
@@ -52,7 +50,7 @@ function PanelTop() {
   
   return (
     <>
-      <span className="fw-bold">SGCM</span>
+      <a className="fw-bold text-decoration-none" href="home">SGCM</a>
       <span className="ms-5">Jhoan Alberto</span>
       <span className="ms-auto me-2"><b>Cambiar tema</b> {dateTime}</span>
     </>

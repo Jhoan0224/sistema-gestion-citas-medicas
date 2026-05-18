@@ -21,6 +21,11 @@ export default class CitaEntity {
 
 
     // metodos staticos
+    static async getAgendaCitasHoy(conn, currentDate, tomorrowDate) {
+        const [result] = await conn.execute(CitaQuery.agendaCitasHoy, [currentDate, tomorrowDate]);
+        return result;
+    }
+
     static async citaPendienteByUsuarioId(conn, idUsuario) {
         const [result] = await conn.execute(CitaQuery.citaPendienteUsuarioById, [idUsuario]);
         return result[0] ?? null;

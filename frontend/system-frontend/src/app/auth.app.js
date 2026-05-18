@@ -1,8 +1,10 @@
-import * as ApiLogin from '../api/api-auth.js'
+import * as ApiSystem from '../api/api-system.js';
+import * as ApiAuth from '../api/api-auth.js'
 
 const token_name = import.meta.env.VITE_TOKEN_NAME;
 const user_id_name = import.meta.env.VITE_USER_ID_NAME
 
+export const ID_USER_SESSION = () => (localStorage.getItem(user_id_name));
 export const HTTP_HEADERS = () => ({
     headers: {
         authorization: `Bearer ${localStorage.getItem(token_name)}`
@@ -11,8 +13,12 @@ export const HTTP_HEADERS = () => ({
 
 export class AuthApp {
 
+    static async currentUserProfile() {
+        const data = await ApiSystem.getCurrentUserProfile();
+        return data;
+    }
     static async loginPersMed(form) {
-        const data = await ApiLogin.loginPersonalMedRequest(form);
+        const data = await ApiAuth.loginPersonalMedRequest(form);
         if (data.success) {
             localStorage.setItem(user_id_name, data.id);
             localStorage.setItem(token_name, data.token);            
@@ -21,7 +27,7 @@ export class AuthApp {
     }
 
     static async loginAdmin(form) {
-        const data = await ApiLogin.loginAdminRequest(form);
+        const data = await ApiAuth.loginAdminRequest(form);
         if (data.success) {
             localStorage.setItem(user_id_name, data.id);
             localStorage.setItem(token_name, data.token);            
@@ -30,12 +36,12 @@ export class AuthApp {
     }
 
     static async verifyAdminIsLogged(form) {
-        const data = await ApiLogin.verifyAdminJWT(form);
+        const data = await ApiAuth.verifyAdminJWT(form);
         return data;
     }
 
     static async verifyPersonalMedIsLogged() {       
-        const data = await ApiLogin.verifyPersonalMedJWT(HTTP_HEADERS());        
+        const data = await ApiAuth.verifyPersonalMedJWT(HTTP_HEADERS());        
         return data;
     }
 

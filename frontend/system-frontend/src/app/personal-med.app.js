@@ -4,6 +4,16 @@ import * as ApiPersonalMed from '../api/api-personal-med.js'
 
 export class PersonalMedApp {
 
+    static async currentUserProfile() {
+        const data = await ApiSystem.getCurrentUserProfile();
+        return data;
+    }
+
+    static async userCitaAgendaHoy() {
+        const data = await ApiPersonalMed.getUserCitaAgendaHoy();
+        return data;
+    }
+
     static async agendarCitaData() {
         const data = await ApiSystem.getListSignosSintomas();
         return data;
@@ -31,6 +41,29 @@ export class PersonalMedApp {
         return data;
     }
 
+    /* Info de Usuario API */
+    static async historialCitasAsistidas(idUsuario) {
+        const data = await ApiPersonalMed.getUserCitasAsistidas(idUsuario);
+        return data;
+    }
 
+    static async historialCitasInasistidas(idUsuario) {
+        const data = await ApiPersonalMed.getUserCitasInasistidas(idUsuario);
+        return data;
+    }
 
+    static async historialCitasCanceladas(idUsuario) {
+        const data = await ApiPersonalMed.getUserCitasCanceladas(idUsuario);
+        return data;
+    }
+
+    static async userCitaPendiente(idUsuario) {
+        const data = await ApiPersonalMed.getUserCitaPendiente(idUsuario);
+        return data;
+    }
+
+    static async userAccountData(idUsuario) {
+        const data = await ApiPersonalMed.getUserAccountInfo(idUsuario);
+        return data;
+    }
 }

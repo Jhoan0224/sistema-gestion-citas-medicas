@@ -5,7 +5,7 @@ import { PersonalMedApp } from "../app/personal-med.app.js";
 export function AgendarCita({setRenderView}) {
     const [listSignosSintomas, setListSignosSintomas] = useState({signos: [], sintomas: [], departamentos: [], ocupaciones: [], condiciones: []});
     const [formAgendarCita, setFormAgendarCita] = useState({
-        titulo: '', motivo: '', tipoAtencion: '', horarioPreferido: '', signosIds: [], sintomasIds: []
+     dui: "", dui_usuario: "", titulo: '', motivo: '', tipoAtencion: '', horarioPreferido: '', signosIds: [], sintomasIds: []
     });
 
     useEffect(() => {
@@ -36,8 +36,10 @@ export function AgendarCita({setRenderView}) {
     };
 
     const sendForm = async (e) => {
-      e.preventDefault();
-      
+      e.preventDefault();      
+      if (formAgendarCita.dui !== formAgendarCita.dui_usuario) {
+        alert("no")
+      }
 
     }
 
@@ -46,6 +48,19 @@ export function AgendarCita({setRenderView}) {
       <div className="container d-flex flex-column">
         <span className="fs-5 my-3 mx-4">Agendando nueva cita</span>
         <form onSubmit={(e) => sendForm(e)} className="form-control border-2 w-auto mx-4">
+          <div className="row">
+            <div className="col-sm-4 col-md-3">
+              <label htmlFor="dui_usuario" className="form-label">DUI del usuario</label>
+              <input type="text" name="dui_usuario" id="dui_usuario" className="form-control" required
+                value={formAgendarCita.dui_usuario} onChange={updateForm}/>
+            </div>
+            <div className="col-sm-4 col-md-3 ">
+              <label htmlFor="dui" className="form-label">Confirmar DUI del usuario</label>
+              <input type="text" name="dui" id="dui" className="form-control" required
+                value={formAgendarCita.dui} onChange={updateForm}/>
+            </div>
+          </div>
+
           <div className="row mb-4">
             <div className="col-sm-6">
               <label htmlFor="titulo" className="form-label">Titulo</label>
@@ -73,7 +88,6 @@ export function AgendarCita({setRenderView}) {
                   <label htmlFor="vespertino" className="form-check-label">Vespertino</label>
                 </div>
               </div>
-
             </div>
 
             <div className="col-sm-6">

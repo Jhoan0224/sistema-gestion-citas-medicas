@@ -214,7 +214,7 @@ function textDescripcionIsValid(textInput) {
 }
 
 function textZonaResidenciaIsValid(textInput) {
-    const regexTextZonaResidencia = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]+$/;
+    const regexTextZonaResidencia = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9_,.#\-\s]+$/;
 
     return regexTextZonaResidencia.test(textInput.trim());
 }
