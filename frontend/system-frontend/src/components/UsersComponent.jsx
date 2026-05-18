@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { PersonalMedApp } from "../app/personal-med.app.js";
+import { UsuarioAccount } from "./UsersAccountComponent.jsx";
+
 
 export function CreateUser({setRenderView}) {
   const [dataCrearCuenta, setDataCrearCuenta] = useState({ocupaciones: [], condiciones: []});
@@ -19,19 +21,19 @@ export function CreateUser({setRenderView}) {
   }, []);
 
   const updateForm = (e) => { setFormCreateUser(prev => ({...prev, [e.target.name]: e.target.value})) };
-
   const sendForm = async (e) => {
-      e.preventDefault();
-      
-
+    e.preventDefault();    
+    const resp = await PersonalMedApp.createUserAccount(formCreateUser);
+    alert(resp.message);
+    
   }
 
   return(
     <>
     <div className="container d-flex flex-column h-100">
-      <span className="fs-5 mx-5 my-3">Registrando nuevo usuario</span>
+      <span className="fs-5 mb-2">Registrando nuevo usuario</span>
 
-      <form onSubmit={(e) => sendForm(e)} className="form-control d-grid gap-4 p-3 border-2 mx-5 w-auto">
+      <form onSubmit={(e) => sendForm(e)} className="form-control d-grid gap-4 p-3 border-2 w-auto">
         <span className="fs-5">Datos de registro</span>
         <div className="row">
           <div className="col-sm-3">
@@ -86,7 +88,7 @@ export function CreateUser({setRenderView}) {
         <div className="row">
           <div className="col-sm-3 d-flex flex-column">
             <label htmlFor="ocupacionId" className="form-label">Trabajo actual</label>
-            <select name="ocupacionId" id="ocupacionId" className="form-select mb-3" required>
+            <select onChange={updateForm} name="ocupacionId" id="ocupacionId" className="form-select mb-3" required>
               <option value="">Seleccionar</option>
               {dataCrearCuenta.ocupaciones.map(ocup => (
                 <option value={ocup.id}>{ocup.nombre}</option>
@@ -94,7 +96,7 @@ export function CreateUser({setRenderView}) {
             </select>
             
             <label htmlFor="condicionId" className="form-label">¿Tienes alguna condicion?</label>
-            <select name="condicionId" id="condicionId" className="form-select" required>
+            <select onChange={updateForm} name="condicionId" id="condicionId" className="form-select" required>
               <option value="">Seleccionar</option>
               {dataCrearCuenta.condiciones.map(cond => (
                 <option value={cond.id}>{cond.nombre}</option>
@@ -104,7 +106,7 @@ export function CreateUser({setRenderView}) {
 
           <div className="col">
             <label htmlFor="zonaResidencia" className="form-label">Zona de residencia</label>
-            <textarea name="zonaResidencia" id="zonaResidencia" className="form-control" readOnly
+            <textarea name="zonaResidencia" id="zonaResidencia" className="form-control"
               value={formCreateUser.zonaResidencia} onChange={updateForm}/>
           </div>
         </div>
@@ -119,18 +121,21 @@ export function CreateUser({setRenderView}) {
   )
 }
 
-
 export function SearchUser({setRenderView}) {
+  const [loadUserInfo, setLoadUserInfo] = useState({isOpen: false, show: false});
   const [userList, setUserList] = useState([]);
   const [formSearchUser, setFormSearchUser] = useState({filterSearch: "DUI", textSearch: "", aproxAge: "ALL_AGE"});
   
   const updateForm = (e) => setFormSearchUser(prev => ({...prev, [e.target.name]: e.target.value}));
+  const resetAge = () => setFormSearchUser(prev => ({...prev, aproxAge: "ALL_AGE"}));
 
-  const sendForm = async (e) => {
+
+  const sendForm = async (e) => {formSearchUser
     e.preventDefault();
-    console.log(formSearchUser)
     const resp = await PersonalMedApp.searchUserForm(formSearchUser);
-    setUserList(resp.userList)
+    if (resp.success) {
+      setUserList(resp.userList)
+    }
     console.log(resp);
     
 
@@ -138,9 +143,15 @@ export function SearchUser({setRenderView}) {
 
   return(
     <>
+    {
+      loadUserInfo.show && <UsuarioAccount loadUserInfo={loadUserInfo} setLoadUserInfo={setLoadUserInfo} />
+    }
+    { !loadUserInfo.show &&
+    <>
     <div className="container d-flex flex-column h-100">
-      <span className="fs-5 fw-medium my-3">Buscar usuarios</span>
-      <form onSubmit={(e) => sendForm(e)} className="row align-items-end border-top border-bottom border-2  mx-2 mb-3 p-2">
+      <span className="fs-5 fw-medium mb-2">Usuarios/Pacientes</span>
+      
+      <form onSubmit={(e) => sendForm(e)} className="row align-items-end border-top border-bottom border-2 pb-3 pt-2 mx-2 mb-3">
         <div className="col-sm-2 p-0">
           <label htmlFor="filterSearch" className="form-label">Filtrar por</label>
           <select onChange={updateForm} name="filterSearch" id="filterSearch" className="form-select">
@@ -154,15 +165,14 @@ export function SearchUser({setRenderView}) {
             value={formSearchUser.textSearch} onChange={updateForm}  />
         </div>
         <div className="col-sm-2">
-          <label htmlFor="aproxAge" className="form-label">Edad aprox. ±5: {formSearchUser.aproxAge}</label>
+          <label onDoubleClick={() => resetAge()} htmlFor="aproxAge" className="form-label">Edad aprox. <span className="fw-medium">±5</span>: {formSearchUser.aproxAge == "ALL_AGE" ? "\u2731" : formSearchUser.aproxAge}</label>
           <input name="aproxAge" id="aproxAge" type="range" className="form-range" value="99" min="10" max="99" step="1"
           value={formSearchUser.aproxAge} onChange={updateForm} />
         </div>
         <div className="col-sm-2">
-          <button type="sumbit" className="btn btn-primary">Buscar</button>
+          <button type="sumbit" className="btn btn-primary"><i className="bi bi-search" /> Buscar</button>
         </div>
       </form>
-
 
       <div className="flex-grow-1">
         <table className="table table-striped table-hover">
@@ -182,9 +192,10 @@ export function SearchUser({setRenderView}) {
                   <td>{user.dui}</td>
                   <td>{user.nombre}</td>
                   <td>{user.apellido}</td>
+                  <td>{new Date(Date.parse(user?.fecha_nacimiento)).toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit"})}</td>
                   <td>{user.email}</td>
                   <td>
-                    <button type="button" className="btn btn-outline-primary">Info.</button>
+                    <button onClick={() => setLoadUserInfo({idUsuario: user.id, show: true})} type="button" className="btn btn-outline-primary">Info.</button>
                   </td>
               </tr>
             ))
@@ -192,9 +203,10 @@ export function SearchUser({setRenderView}) {
           </tbody>
         </table>
       </div>
-
-
     </div>
+    </>
+    }
+
     </>
   )
 }

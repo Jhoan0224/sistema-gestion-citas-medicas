@@ -6,14 +6,14 @@ export const verifyAuthJWT = async (req, res, next) => {
     try {       
         // request the autorization header from the http request
         const authHeader = req.headers["authorization"];
-        console.log(req);
-        
+
         // split and get the token value: bearer token
         const token = authHeader.split(" ")[1];
 
         // decoded and verify the Token
         const TOKEN_DECODED = await JwtToken.jwtVerfyDecoded(token);
-        console.log("TOKEN >> " + TOKEN_DECODED);
+        console.log("TOKEN >> " );
+        console.log(TOKEN_DECODED);
         
         if (TOKEN_DECODED === null) { return res.status(401).json(TOKEN_NOT_VALID); }
 

@@ -16,6 +16,23 @@ export default class CitaQuery {
         cita.id = ?
     `;
 
+    static agendaCitasHoy = `
+    SELECT
+        ct.id, ct.titulo, ct.motivo, ct.fecha_hora_atencion, std_ct.nombre as estado_cita,
+        esp.nombre as especialidad, user.dui as dui_usuario, user.id as id_usuario, CONCAT(user.nombre, ' ', user.apellido) as usuario 
+    FROM 
+        cita ct
+    JOIN
+        especialidad esp ON  esp.id = ct.id_espcialidad
+    JOIN
+        estado_cita std_ct ON std_ct.id = ct.id_estado_cita
+    JOIN
+        usuario user ON user.id = ct.id_usuario
+    WHERE
+        ct.id_estado_cita = ${EstadoCita.ESTADO.AGENDADA} OR ${EstadoCita.ESTADO.CONFIRMADA}
+        AND ct.fecha_hora_atencion >= ? AND ct.fecha_hora_atencion < ?
+    `;
+
     static citaPendienteUsuarioById = `
     SELECT
         ct.id, ct.titulo, ct.motivo, ct.fecha_hora_atencion, std_ct.nombre as estado_cita, esp.nombre as especialidad

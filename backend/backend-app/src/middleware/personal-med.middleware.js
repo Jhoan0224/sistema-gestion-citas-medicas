@@ -1,3 +1,4 @@
+import { SERVER_ERROR } from '../utils/http-status-messages.js';
 import * as persMedValidations from '../utils/validations/personal-med.validations.js'
 import { formCrearCuenta, formAgendarCitaUsuario } from '../utils/validations/user-account.validation.js';
 
@@ -30,7 +31,7 @@ export const agendarCitaUserValidations = (req, res, next) => {
 };
 
 export const createUserAccountValidations = (req, res, next) => {
-    try {
+    try {        
         const validationResult = formCrearCuenta(req.body);
         
         return validationResult.success 

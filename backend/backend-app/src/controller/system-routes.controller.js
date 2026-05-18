@@ -1,11 +1,16 @@
-import { NOT_FOUND, SERVER_ERROR } from "../utils/http-status-messages.js";
+import { NOT_FOUND, SERVER_ERROR, FORBIDDEN_STATUS } from "../utils/http-status-messages.js";
 import * as systemSvc from '../services/system_svc/system.svc.js';
 
 export const currentUserProfileCtrl = async (req, res) => {
     try {
-        
-        const processResult = await systemSvc.userCurrentProfileSvc(req.params.idUser);
+        const ID_USER_TOKEN = req.user.id;
+        if (Number(req.params.idUser) !== Number(ID_USER_TOKEN)) {
+            return res.status(401).json(FORBIDDEN_STATUS);
+        }
 
+        const processResult = await systemSvc.userCurrentProfileSvc(req.params.idUser);
+        console.log(processResult);
+        
         processResult.success === true
             ? res.status(200).json(processResult)
             : res.status(404).json(NOT_FOUND);

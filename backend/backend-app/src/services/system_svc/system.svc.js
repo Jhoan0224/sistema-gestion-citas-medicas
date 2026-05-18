@@ -20,7 +20,7 @@ export async function userCurrentProfileSvc(id) {
 
         PROCESS_RESULT.message = "Perfil recuperado correctamente.";
         PROCESS_RESULT.success = true;
-        PROCESS_RESULT.userProfile = {...profile, roles};
+        PROCESS_RESULT.userProfile = {...profile, roles: roles.map(r => r.nombre)};
         return PROCESS_RESULT;
         
     } catch (error) {
