@@ -18,4 +18,20 @@ export class SystemUserEntity {
         return result.length === 0 ? null : result;
     }
 
+    // ------
+    static async findUserSysByFullNameAndAge(conn, values) {
+        const [result] = await conn.execute(SystemUserQuery.findIdByFullNameAndAge, values);
+        return result;
+    }
+
+    static async findUserSysByEmailAndAge(conn, values) {        
+        const [result] = await conn.execute(SystemUserQuery.findIdByEmailAndAge, values);
+        return result;
+    }
+
+    static async findUserSysByDuiAndAge(conn, values) {
+        const [result] = await conn.execute(SystemUserQuery.findIdByDuiAndAge, values);
+        return result;
+    }
+
 }

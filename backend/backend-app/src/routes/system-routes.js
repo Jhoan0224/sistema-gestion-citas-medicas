@@ -20,6 +20,11 @@ systemRouter.get('/list-ocupaciones-condiciones',
     systemRoutesCtrl.listOcupacionesCondicionesCtrl
 );
 
+systemRouter.get('/list-roles-privilegios',
+    verifyAuthJWT,
+    systemRoutesCtrl.listRolesPrivilegiosCtrl
+);
+
 systemRouter.get('/list-roles',
     verifyAuthJWT,
     systemRoutesCtrl.listRolesCtrl

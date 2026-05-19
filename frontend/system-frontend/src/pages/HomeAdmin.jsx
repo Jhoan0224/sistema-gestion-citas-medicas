@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CurrentSystemUserProfile, SystemUserProfile } from "../components/SystemUser.jsx";
+import { CreateSystemUser, CurrentSystemUserProfile, SystemUserProfile } from "../components/SystemUser.jsx";
 import { SystemDataBase, SystemVariables } from "../components/SystemConfig.jsx";
 import { AuthApp } from "../app/auth.app.js";
 
@@ -10,25 +10,26 @@ export function HomeAdmin() {
         "CURRECT_SYSTEM_USER_PROFILE": <CurrentSystemUserProfile />,
         "SYSTEM_VARIABLES": <SystemVariables />,
         "SYSTEM_DATABASE": <SystemDataBase />,
-        "SYSTEM_USERS" : <SystemUserProfile />,
+        "SYSTEM_USERS" : <SystemUserProfile setRenderView={setRenderView} />,
+        "CREATE_SYSTEM_USER" : <CreateSystemUser setRenderView={setRenderView} />,
     };
 
 
     return(
     <>
-    <div className="row w-100 m-0">
-        <div className="col-sm-2 d-flex flex-column p-0">
+    <div className="row w-100 vh-100 m-0">
+        <div className="col-sm-2 d-flex flex-column h-100 p-0">
            <PanelLeft setRenderView={setRenderView} />
         </div>
-        
-
-        <div className="col-sm-10 p-0">
+        <div className="col-sm-10 d-flex flex-column p-0 h-100">
             <div className="d-flex bg-body-secondary p-2">
                 <PanelTop />
             </div>
-            {
-                RenderContent[renderView]
-            }
+            <div className="m-2 flex-grow-1 d-flex flex-column h-100" style={{ minHeight: 0 }}>
+                { 
+                    RenderContent[renderView]
+                }
+            </div>
         </div>
     </div>
     </>

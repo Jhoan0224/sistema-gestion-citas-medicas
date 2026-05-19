@@ -13,6 +13,7 @@ import personalMedicoAuthRouter from './src/routes/personal-medico/auth-personal
 import adminAuthRouter from './src/routes/admin/auth-admin.js'
 import systemRouter from './src/routes/system-routes.js';
 import personalMedRouter from './src/routes/personal-medico/personal-medico.route.js';
+import adminRouter from './src/routes/admin/admin.router.js';
 
 const app = express();
 const logger = morgan;
@@ -34,7 +35,7 @@ app.use('/user', userAccountRouter);
 app.use('/user', userAuthRouter);
 app.use('/system', systemRouter);
 app.use('/system-personal-medico', personalMedRouter);
-app.use('/system-admin', adminAuthRouter);
+app.use('/system-admin', adminRouter);
 app.use('/system-auth', personalMedicoAuthRouter);
 app.use('/system-auth', adminAuthRouter);
 

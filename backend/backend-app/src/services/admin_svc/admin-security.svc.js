@@ -9,7 +9,7 @@ export async function loginAdmin(form) {
     let conn = await mysqlConnPool.getConnection();
     const PROCESS_RESULT = {success: false, message: '', id: '', token: ''};
     try {
-        const [dataLogin] = await SystemUserEntity.getDataLoginByEmail(conn, [form.email]);
+        const dataLogin = await SystemUserEntity.getDataLoginByEmail(conn, [form.email]);
 
         if (dataLogin === null) { return CREDENTIALS_NOT_VALID }
 
@@ -32,7 +32,7 @@ export async function loginAdmin(form) {
         PROCESS_RESULT.success = true;
         PROCESS_RESULT.id = dataLogin.id;
         PROCESS_RESULT.token = TOKEN;
-
+        
         return PROCESS_RESULT;
 
     } catch (error) {

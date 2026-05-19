@@ -76,3 +76,17 @@ export const listSignosSintomasCtrl = async (req, res) => {
         return res.status(500).json(SERVER_ERROR);   
     }
 };
+
+export const listRolesPrivilegiosCtrl = async (req, res) => {
+    try {
+        const processResult = await systemSvc.listRolesPrivilegiosSvc();
+
+        processResult.success === true
+            ? res.status(200).json(processResult)
+            : res.status(404).json(NOT_FOUND);
+        
+    } catch (error) {
+        console.log('error en listRolesPrivilegiosCtrl', error);
+        return res.status(500).json(SERVER_ERROR);   
+    }
+};

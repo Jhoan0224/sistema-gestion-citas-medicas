@@ -46,7 +46,7 @@ export function AgendarCita({setRenderView}) {
     return(
       <>
       <div className="container d-flex flex-column">
-        <span className="fs-5 my-3 mx-4">Agendando nueva cita</span>
+        <span className="fs-5 mb-3 mx-4">Agendando nueva cita</span>
         <form onSubmit={(e) => sendForm(e)} className="form-control border-2 w-auto mx-4">
           <div className="row">
             <div className="col-sm-4 col-md-3">
@@ -162,7 +162,7 @@ export function AgendarCita({setRenderView}) {
 
           </div>
 
-          <div className="row mb-3">
+          <div className="row mb-2">
             <div className="col-12 d-flex flex-wrap-reverse flex-md-nowrap justify-content-between gap-3 px-3">
               <button onClick={() => setRenderView("PANEL_MAIN")} type="button" className="btn btn-warning flex-grow-1 flex-md-grow-0">
                   Cancelar

@@ -3,7 +3,8 @@
 export function formLoginAdmin(form) {
     const VALIDATION_RESULT = {success: false, message: ''};
     const TYPE_LOGIN = "ADMIN";
-
+    console.log(form);
+    
     if (form.typeLogin !== TYPE_LOGIN) {
         VALIDATION_RESULT.message = 'EL inicio de sesion seleccionado es incorrecto.';
         return VALIDATION_RESULT;

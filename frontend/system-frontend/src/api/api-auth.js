@@ -26,6 +26,8 @@ export async function verifyPersonalMedJWT(headers) {
 /* Auth Admin */
 export async function loginAdminRequest(form) {
     try {
+        console.log(form);
+        
         const resp = await axios.post(`${API_AUTH}/login-admin`, form);
         return resp.data;
     } catch (error) {
@@ -33,9 +35,9 @@ export async function loginAdminRequest(form) {
     }
 }
 
-export async function verifyAdminJWT() {
+export async function verifyAdminJWT(headers) {
     try {
-        const resp = await axios.get(`${API_AUTH}/verify-login-admin`);
+        const resp = await axios.get(`${API_AUTH}/verify-login-admin`, headers);
         return resp.data;
     } catch (error) {
         return error.response.data;

@@ -16,8 +16,8 @@ export default class PasswordSecurity {
     static async passwordMatches(passPlainText, passHash) {
         try {
             const match = await bcrypt.compare(passPlainText, passHash);
-            console.log(match);
             return match;
+            
         } catch (error) {
             throw error;
         }
