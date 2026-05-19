@@ -289,19 +289,6 @@ function PanelMain() {
                 </td>
               </tr>
             ))}
-            {userListCitas.map((user, index) => (
-              <tr key={user.id}>
-                <td>{index + 1}</td>
-                <td>{user.dui_usuario}</td>
-                <td>{user.usuario}</td>
-                <td>{user.especialidad}</td>
-                <td>{new Date(user.fecha_hora_atencion).toLocaleString(undefined, dateOptions)}</td>
-                <td>Confirmada</td>
-                <td>
-                  <button onClick={() => setLoadUserInfo({idUsuario: user.id, show: true}) } type="button" className="btn btn-outline-primary">Info.</button>
-                </td>
-              </tr>
-            ))}
           </tbody>
         </table>
       </div>

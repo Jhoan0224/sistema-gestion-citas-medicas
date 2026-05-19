@@ -40,6 +40,15 @@ export async function getListPermisos() {
     }
 }
 
+export async function getListRolesPrivilegios() {
+    try {
+        const resp = await axios.get(`${API_SYSTEM}/list-roles-privilegios`, HTTP_HEADERS());
+        return resp.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
 export async function getListOcupacionesCondiciones() {
     try {
         const resp = await axios.get(`${API_SYSTEM}/list-ocupaciones-condiciones`, HTTP_HEADERS());

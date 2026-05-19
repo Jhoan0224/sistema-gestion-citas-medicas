@@ -1,4 +1,3 @@
-import { data } from 'react-router-dom';
 import * as ApiSystem from '../api/api-system.js'
 import * as ApiPersonalMed from '../api/api-personal-med.js'
 

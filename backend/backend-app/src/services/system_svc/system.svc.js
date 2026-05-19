@@ -1,6 +1,6 @@
 import { mysqlConnPool } from "../../config/databases/mysql.js"
 import { SignosEntity, SintomasEntity } from "../../database/centro_salud_db/entity/signos-sintomas.entity.js";
-import { RolesEntity, PermisosEntity } from "../../database/centro_salud_db/entity/roles-permisos.entity.js";
+import { RolesEntity, PrivilegiosEntity } from "../../database/centro_salud_db/entity/roles-permisos.entity.js";
 import CondicionEntity from '../../database/centro_salud_db/entity/condiciones.entity.js'
 import OcupacionEntity from '../../database/centro_salud_db/entity/ocupacion.entity.js'
 import { SystemUserEntity } from "../../database/centro_salud_db/entity/system-user.entity.js";
@@ -81,10 +81,27 @@ export async function listPermisosSvc() {
     const PROCESS_RESULT = {success: false, permisosList: []};
     let conn = await mysqlConnPool.getConnection();
     try {
-        const permisosList =  await PermisosEntity.getListPermisos(conn)
+        const permisosList =  await PrivilegiosEntity.getListPrivilegios(conn)
         
         PROCESS_RESULT.success = true;
         PROCESS_RESULT.permisosList = permisosList;
+        return PROCESS_RESULT;
+        
+    } catch (error) {
+        throw error;
+    } finally {conn?.release();}
+};
+
+export async function listRolesPrivilegiosSvc() {
+    const PROCESS_RESULT = {success: false, rolesList: [], privilegiosList: []};
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        const rolesList = await RolesEntity.getListRoles(conn);
+        const privilegiosList =  await PrivilegiosEntity.getListPrivilegios(conn);
+        
+        PROCESS_RESULT.success = true;
+        PROCESS_RESULT.rolesList = rolesList;
+        PROCESS_RESULT.privilegiosList = privilegiosList;
         return PROCESS_RESULT;
         
     } catch (error) {

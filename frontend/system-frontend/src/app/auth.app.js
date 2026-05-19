@@ -35,8 +35,8 @@ export class AuthApp {
         return data;
     }
 
-    static async verifyAdminIsLogged(form) {
-        const data = await ApiAuth.verifyAdminJWT(form);
+    static async verifyAdminIsLogged() {
+        const data = await ApiAuth.verifyAdminJWT(HTTP_HEADERS());
         return data;
     }
 

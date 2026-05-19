@@ -8,9 +8,9 @@ export class RolesEntity {
     }
 }
 
-export class PermisosEntity {
+export class PrivilegiosEntity {
 
-    static async getListPermisos(conn) {
+    static async getListPrivilegios(conn) {
         const [result] = await conn.execute(PermisosQuery.listPermisos);
         return result;
     }

@@ -9,6 +9,49 @@ export class SystemUserQuery {
     WHERE
         us.email = ?
     `;
+
+    static findIdByEmailAndAge = `
+    SELECT
+        user.id, user.dui, user.nombre, user.apellido, user.fecha_nacimiento, user.email 
+    FROM
+        usuario_sistema user
+    JOIN
+        rol_usuario_sistema rus ON rus.id_usuario_sistema = user.id
+    JOIN
+        rol r ON r.id = rus.id_rol
+    WHERE
+        user.email LIKE ? AND
+        r.nombre = ?
+    `;
+
+    static findIdByDuiAndAge = `
+    SELECT
+        user.id, user.dui, user.nombre, user.apellido, user.fecha_nacimiento, user.email 
+    FROM
+        usuario_sistema user
+    JOIN
+        rol_usuario_sistema rus ON rus.id_usuario_sistema = user.id
+    JOIN
+        rol r ON r.id = rus.id_rol
+    WHERE
+        user.dui LIKE ? AND
+        r.nombre = ?
+    `;
+
+    static findIdByFullNameAndAge = `
+    SELECT
+        user.id, user.dui, user.nombre, user.apellido, user.fecha_nacimiento, user.email 
+    FROM
+        usuario_sistema user
+    JOIN
+        rol_usuario_sistema rus ON rus.id_usuario_sistema = user.id
+    JOIN
+        rol r ON r.id = rus.id_rol
+    WHERE
+        CONCAT(user.nombre, ' ',user.apellido) LIKE ? AND
+        r.nombre = ?
+    `;
+
 }
 
 export class SystemUserSecQuery {

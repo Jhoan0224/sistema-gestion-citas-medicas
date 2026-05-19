@@ -1,7 +1,7 @@
 export class RolesQuery {
     
     static listRoles = `
-    SELECT  r.id, r.nombre FROM rol
+    SELECT  r.id, r.nombre FROM rol r
     `;
 
 }
@@ -9,7 +9,7 @@ export class RolesQuery {
 export class PermisosQuery {
 
     static listPermisos = `
-    SELECT  p.id, p.nombre FROM privilegio
+    SELECT  p.id, p.nombre FROM privilegio p
     `;
 
 }

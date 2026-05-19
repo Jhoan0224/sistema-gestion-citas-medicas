@@ -31,9 +31,9 @@ export function CreateUser({setRenderView}) {
   return(
     <>
     <div className="container d-flex flex-column h-100">
-      <span className="fs-5 mb-2">Registrando nuevo usuario</span>
+      <span className="fs-5 mb-2 mx-4">Registrando nuevo usuario</span>
 
-      <form onSubmit={(e) => sendForm(e)} className="form-control d-grid gap-4 p-3 border-2 w-auto">
+      <form onSubmit={(e) => sendForm(e)} className="form-control d-grid gap-4 p-3 border-2 mx-4 w-auto">
         <span className="fs-5">Datos de registro</span>
         <div className="row">
           <div className="col-sm-3">
@@ -174,9 +174,9 @@ export function SearchUser({setRenderView}) {
         </div>
       </form>
 
-      <div className="flex-grow-1">
+      <div className="flex-grow-1 overflow-y-auto" style={{ minHeight: '0' }}>
         <table className="table table-striped table-hover">
-          <thead>
+          <thead className="sticky-top">
             <tr>
               <th>DUI</th>
               <th>Nombre</th>
