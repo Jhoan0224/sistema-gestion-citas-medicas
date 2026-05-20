@@ -2,6 +2,30 @@ import { SystemUserQuery, SystemUserSecQuery } from "../query/system-user.query.
 
 export class SystemUserEntity {
 
+    static async deleteUserSysByEmail(conn, email) {
+        const [result] = await conn.execute(SystemUserSecQuery.deleteByEmail, [email]);
+        return result.affectedRows > 0;
+    }
+
+    static async createUserSysAccount(conn, values) {
+        const [result] = await conn.execute(SystemUserSecQuery.createUserSysAccount, values);        
+        return result.affectedRows ?? null;
+    }
+    static async createPrivilegioUserSysAccount(conn, values) {
+        const [result] = await conn.execute(SystemUserSecQuery.privilgiosUserSytem, values);        
+        return result.affectedRows ?? null;
+    }
+    static async createRolUserSysAccount(conn, values) {
+        const [result] = await conn.execute(SystemUserSecQuery.rolUserSytem, values);        
+        return result.affectedRows ?? null;
+    }
+
+
+    static async accountInfoById(conn, id) {
+        const [result] = await conn.execute(SystemUserSecQuery.usuarioAccountInfo, [id]);
+        
+        return result[0] ?? null;
+    }
 
     static async getCurrentUserProfileById(conn, id) {
         const [result] = await conn.execute(SystemUserSecQuery.currentUserProfileById, [id]);

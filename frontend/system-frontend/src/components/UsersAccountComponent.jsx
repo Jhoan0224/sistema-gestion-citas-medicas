@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { PersonalMedApp } from "../app/personal-med.app.js";
 import { getListOcupacionesCondiciones } from "../api/api-system.js";
 import { ImageCitaAgendadaSave } from "../utils/img-cita-agendada.js";
+import { AdminApp } from "../app/Admin.app.js";
 
 export function UsuarioAccount({loadUserInfo, setLoadUserInfo}) { // El objeto setLoadUserInfo contiene: {idUsuario: "", show: false}
     const [historialStatus, setHistorialStatus] = useState({isOpen: false, show: false});
@@ -264,6 +265,142 @@ function FormPersonalInfo({userData, setCancelar}) {
             <button type="submit" className="btn btn-primary">Guardar Cambios</button>
         </div>
     </form>
+    </>
+    )
+}
+
+export function UsuarioNormalAccount({loadUserInfo, setLoadUserInfo}) { // El objeto setLoadUserInfo contiene: {idUsuario: "", show: false}
+    const [historialStatus, setHistorialStatus] = useState({isOpen: false, show: false});
+    const [historialCitas, setHistorialCitas] = useState([]);
+    const [citaPendiente, setCitaPendiente] = useState({id_usuario: "", estado_cita: "", titulo: "", motivo: "", fecha_hora_atencion: "", especialidad: ""});
+    const [accountConfig, setAccountConfig] = useState("");
+    const [userData, setUserData] = useState({
+        id_usuario: "",  nombre: '', apellido: '', fecha_nacimiento: '', dui: '', email: '',
+        idOcupacion: '', idCondicion: '', zona_residencia: ''
+    });
+
+    useEffect(() => {
+        let isMounted = true;
+        const loadData = async () => {
+            const resp = await PersonalMedApp.userAccountData(loadUserInfo.idUsuario);            
+            if (isMounted && resp.success) {
+                setUserData(resp.usuarioAccountInfo);
+            }
+        };
+        loadData();
+        return () => { isMounted = false }
+    }, []);
+
+    const getAccountConfig = {
+        "HISTORIAL_CITAS_INASISTIDAS": () => PersonalMedApp.historialCitasInasistidas(userData.id_usuario),
+        "HISTORIAL_CITAS_CANCELADAS": () => PersonalMedApp.historialCitasInasistidas(userData.id_usuario),
+        "HISTORIAL_CITAS_ASISTIDAS": () => PersonalMedApp.historialCitasInasistidas(userData.id_usuario),
+        "CITA_PENDIENTE": () => PersonalMedApp.userCitaPendiente(userData.id_usuario),
+    };
+
+    const RenderAccountConfig = {
+        "HISTORIAL_CITAS_INASISTIDAS": <HistorialCitas historialCitas={historialCitas} />,
+        "HISTORIAL_CITAS_CANCELADAS": <HistorialCitas historialCitas={historialCitas} />,
+        "HISTORIAL_CITAS_ASISTIDAS": <HistorialCitas historialCitas={historialCitas} />,
+        "CITA_PENDIENTE": <UserCitaPendiente citaPendiente={citaPendiente} />,
+        "DELETE_ACCOUNT": <FormDeleteAccount userData={userData} setCancelar={setAccountConfig} />,
+        "USER_INFO_CONFIG": <FormPersonalInfo userData={userData} setCancelar={setAccountConfig} />,
+    };
+
+    useEffect(() => {
+        if (accountConfig === "") { return }
+        const typeConfig = accountConfig.split("_")[0];
+        if ( !["HISTORIAL", "CITA"].some(type => type == typeConfig) ) { return } ;
+        let isMounted = true;
+        const loadAccountConfig = async () => {           
+            const resp = await getAccountConfig[accountConfig]();
+            if (!isMounted || !resp.success) { return }
+            if (typeConfig == "HISTORIAL") { setHistorialCitas(resp.historialCitas) }
+            else if (typeConfig == "CITA") { setCitaPendiente(resp.citaInfo) }
+        };
+        loadAccountConfig();
+        return () => {isMounted = false}
+    }, [accountConfig]);
+
+    return(
+    <>
+    <div className="container">
+        <div className="d-flex justify-content-between py-3">
+            <h5 className="fs-5 fw-normal">Información de Usuario</h5>
+            <button onClick={() => setLoadUserInfo("SEARCH_USER")} className="btn btn-outline-secondary me-2"><i className="bi bi-x-lg"></i></button>
+        </div>
+        <div className="border mx-2 mb-2">
+            <ul className="list-group list-group-flush">
+                <li className="list-group-item"><b>DUI: </b>{userData.dui}</li>
+                <li className="list-group-item"><b>Nombres: </b>{userData.nombre}</li>
+                <li className="list-group-item"><b>Apellidos: </b>{userData.apellido}</li>
+                <li className="list-group-item"><b>Fecha de nacimiento: </b>{userData.fecha_nacimiento.split('T')[0]}</li>
+                <li className="list-group-item"><b>Email: </b>{userData.email}</li>
+                <li className="list-group-item"><b>Ocupacion actual:</b> {userData.ocupacion}</li>
+                <li className="list-group-item"><b>Zona de residencia: </b>{userData.zona_residencia}</li>
+                <li className="list-group-item"><b>Condicion medica: </b>{userData.condicion}</li>
+            </ul>
+        </div>
+        <h5 className="fs-5 fw-normal py-2">Configuración de Cuenta</h5>
+        <div className="d-flex gap-3 mb-3 mx-2">
+            <button onClick={() => setAccountConfig("HISTORIAL_CITAS_CANCELADAS")} className="btn btn-outline-warning ms-0 me-2">Citas canceladas</button>
+            <button onClick={() => setAccountConfig("HISTORIAL_CITAS_ASISTIDAS")} className="btn btn-outline-warning ms-0 me-2">Citas asistidas</button>
+            <button onClick={() => setAccountConfig("HISTORIAL_CITAS_INASISTIDAS")} className="btn btn-outline-warning ms-0 me-2">Citas inasistidas</button>
+            <button onClick={() => setAccountConfig("CITA_PENDIENTE")} className="btn btn-outline-warning ms-0 me-auto">Citas Pendiente</button>
+            <button onClick={() => setAccountConfig("DELETE_ACCOUNT")} className="btn btn-outline-danger ms-0 me-auto">Eliminar</button>
+            <button onClick={() => setAccountConfig("USER_INFO_CONFIG")} className="btn btn-outline-primary">Act. infomarción</button>
+        </div>
+        <div id='div-historial-citas' className="row justify-content-center p-2">
+            <div className="col-md-11 border border-2 rounded-2 p-3">
+            {
+                RenderAccountConfig[accountConfig]
+            }
+            </div>
+        </div>
+    </div>
+    </>
+    )
+}
+
+
+export function FormDeleteAccount({userData, setCancelar}) {
+    const securityCheck = {securityWord: "Si Eliminar Cuenta", inputWord: "w"}
+    const [formDeleteAccount, setFormDeleteAccount] = useState({email: ''});
+
+    useEffect(() => {
+        setFormDeleteAccount(prev => ({...prev, email: userData.email}));
+    }, [userData]);
+
+    const sendForm = async (event) => {
+        event.preventDefault();
+        const securityIsChecked = securityCheck.inputWord === securityCheck.securityWord ? true : false;
+        if (securityIsChecked) {
+            const resp = await AdminApp.deleteNormalUserAccount(formDeleteAccount);
+            console.log(resp);            
+        }   
+    }
+
+    return(
+    <>
+    <div className="d-flex flex-column px-3 py-2">
+        <h5 className="fs-6">Eliminación de Cuenta</h5>
+        <p className="text-center">Al Elimnar tú cuenta se desactivara durante 15 días, durante este periodo de tiempo aún puedes volver Activar tu cuenta.
+            Pasado ese periodo de tiempo, tu cuenta y los datos relacionados no se podran recuperar.
+        </p>
+        <p className="text-center">La Frase de seguridad es: <i className="fw-medium">{securityCheck.securityWord}</i></p>
+        <form onSubmit={(e) => sendForm(e)} className="border border-danger rounded-2 px-4 py-2 mx-auto">
+            <div className="form-floating my-3">
+                <input type="text" name="check1" id="check1" className="form-control fw-medium" placeholder="Frase de seguridad"
+                    onChange={(e) => {securityCheck.inputWord = e.target.value}}   />
+                <label htmlFor="check1">Frase de seguridad</label>
+            </div>
+
+            <div className="d-flex gap-2 flex-column-reverse flex-md-row justify-content-md-between mt-4 mb-3">
+                <button type="button" onClick={() => setCancelar("")} className="btn btn-primary">Cancelar</button>
+                <button type="submit" className="btn btn-danger">Eliminar Cuenta</button>
+            </div>
+        </form>
+    </div>
     </>
     )
 }

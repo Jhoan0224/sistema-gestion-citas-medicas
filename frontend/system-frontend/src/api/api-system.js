@@ -13,6 +13,7 @@ export async function getCurrentUserProfile() {
     }
 }
 
+
 export async function getListSignosSintomas() {
     try {
         const resp = await axios.get(`${API_SYSTEM}/list-signos-sintomas`, HTTP_HEADERS());

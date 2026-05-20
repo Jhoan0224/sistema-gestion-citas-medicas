@@ -1,5 +1,10 @@
 export default class UsuarioQuery {
 
+
+    static deleteByEmail = `
+    DELETE FROM usuario us WHERE us.email = ?
+    `;
+    
     static createAccount = `
     INSERT INTO
         usuario(dui, nombre, apellido, fecha_nacimiento, email, pass_hash, zona_residencia, id_ocupacion, id_condicion)
@@ -34,6 +39,15 @@ export default class UsuarioQuery {
     WHERE
         user.dui LIKE ? AND
         TIMESTAMPDIFF(YEAR, fecha_nacimiento, CURDATE()) BETWEEN (? - 10) AND (? + 10)
+    `;
+
+    static findIdByFullName = `
+    SELECT
+        user.id, user.dui, user.nombre, user.apellido, user.fecha_nacimiento, user.email 
+    FROM
+        usuario user
+    WHERE
+        CONCAT(user.nombre, ' ',user.apellido) LIKE ?
     `;
 
     static findIdByFullNameAndAge = `

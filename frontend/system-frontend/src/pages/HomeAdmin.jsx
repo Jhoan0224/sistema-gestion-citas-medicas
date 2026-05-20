@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CreateSystemUser, CurrentSystemUserProfile, SystemUserProfile } from "../components/SystemUser.jsx";
+import { CreateSystemUser, CurrentSystemUserProfile, NormalUserProfile, SystemUserProfile } from "../components/SystemUser.jsx";
 import { SystemDataBase, SystemVariables } from "../components/SystemConfig.jsx";
 import { AuthApp } from "../app/auth.app.js";
 
@@ -10,8 +10,9 @@ export function HomeAdmin() {
         "CURRECT_SYSTEM_USER_PROFILE": <CurrentSystemUserProfile />,
         "SYSTEM_VARIABLES": <SystemVariables />,
         "SYSTEM_DATABASE": <SystemDataBase />,
+        "CREATE_SYSTEM_USER": <CreateSystemUser setRenderView={setRenderView} />,
         "SYSTEM_USERS" : <SystemUserProfile setRenderView={setRenderView} />,
-        "CREATE_SYSTEM_USER" : <CreateSystemUser setRenderView={setRenderView} />,
+        "NORMAL_USERS" : <NormalUserProfile setRenderView={setRenderView} />,
     };
 
 
@@ -79,7 +80,7 @@ function PanelLeft({setRenderView}) {
         <button onClick={() => setRenderView("SYSTEM_DATABASE")} type="button" className="btn btn-outline-primary border-0">
             <i className="bi bi-database" /> DataBase del Sistema
         </button>
-        <button onClick={() => setRenderView("USERS")} type="button" className="btn btn-outline-primary border-0">
+        <button onClick={() => setRenderView("NORMAL_USERS")} type="button" className="btn btn-outline-primary border-0">
             <i className="bi bi-people" /> Usuarios
         </button>
     </div>

@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react"
 import { AuthApp } from "../app/auth.app.js";
+import { getListOcupacionesCondiciones } from "../api/api-system.js";
+import { getListCondiciones } from "../api/api-system.js";
 import { AdminApp } from "../app/Admin.app.js";
+import { UsuarioNormalAccount } from "./UsersAccountComponent.jsx";
+import { PersonalMedApp } from "../app/personal-med.app.js";
 
 export function CurrentSystemUserProfile({setRenderView}) {
     const [userProfile, setUserProfile] = useState({
@@ -57,14 +61,225 @@ export function CurrentSystemUserProfile({setRenderView}) {
     )
 }
 
+function FormPersonalInfoSys({userData, setCancelar}) {
+    const [formPersonalInfo, setFormPersonalInfo] = useState({
+        nombre: '', apellido: '', fecha_nacimiento: '', dui: '', email: '',
+        zona_residencia: '', idOcupacion: '', idCondicion: ''
+    });
+    const [dataUserCuenta, setDataUserCuenta] = useState({ocupaciones: [], condiciones: []});
+
+    useEffect(() => {
+        setFormPersonalInfo(userData);
+    }, [userData]);
+    useEffect(() => {
+        let isMounted = true;
+        const loadDataAccountConfig = async () => {
+            const resp = await getListOcupacionesCondiciones();
+            if (isMounted && resp.success) {
+                setDataUserCuenta({ocupaciones: resp.ocupacionesList, condiciones: resp.condicionesList});
+            }
+        };
+        loadDataAccountConfig();
+        return () => {isMounted = false;}
+    }, []);
+    const updateForm = (e) => setFormPersonalInfo(prev => ({...prev, [e.target.name]: e.target.value}));
+
+    const changeAlertBg = (orignal, change) => {
+        return { "backgroundColor": orignal == change ? "transparent" : "rgb(248, 215, 218)" };
+    }
+              
+    const sendForm = async (event) => {
+        event.preventDefault();
+        const resp = await updateInfoAccount(formPersonalInfo);
+        console.log(resp);
+    };
+
+    return(
+    <>
+    <h5 className="fs-6 fw-normal mb-2">Actualizando información de Usuario</h5>
+    <form onSubmit={(e) => sendForm(e)} className="">
+        <ul className="list-group list-group-flush ">
+            <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.nombre, userData.nombre)}>
+                <span className="fw-medium ms-0 me-auto m-sm-0">Nombres:</span>
+                <input type="text" name="nombre" id="nombre" className="form-control w-auto"
+                    value={formPersonalInfo.nombre} onChange={updateForm} />
+            </li>
+            <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.apellido, userData.apellido)}>
+                 <span className="fw-medium ms-0 me-auto m-sm-0">Apellidos:</span>
+                <input type="text" name="apellido" id="apellido" className="form-control w-auto"
+                    value={formPersonalInfo.apellido} onChange={updateForm} />
+            </li>
+           
+            <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.dui, userData.dui)}>
+                 <span className="fw-medium ms-0 me-auto m-sm-0">DUI:</span>
+                <input type="text" name="dui" id="dui" className="form-control w-auto"
+                    value={formPersonalInfo.dui} onChange={updateForm} />
+            </li>
+
+            <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.fecha_nacimiento.split("T")[0], userData.fecha_nacimiento.split("T")[0])}>
+                 <span className="fw-medium ms-0 me-auto m-sm-0">Fecha de nacimiento:</span>
+                <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" className="form-control w-auto"
+                    value={formPersonalInfo.fecha_nacimiento.split('T')[0].split("-").join("-") || ""} onChange={updateForm} />
+            </li>
+  
+            <li className="list-group-item d-flex flex-column flex-sm-row align-items-center justify-content-start gap-3" style={changeAlertBg(formPersonalInfo.idOcupacion, userData.idOcupacion)}>
+                <span className="fw-medium ms-0 me-auto m-sm-0">Ocupacion actual:</span>
+                <select name="idOcupacion" id="idOcupacion" className="form-select w-auto" onChange={updateForm} required value={formPersonalInfo.idOcupacion}>
+                    {dataUserCuenta.ocupaciones.map(ocup =>                       
+                        <option key={ocup.id} value={ocup.id}>{ocup.nombre}</option>
+                    )}
+                </select>
+            </li>
+            <li className="list-group-item d-flex flex-column flex-sm-row align-items-center justify-content-start gap-3" style={changeAlertBg(formPersonalInfo.idCondicion, userData.idCondicion)}>
+                <span className="fw-medium ms-0 me-auto m-sm-0">Condicion medica:</span>
+                <select name="idCondicion" id="idCondicion" className="form-select w-auto" onChange={updateForm} required value={formPersonalInfo.idCondicion}>
+                    {dataUserCuenta.condiciones.map(cond =>                       
+                        <option key={cond.id} value={cond.id}>{cond.nombre}</option>
+                    )}
+                </select>
+            </li>
+            <li className="list-group-item d-flex flex-column flex-sm-row align-items-center justify-content-start gap-3" style={changeAlertBg(formPersonalInfo.zona_residencia, userData.zona_residencia)}>
+                <span className="fw-medium ms-0 me-auto m-sm-0">Zona de residencia:</span>
+                <textarea type="text" name="zona_residencia" id="zona_residencia" className="form-control"
+                    value={formPersonalInfo.zona_residencia || ""} onChange={updateForm} />
+            </li>
+        </ul>
+
+        <div className="d-flex gap-3 flex-column-reverse flex-md-row justify-content-md-between mt-4 mb-3">
+            <button type="button" onClick={() => setCancelar("")} className="btn btn-warning">Cancelar</button>
+            <button type="submit" className="btn btn-primary">Guardar Cambios</button>
+        </div>
+    </form>
+    </>
+    )
+}
+
+export function FormDeleteAccountSys({userData, setCancelar}) {
+    const securityCheck = {securityWord: "Si Eliminar Cuenta", inputWord: "w"}
+    const [formDeleteAccount, setFormDeleteAccount] = useState({email: ''});
+
+    useEffect(() => {
+        setFormDeleteAccount(prev => ({...prev, email: userData.email}));
+    }, [userData]);
+
+    const sendForm = async (event) => {
+        event.preventDefault();
+        const securityIsChecked = securityCheck.inputWord === securityCheck.securityWord ? true : false;
+        if (securityIsChecked) {
+            const resp = await AdminApp.deleteUserSysAccount(formDeleteAccount);
+            console.log(resp);            
+        }   
+    }
+
+    return(
+    <>
+    <div className="d-flex flex-column px-3 py-2">
+        <h5 className="fs-6">Eliminación de Cuenta</h5>
+        <p className="text-center">Al Elimnar tú cuenta se desactivara durante 15 días, durante este periodo de tiempo aún puedes volver Activar tu cuenta.
+            Pasado ese periodo de tiempo, tu cuenta y los datos relacionados no se podran recuperar.
+        </p>
+        <p className="text-center">La Frase de seguridad es: <i className="fw-medium">{securityCheck.securityWord}</i></p>
+        <form onSubmit={(e) => sendForm(e)} className="border border-danger rounded-2 px-4 py-2 mx-auto">
+            <div className="form-floating my-3">
+                <input type="text" name="check1" id="check1" className="form-control fw-medium" placeholder="Frase de seguridad"
+                    onChange={(e) => {securityCheck.inputWord = e.target.value}}   />
+                <label htmlFor="check1">Frase de seguridad</label>
+            </div>
+
+            <div className="d-flex gap-2 flex-column-reverse flex-md-row justify-content-md-between mt-4 mb-3">
+                <button type="button" onClick={() => setCancelar("")} className="btn btn-primary">Cancelar</button>
+                <button type="submit" className="btn btn-danger">Eliminar Cuenta</button>
+            </div>
+        </form>
+    </div>
+    </>
+    )
+}
+
+function UsuarioSysAccount({loadUserInfo, setLoadUserInfo}) { // El objeto setLoadUserInfo contiene: {idUsuario: "", show: false}
+    const [accountConfig, setAccountConfig] = useState("");
+    const [userData, setUserData] = useState({
+        id_usuario: "",  nombre: '', apellido: '', fecha_nacimiento: '', dui: '', email: '',
+        idOcupacion: '', idCondicion: '', zona_residencia: ''
+    });
+
+    useEffect(() => {
+        let isMounted = true;
+        const loadData = async () => {
+            const resp = await AdminApp.userAccountData(loadUserInfo.idUsuario);            
+            if (isMounted && resp.success) {
+                setUserData(resp.usuarioAccountInfo);
+            }
+        };
+        loadData();
+        return () => { isMounted = false }
+    }, []);
+
+    const RenderAccountConfig = {
+        "USER_INFO_CONFIG": <FormPersonalInfoSys userData={userData} setCancelar={setAccountConfig} />,
+        "DELETE_ACCOUNT":<FormDeleteAccountSys userData={userData} setCancelar={setAccountConfig} />,
+    };
+
+    useEffect(() => {
+        if (accountConfig === "") { return }
+        const typeConfig = accountConfig.split("_")[0];
+        if ( !["HISTORIAL", "CITA"].some(type => type == typeConfig) ) { return } ;
+        let isMounted = true;
+        const loadAccountConfig = async () => {           
+            const resp = await getAccountConfig[accountConfig]();
+            if (!isMounted || !resp.success) { return }
+            if (typeConfig == "HISTORIAL") { setHistorialCitas(resp.historialCitas) }
+            else if (typeConfig == "CITA") { setCitaPendiente(resp.citaInfo) }
+        };
+        loadAccountConfig();
+        return () => {isMounted = false}
+    }, [accountConfig]);
+
+    return(
+    <>
+    <div className="container">
+        <div className="d-flex justify-content-between py-3">
+            <h5 className="fs-5 fw-normal">Información de Usuario</h5>
+            <button onClick={() => setLoadUserInfo("SEARCH_USER")} className="btn btn-outline-secondary me-2"><i className="bi bi-x-lg"></i></button>
+        </div>
+        <div className="border mx-2 mb-2">
+            <ul className="list-group list-group-flush">
+                <li className="list-group-item"><b>DUI: </b>{userData.dui}</li>
+                <li className="list-group-item"><b>Nombres: </b>{userData.nombre}</li>
+                <li className="list-group-item"><b>Apellidos: </b>{userData.apellido}</li>
+                <li className="list-group-item"><b>Fecha de nacimiento: </b>{userData.fecha_nacimiento.split('T')[0]}</li>
+                <li className="list-group-item"><b>Email: </b>{userData.email}</li>
+                <li className="list-group-item"><b>Ocupacion actual:</b> {userData.ocupacion}</li>
+                <li className="list-group-item"><b>Zona de residencia: </b>{userData.zona_residencia}</li>
+                <li className="list-group-item"><b>Condicion medica: </b>{userData.condicion}</li>
+            </ul>
+        </div>
+        <h5 className="fs-5 fw-normal py-2">Configuración de Cuenta</h5>
+        <div className="d-flex gap-3 mb-3 mx-2">
+            <button onClick={() => setAccountConfig("DELETE_ACCOUNT")} className="btn btn-outline-danger ms-0 me-auto">Eliminar</button>
+            <button onClick={() => setAccountConfig("USER_INFO_CONFIG")} className="btn btn-outline-primary">Act. infomarción</button>
+        </div>
+        <div id='div-historial-citas' className="row justify-content-center p-2">
+            <div className="col-md-11 border border-2 rounded-2 p-3">
+            {
+                RenderAccountConfig[accountConfig]
+            }
+            </div>
+        </div>
+    </div>
+    </>
+    )
+}
+
 export function SystemUserProfile({setRenderView}) {
-    const [searchUserSys, setSearchUserSys] = useState({typeSearch: "DUI", typeUser: "PERSONAL_MEDICO", textSearch: ""});
+    const [loadUserInfo, setLoadUserInfo] = useState({isOpen: false, show: false});
+    const [searchNormalUser, setSearchNormalUser] = useState({typeSearch: "DUI", typeUser: "PERSONAL_MEDICO", textSearch: ""});
     const [userList, setUserList] = useState([]);
-    const updateForm = (e) => setSearchUserSys(prev => ({...prev, [e.target.name]: e.target.value}));
+    const updateForm = (e) => setSearchNormalUser(prev => ({...prev, [e.target.name]: e.target.value}));
 
     const sendForm = async (e) => {
         e.preventDefault();
-        const resp = await AdminApp.searchUserSys(searchUserSys);
+        const resp = await AdminApp.searchUserSys(searchNormalUser);
         if (resp.success) {
             setUserList(resp.userList);
         } else {
@@ -77,6 +292,10 @@ export function SystemUserProfile({setRenderView}) {
     
     return(
     <>
+    {
+      loadUserInfo.show && <UsuarioSysAccount loadUserInfo={loadUserInfo} setLoadUserInfo={setLoadUserInfo} />
+    }
+    { !loadUserInfo.show &&
     <div className="container d-flex flex-column h-100">
 
         <div className="d-flex h-auto justify-content-between my-2">
@@ -105,7 +324,7 @@ export function SystemUserProfile({setRenderView}) {
             </div>
             <div className="col-sm-4">
                 <input name="textSearch" id="textSearch" type="text" className="form-control"
-                    value={searchUserSys.textSearch} onChange={updateForm}  />
+                    value={searchNormalUser.textSearch} onChange={updateForm}  />
             </div>
             <div className="col-sm-2">
                 <button type="submit" className="btn btn-primary"><i className="bi bi-search me-1" />Buscar</button>
@@ -137,70 +356,11 @@ export function SystemUserProfile({setRenderView}) {
                     </td>
                 </tr>
                 ))}
-                {userList.map((user, index) => (
-                <tr key={user.id}>
-                    <td>{index + 1}</td>
-                    <td>{user.dui}</td>
-                    <td>{user.nombre}</td>
-                    <td>{user.apellido}</td>
-                    <td>{user.email}</td>
-                    <td>
-                    <button onClick={() => setLoadUserInfo({idUsuario: user.id, show: true}) } type="button" className="btn btn-outline-primary">Info.</button>
-                    </td>
-                </tr>
-                ))}
-                {userList.map((user, index) => (
-                <tr key={user.id}>
-                    <td>{index + 1}</td>
-                    <td>{user.dui}</td>
-                    <td>{user.nombre}</td>
-                    <td>{user.apellido}</td>
-                    <td>{user.email}</td>
-                    <td>
-                    <button onClick={() => setLoadUserInfo({idUsuario: user.id, show: true}) } type="button" className="btn btn-outline-primary">Info.</button>
-                    </td>
-                </tr>
-                ))}
-                {userList.map((user, index) => (
-                <tr key={user.id}>
-                    <td>{index + 1}</td>
-                    <td>{user.dui}</td>
-                    <td>{user.nombre}</td>
-                    <td>{user.apellido}</td>
-                    <td>{user.email}</td>
-                    <td>
-                    <button onClick={() => setLoadUserInfo({idUsuario: user.id, show: true}) } type="button" className="btn btn-outline-primary">Info.</button>
-                    </td>
-                </tr>
-                ))}
-                {userList.map((user, index) => (
-                <tr key={user.id}>
-                    <td>{index + 1}</td>
-                    <td>{user.dui}</td>
-                    <td>{user.nombre}</td>
-                    <td>{user.apellido}</td>
-                    <td>{user.email}</td>
-                    <td>
-                    <button onClick={() => setLoadUserInfo({idUsuario: user.id, show: true}) } type="button" className="btn btn-outline-primary">Info.</button>
-                    </td>
-                </tr>
-                ))}
-                {userList.map((user, index) => (
-                <tr key={user.id}>
-                    <td>{index + 1}</td>
-                    <td>{user.dui}</td>
-                    <td>{user.nombre}</td>
-                    <td>{user.apellido}</td>
-                    <td>{user.email}</td>
-                    <td>
-                    <button onClick={() => setLoadUserInfo({idUsuario: user.id, show: true}) } type="button" className="btn btn-outline-primary">Info.</button>
-                    </td>
-                </tr>
-                ))}
                 </tbody>
             </table>
         </div>
     </div>
+    }
     </>
     )
 }
@@ -210,21 +370,22 @@ export function CreateSystemUser() {
     const [formUserSys, setFormUserSys] = useState({nombre: "", apellido: "", dui: "", fecha_nacimiento: "",
         email: "", pass1: "", pass2: "", zona_residencia: "", id_rol: "", ids_privilegios: []});
 
-    const updateForm = (e) => setFormUserSys(prev => ({[e.target.name]: e.target.value}));
+    const updateForm = (e) => setFormUserSys(prev => ({...prev, [e.target.name]: e.target.value}));
     const updateIdsPrivilegios = (e) => {
         const { checked, value } = e.target;
         setFormUserSys(prev => {
             return checked
-                ? {...prev, ids_privilegios: [...prev.ids_privilegios, value]}
-                : {...prev, ids_privilegios: prev.ids_privilegios.filter(id => id !== value)}
+                ? {...prev, ids_privilegios: [prev.ids_privilegios, value]}
+                : {...prev, ids_privilegios: prev?.ids_privilegios.filter(id => id !== value)}
         })
     };
 
     const sendForm = async (e) => {
         e.preventDefault();
+        console.log(formUserSys);
+        
 
     }
-    console.log(formUserSys.ids_privilegios);
     
     useEffect(() => {
         let isMounted = true;
@@ -334,6 +495,87 @@ export function CreateSystemUser() {
             </div>
         </form>
     </div>
+    </>
+    )
+}
+
+export function NormalUserProfile({setRenderView}) {
+    const [loadUserInfo, setLoadUserInfo] = useState({isOpen: false, show: false});
+    const [searchNormalUser, setSearchNormalUser] = useState({typeSearch: "DUI", textSearch: ""});
+    const [userList, setUserList] = useState([]);
+    const updateForm = (e) => setSearchNormalUser(prev => ({...prev, [e.target.name]: e.target.value}));
+
+    const sendForm = async (e) => {
+        e.preventDefault();
+        const resp = await AdminApp.searchNormalUser(searchNormalUser);
+        if (resp.success) {
+            setUserList(resp.userList);
+        } else {
+            setUserList([]);
+        }
+        console.log(resp);       
+    }
+    
+    return(
+    <>
+    {
+      loadUserInfo.show && <UsuarioNormalAccount loadUserInfo={loadUserInfo} setLoadUserInfo={setLoadUserInfo} />
+    }
+    { !loadUserInfo.show &&
+    <div className="container d-flex flex-column h-100">
+
+        <div className="d-flex h-auto justify-content-between my-2">
+            <span className="fs-5 fw-normal ">Usuarios/Pacientes</span>
+        </div>
+        
+        <form onSubmit={(e) => sendForm(e)} className="row m-0 align-items-end border-top border-bottom border-2 pt-2 pb-3">
+            <div className="col-auto">
+                <label htmlFor="typeSearch" className="form-label">Buscar por:</label>
+                <select onChange={updateForm} name="typeSearch" id="typeSearch" className="form-select">
+                    <option value="DUI">DUI</option>
+                    <option value="EMAIL">Email</option>
+                    <option value="FULLNAME">Nombres</option>
+                </select>
+            </div>
+            <div className="col-sm-4">
+                <input name="textSearch" id="textSearch" type="text" className="form-control"
+                    value={searchNormalUser.textSearch} onChange={updateForm}  />
+            </div>
+            <div className="col-sm-2">
+                <button type="submit" className="btn btn-primary"><i className="bi bi-search me-1" />Buscar</button>
+            </div>
+        </form>
+        
+        <div className="flex-grow-1 overflow-y-auto" style={{ minHeight: '0' }}>
+            <table className="table table-striped table-hover">
+                <thead className="sticky-top">
+                    <tr>
+                        <th>ID</th>
+                        <th>DUI</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Email</th>
+                        <th>Detalles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {userList.map((user, index) => (
+                <tr key={user.id}>
+                    <td>{index + 1}</td>
+                    <td>{user.dui}</td>
+                    <td>{user.nombre}</td>
+                    <td>{user.apellido}</td>
+                    <td>{user.email}</td>
+                    <td>
+                    <button onClick={() => setLoadUserInfo({idUsuario: user.id, show: true}) } type="button" className="btn btn-outline-primary">Info.</button>
+                    </td>
+                </tr>
+                ))}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    }
     </>
     )
 }

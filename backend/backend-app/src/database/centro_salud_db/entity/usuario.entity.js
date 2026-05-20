@@ -31,6 +31,17 @@ export default class UsuarioEntity {
 
     // metodos statics sin estados
 
+    static async deleteUserByEmail(conn, email) {
+        const [result] = await conn.execute(UsuarioQuery.deleteByEmail, [email]);
+        return result.affectedRows > 0;
+    }
+    
+    static async findUserByFullName(conn, fullname) {
+        console.log(values);
+        const [result] = await conn.execute(UsuarioQuery.findIdByFullName, fullname);
+        return result;
+    }
+    
     static async findUserByFullNameAndAge(conn, values) {
         console.log(values);
         const [result] = await conn.execute(UsuarioQuery.findIdByFullNameAndAge, values);
@@ -45,7 +56,7 @@ export default class UsuarioEntity {
     }
 
     static async findUserByDuiAndAge(conn, values) {
-        console.log(values);
+        console.log("54" + values);
         const [result] = await conn.execute(UsuarioQuery.findIdByDuiAndAge, values);
         return result;
     }
@@ -61,6 +72,7 @@ export default class UsuarioEntity {
     }
 
     static async findIdUsuarioByDui(conn, dui) {
+        console.log(dui);        
         const [result] = await conn.execute(UsuarioQuery.findIdByDui, [dui]);
         return result;
     }
