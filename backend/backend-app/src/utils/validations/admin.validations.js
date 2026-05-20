@@ -1,4 +1,23 @@
 
+export function formSearchNormalUser(form) {
+    const VALIDATION_RESULT = {success: false, message: ''};
+    const FILTER_SEARCH = ["DUI", "EMAIL", "FULLNAME"];
+    
+    if (!FILTER_SEARCH.some(fs => fs.includes(form.typeSearch))) {
+        VALIDATION_RESULT.message = 'El filtro de busqueda seleccionado no es valido.';
+        return VALIDATION_RESULT;
+    }
+
+    if (form.textSearch.length === 0) {
+        VALIDATION_RESULT.message = 'El campo de busqueda esta vacio.';
+        return VALIDATION_RESULT;
+    }
+
+    VALIDATION_RESULT.message = 'Validacion exitosa.';
+    VALIDATION_RESULT.success = true;
+    return VALIDATION_RESULT;
+}
+
 export function formSearchUserSys(form) {
     const VALIDATION_RESULT = {success: false, message: ''};
     const FILTER_SEARCH = ["DUI", "EMAIL", "FULLNAME"];

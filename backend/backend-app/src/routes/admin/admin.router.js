@@ -6,12 +6,43 @@ import * as adminCtrl from '../../controller/admin_ctrl/admin.controller.js'
 const adminRouter = express.Router();
 adminRouter.use(express.json());
 
+adminRouter.get("/usuario-sys-account-data/:idUsuario",
+    verifyAuthJWT,
+    adminCtrl.userSysAccountDataCtrl
+);
 
 adminRouter.post("/search-user-form",
     verifyAuthJWT,
     adminValidations.searchUserSysValidations,
     adminCtrl.searchUserSysCtrl    
 );
+
+adminRouter.post("/create-user-sys",
+    verifyAuthJWT,
+    adminCtrl.createUserSysAccountCtrl    
+);
+
+adminRouter.post("/search-normal-user",
+    verifyAuthJWT,
+    adminValidations.searchNormalUserValidations,
+    adminCtrl.searchNormalUserCtrl    
+);
+
+adminRouter.post("/delete-normal-user-account",
+    verifyAuthJWT,
+    adminCtrl.deleteNormalUserAccountCtrl    
+);
+
+adminRouter.post("/delete-user-system-account",
+    verifyAuthJWT,
+    adminCtrl.deleteUserSysAccountCtrl    
+);
+
+adminRouter.get("/get-info-table/:tableName",
+    // verifyAuthJWT,
+    adminCtrl.tableInfoCtrl    
+);
+
 
 
 
