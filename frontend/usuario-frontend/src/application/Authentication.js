@@ -8,12 +8,12 @@ export function userSignOutAccount() {
     localStorage.removeItem(TOKEN_NAME);
     localStorage.removeItem(ID_NAME);
     location.reload();
-}
+};
 
 export function saveNewUserAccountToken(TOKEN, ID) {
     localStorage.setItem(TOKEN_NAME, TOKEN);
     localStorage.setItem(ID_NAME, ID);
-}
+};
 
 export async function sendLoginUsuario(formLogin) {
     const resp = await loginUsuario(formLogin);

@@ -22,6 +22,15 @@ export async function searchUserRequest(form) {
     }
 }
 
+export async function updateUserAccountRequest(form) {
+    try {
+        const resp = await axios.post(`${API_PERSONAL_MED}/update-user-normal`, form, HTTP_HEADERS());
+        return resp.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
 export async function createUserAccountRequest(form) {
     try {
         const resp = await axios.post(`${API_PERSONAL_MED}/create-user-account`, form, HTTP_HEADERS());
@@ -33,7 +42,7 @@ export async function createUserAccountRequest(form) {
 
 export async function agendaCitaUsuarioRequest(form) {
     try {
-        const resp = await axios.post(`${API_PERSONAL_MED}/agendar-cita-user`, from, HTTP_HEADERS());
+        const resp = await axios.post(`${API_PERSONAL_MED}/agendar-cita-user`, form, HTTP_HEADERS());
         return resp.data;
     } catch (error) {
         return error.response.data;

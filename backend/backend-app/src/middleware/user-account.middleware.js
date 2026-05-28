@@ -34,7 +34,7 @@ export const userUpdateInfoAccountValidations = (req, res, next) => {
 export const agendarCitaUsuarioValidations = (req, res, next) => {
     try {        
         const validationResult = userAccountValidations.formAgendarCitaUsuario(req.body);
-
+console.log(validationResult)
         return validationResult.success
             ?  next()
             : res.status(400).json(validationResult);

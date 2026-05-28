@@ -1,0 +1,195 @@
+const OPTIONS_DATE = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true}
+const IMG_URL = `${window.location.origin}/logo.webp`;
+const CENTER_HEALT_NAME = "Centro de Salud de Santa Ana";
+const CENTER_HEALT_LOCATION = "6ª Avenida Sur, entre 23ª y 25ª Calle Poniente, Santa Ana, El Salvador.";
+const CENTER_HEALT_PHONE_NUMBERS = "Numeros de telefono: 2443-1225, 2255-8852";
+const CENTER_HEALT_PHONE_EMAILS = "Email: sgcm.contact@sgcm.Health";
+const WIDTH_STD = 816;
+const HEIGHT_STD = 1056;
+
+// ---------- Declaration the main variables ----------
+// Offset X and Y
+const HEADER_X = 140;
+const HEADER_Y = 50;
+const HEADER_HR_MY = HEADER_Y + 10;
+const DATA_X = 50;
+const DATA_Y = 120;
+const DATA_LINE_SPACE = 20;
+const SPACE_TEXT_2 = 15;
+
+// Set the typography configuration 
+const FONT_MAIN_HEADER = "28px Verdana, sans-serif";
+const FONT_B1 = "bold 20px Verdana, sans-serif";
+const FONT_1 = "20px Verdana, sans-serif";
+const FONT_B2 = "bold 17px Verdana, sans-serif";
+const FONT_2 = "17px Verdana, sans-serif";
+
+// Set the margins  and dimensions to Logo Canvas 
+const LOGO_MX = 40;
+const LOGO_Y = 20;
+const LOGO_WIDTH = 50;
+const LOGO_HEIGHT = 50;
+
+export async function ImageCitaAgendadaSave(userData, citaInfo) {
+
+    // create canvas context to generate Appointment downloadable image
+    const canvas = document.createElement("canvas");
+    
+    //Set dimensions to standard paper A4
+    canvas.width = WIDTH_STD;
+    canvas.height = HEIGHT_STD;
+
+    // Create canvas context after dimensions configuration
+    const ctx = canvas.getContext("2d");
+    
+    // ---------- Initialize the main variables ----------
+    const HEADER_SIZE = ctx.measureText(CENTER_HEALT_NAME).width;
+    const LOGO_X = HEADER_X + HEADER_SIZE + LOGO_MX;
+    let TITLE_WIDTH = 0;
+    let MOTIVE_WIDTH = 0;
+    let USUARIO_WIDTH = 0;
+    let ID_CITA_WIDTH = 0;
+    let ESPECIALIDAD_WIDTH = 0;
+    let TIPO_CITA_WIDTH = 0;
+    let FECHA_HORA_ATENCIO_WIDTH = 0;
+    let UBICATION_WIDTH = 0;
+    let CONSIDERATIONS_WIDTH = 0;
+
+    // Set background white, after set font color black
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#000000'; 
+
+    // ---------- Secction Main Header ----------
+    ctx.font = FONT_MAIN_HEADER;
+    ctx.fillText(CENTER_HEALT_NAME, HEADER_X, HEADER_Y);
+    
+    // Render horizontal decorative line divider under the Main Header
+    ctx.beginPath();
+    ctx.moveTo(HEADER_X, HEADER_HR_MY);
+    ctx.lineTo(HEADER_X + HEADER_SIZE, HEADER_HR_MY);
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+        
+    // Fetch the Logo from public directory    
+    await new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = IMG_URL;
+        
+        // Render the resolved image onto canvas
+        img.onload = () => {
+            ctx.drawImage(img, LOGO_X, LOGO_Y, LOGO_WIDTH, LOGO_HEIGHT);
+            resolve();
+        };
+    });
+
+    // ---------- Secction appintment data ----------
+    // Title
+    ctx.font = FONT_B1;
+    ctx.fillText("Titulo: ", DATA_X, DATA_Y);
+    TITLE_WIDTH = ctx.measureText("Titulo").width;
+    ctx.font = FONT_1;
+    ctx.fillText(`${citaInfo.titulo}`, DATA_X + TITLE_WIDTH + SPACE_TEXT_2, DATA_Y);
+
+    // Motive
+    ctx.font = FONT_B1;
+    ctx.fillText("Motivo: ", DATA_X, DATA_Y + DATA_LINE_SPACE * 2);
+    MOTIVE_WIDTH = ctx.measureText("Motivo").width;
+    ctx.font = FONT_1;
+    ctx.fillText(`${citaInfo.motivo}`,
+    DATA_X + MOTIVE_WIDTH + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 2);
+
+    // User or Patient
+    ctx.font = FONT_B1;
+    ctx.fillText("Paciente:", DATA_X, DATA_Y + DATA_LINE_SPACE * 4);
+    USUARIO_WIDTH = ctx.measureText("Paciente:").width;
+    ctx.font = FONT_1;
+    ctx.fillText(`${userData.nombre} ${userData.apellido}`, DATA_X + USUARIO_WIDTH + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 4);
+
+    // DateTime Appointment
+    ctx.font = FONT_B1;
+    ctx.fillText("Fecha hora de atencion:", DATA_X, DATA_Y + DATA_LINE_SPACE * 6);
+    FECHA_HORA_ATENCIO_WIDTH = ctx.measureText("Fecha hora de atencion:").width;
+    ctx.font = FONT_1;
+    ctx.fillText(`${new Date(Date.parse(citaInfo?.fecha_hora_atencion))?.toLocaleString(undefined, OPTIONS_DATE)}`,
+    DATA_X + FECHA_HORA_ATENCIO_WIDTH + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 6);
+
+    // Medical specialty
+    ctx.font = FONT_B1;
+    ctx.fillText("Especialidad: ", DATA_X, DATA_Y + DATA_LINE_SPACE * 8);
+    ESPECIALIDAD_WIDTH = ctx.measureText("Especialidad:").width;
+    ctx.font = FONT_1;
+    ctx.fillText(`${citaInfo.especialidad}`, DATA_X + ESPECIALIDAD_WIDTH + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 8);
+
+    // Appointment type
+    ctx.font = FONT_B1;
+    ctx.fillText("Tipo de cita: ", DATA_X, DATA_Y + DATA_LINE_SPACE * 10);
+    TIPO_CITA_WIDTH = ctx.measureText("Tipo de cita:").width;
+    ctx.font = FONT_1;
+    ctx.fillText(`${citaInfo.tipo_cita}`, DATA_X + TIPO_CITA_WIDTH + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 10);
+
+    // Appointment ID
+    ctx.font = FONT_B1;
+    ctx.fillText("ID Cita: ", DATA_X, DATA_Y + DATA_LINE_SPACE * 12);
+    ID_CITA_WIDTH = ctx.measureText("ID Cita:").width;
+    ctx.font = FONT_1;
+    ctx.fillText(`${citaInfo.id}`, DATA_X + ID_CITA_WIDTH + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 12);
+
+    // Location of Health Center
+    ctx.font = FONT_B2;
+    ctx.fillText("Ubicacion del centro de salud:", DATA_X, DATA_Y + DATA_LINE_SPACE * 14);
+    ctx.font = FONT_2;
+    ctx.fillText(`• ${CENTER_HEALT_LOCATION}`, DATA_X + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 15.2);
+    
+    // Important Guidelines
+    ctx.font = FONT_B2;
+    ctx.fillText("Consideraciones del Usuario: ", DATA_X, DATA_Y + DATA_LINE_SPACE * 17);
+
+    ctx.font = FONT_2;
+    ctx.fillText("• La Confirmacion de la Cita es maximo 5 Horas antes o el dia previo a la Cita.", DATA_X + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 18.2);
+    ctx.fillText("• El Tiempo maximo de espero por paciente Sin Confirmacion es de 10 min.", DATA_X + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 19.4);
+    ctx.fillText("• El Tiempo maximo de espero por paciente con Cita Confirmada es de 20 min.", DATA_X + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 20.6);
+
+    // Health Center contact info 
+    ctx.font = FONT_B2;
+    ctx.fillText("Conctactos del Centro de Salud: ", DATA_X, DATA_Y + DATA_LINE_SPACE * 22.5);
+    ctx.font = FONT_2;
+    ctx.fillText(`• ${CENTER_HEALT_PHONE_NUMBERS}`, DATA_X + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 23.7);
+    ctx.fillText(`• ${CENTER_HEALT_PHONE_EMAILS}`, DATA_X + SPACE_TEXT_2, DATA_Y + DATA_LINE_SPACE * 25);
+
+
+    // Public and Emergency contact channels
+    ctx.font = 'bold 16px Arial'
+    ctx.fillText("Numeros de Emergicia del el salvador: ", DATA_X, 660);
+
+    ctx.font = '16px Arial'
+    ctx.fillText("• Sistema de Emergencias Médicas (SEM): 132.", 220, 685);
+    ctx.fillText("• Comandos de Salvamento: 2133-0000.", 220, 710);
+    ctx.fillText("• Cuerpo de Bomberos de El Salvador: 913.", 220, 735);
+    ctx.fillText("• Dirección General de Protección Civil: 2201-2424.", 220, 760);
+    ctx.fillText("• Policía Nacional Civil (PNC): 911.", 220, 785);
+
+
+    canvas.toBlob((blob) => {
+
+        // Notify the user if the Blob fails
+        if (!blob) {
+            console.error("Error al generar el archivo binario de la imagen.");
+            return null;
+        }
+        
+        const blobUrl = URL.createObjectURL(blob);
+        const enlace = document.createElement('a');
+        enlace.download = 'ticket-cita-medica.png'
+        enlace.href = blobUrl;
+        
+        document.body.appendChild(enlace);
+        enlace.click();
+        
+        // clear the memory immediately
+        document.body.removeChild(enlace);
+        URL.revokeObjectURL(blobUrl);
+        console.log("Descarga completada!");        
+    }, 'image/png');
+};

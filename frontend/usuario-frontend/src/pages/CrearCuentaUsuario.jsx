@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
+import App from "../application/app.js"; 
+import { saveNewUserAccountToken } from "../application/Authentication.js";
 import { createAccount } from "../api/usuario-account.api.js";
 import { ToastAlert, ToastSuccess } from "../componentes/Notifications.jsx";
-import App from "../application/app.js";
-import { saveNewUserAccountToken } from "../application/Authentication.js";
 
 export function CrearCuentaUsuario() {
     const navigate = useNavigate();
@@ -16,22 +16,20 @@ export function CrearCuentaUsuario() {
     const [dataCrearCuenta, setDataCrearCuenta] = useState({ocupaciones: [], condiciones: []})
     
     useEffect(() => {
+        let isMounted = true;
         const loadData = async () => {
             const data = await App.loadDataCrearCuenta();
-            if (data.success) {
-                setDataCrearCuenta(({
-                    ocupaciones: data.ocupacionesList, condiciones: data.condicionesList
-                }));
+            if (isMounted && data.success) {
+                setDataCrearCuenta({ocupaciones: data.ocupacionesList, condiciones: data.condicionesList});
             }
         };
         loadData();
+        return () => {isMounted = false}
     }, []);
 
     const delay = (ms) => new Promise(solve => setTimeout(solve, ms));
     
-    const updateForm = (e) => {
-        setFormAddUsuario(prev => ({...prev, [e.target.name]: e.target.value}));
-    };
+    const updateForm = (e) => setFormAddUsuario(prev => ({...prev, [e.target.name]: e.target.value}));
 
     const sendForm = async (event) => {
         event.preventDefault();
@@ -55,62 +53,53 @@ export function CrearCuentaUsuario() {
     { alertSuccess.show && <ToastSuccess message={alertSuccess.message} /> }
 
     <div className="d-flex flex-column align-items-center m-auto w-100">
-
         <div className="text-center mb-2">
             <h5 className="fs-5 mb-0">Formulario de registro para nuevo usuario</h5>
             <i className="bi bi-person-plus-fill fs-2 mt-0"></i>
         </div>
 
         <form onSubmit={(e) => sendForm(e)} className="d-flex flex-column gap-3 border border-2 rounded-2 p-4" >
-
             <h5 className="fs-5">Datos de registro</h5>
             <div className="d-flex flex-wrap gap-2 gap-md-4">
                 <div>
                     <label htmlFor="nombre" className="form-label">Nombres</label>
                     <input type="text" id="nombre" name="nombre" className="form-control" required 
-                        value={formAddUsuario.nombre} onChange={updateForm}
-                    />
+                        value={formAddUsuario.nombre} onChange={updateForm} />
                 </div>
 
                 <div>
                     <label htmlFor="apellido" className="form-label">Apelllidos</label>
                     <input type="text" id="apellido" name="apellido" className="form-control" required 
-                        value={formAddUsuario.apellido} onChange={updateForm}
-                    />
+                        value={formAddUsuario.apellido} onChange={updateForm} />
                 </div>
 
                 <div>
                     <label htmlFor="dui" className="form-label">DUI</label>
                     <input type="text" id="dui" name="dui" className="form-control" required pattern="^\d{8}-\d{1}$"
-                        value={formAddUsuario.dui} onChange={updateForm}
-                    />
+                        value={formAddUsuario.dui} onChange={updateForm} />
                 </div>
 
                 <div>
                     <label htmlFor="fechaNacimiento" className="form-label">Fecha de Nacimiento</label>
                     <input type="date" id="fechaNacimiento" name="fechaNacimiento" className="form-control" required 
-                        value={formAddUsuario.fechaNacimiento} onChange={updateForm}
-                    />
+                        value={formAddUsuario.fechaNacimiento} onChange={updateForm} />
                 </div>
             </div>
             <div className="d-flex flex-wrap gap-2 gap-md-4">
                 <div>
                     <label htmlFor="email" className="form-label">Email</label>
                     <input type="email" id="email" name="email" className="form-control w-100" required 
-                        value={formAddUsuario.email} onChange={updateForm}
-                    />
+                        value={formAddUsuario.email} onChange={updateForm} />
                 </div>
                 <div>
                     <label htmlFor="pass1" className="form-label">Contrasena</label>
                     <input type="text" id="pass1" name="pass1" className="form-control" required 
-                        value={formAddUsuario.pass1} onChange={updateForm}
-                    />
+                        value={formAddUsuario.pass1} onChange={updateForm} />
                 </div>
                 <div>
                     <label htmlFor="pass2" className="form-label">Confirmar contrasena</label>
                     <input type="text" id="pass2" name="pass2" className="form-control" required 
-                        value={formAddUsuario.pass2} onChange={updateForm}
-                        />
+                        value={formAddUsuario.pass2} onChange={updateForm} />
                 </div>
             </div>
      
@@ -149,7 +138,6 @@ export function CrearCuentaUsuario() {
                 <a href="/login" className="m-auto m-md-auto ms-md-0">Ya tengo una cuenta</a>
                 <button type="submit" className="btn btn-primary flex-grow-sm-1 flex-shrink-md-1">Crear Cuenta</button>
             </div>
-            
         </form>
     </div>
     </>

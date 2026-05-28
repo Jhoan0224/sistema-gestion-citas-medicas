@@ -7,17 +7,36 @@ export class SystemUserEntity {
         return result.affectedRows > 0;
     }
 
+    static async updateUserSysByEmail(conn, values) {
+        const [result] = await conn.execute(SystemUserSecQuery.updateUserSysAccount, values);
+        return result.affectedRows > 0;
+    }
+
+    static async findUserSysByEmail(conn, email) {
+        const [result] = await conn.execute(SystemUserSecQuery.userSysByEmail, [email]);
+        return result.length === 0;
+    }
+
+    static async findUserSysByDui(conn, email) {
+        const [result] = await conn.execute(SystemUserSecQuery.userSysByEmail, [email]);
+        return result.length === 0;
+    }
+
     static async createUserSysAccount(conn, values) {
         const [result] = await conn.execute(SystemUserSecQuery.createUserSysAccount, values);        
-        return result.affectedRows ?? null;
+        console.log(result);
+        
+        return result.affectedRows > 0 ? result : null;
     }
     static async createPrivilegioUserSysAccount(conn, values) {
-        const [result] = await conn.execute(SystemUserSecQuery.privilgiosUserSytem, values);        
-        return result.affectedRows ?? null;
+        console.log(values);
+        
+        const [result] = await conn.query(SystemUserSecQuery.privilgiosUserSytem, [values]);        
+        return result.affectedRows > 0 ? result : null;
     }
     static async createRolUserSysAccount(conn, values) {
         const [result] = await conn.execute(SystemUserSecQuery.rolUserSytem, values);        
-        return result.affectedRows ?? null;
+        return result.affectedRows > 0 ? result : null;
     }
 
 

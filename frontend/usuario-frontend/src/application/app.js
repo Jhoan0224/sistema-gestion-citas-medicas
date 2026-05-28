@@ -16,8 +16,8 @@ export default class App {
             case 'PERDIDAS':
                 return await getHistoriaCitasInasistidasUsuario();
                 break;
-        }
-    }
+        };
+    };
 
     static async loadDataCrearCuenta() {
         const RESP = {success: false, ocupacionesList: [], condicionesList: []};
@@ -31,7 +31,7 @@ export default class App {
                 RESP.success = true;
         }
         return RESP;
-    }
+    };
 
     static async loadDataUpdateCuenta() {
         const RESP = {success: false, usuarioInfo: {}, ocupacionesList: [], condicionesList: []};
@@ -46,7 +46,7 @@ export default class App {
                 RESP.success = true;
         }
         return RESP;
-    }
+    };
 
     static async loadDataAgendarCita() {
         const RESP = {success: false, signosList: [], sintomasList: []};
@@ -60,12 +60,11 @@ export default class App {
                 RESP.success = true;
         }
         return RESP;
-    }
+    };
     
     static async loadUserAccountData() {
 
         return await getUserAccountData();
-    }
+    };
 
-}
-
+};

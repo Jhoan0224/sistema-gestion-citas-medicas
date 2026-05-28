@@ -4,7 +4,7 @@ export default class CitaQuery {
 
     static createCita = `
     INSERT INTO
-        cita(nombre, motivo, fecha_atencion, id_estado_cita, id_usuario)
+        cita(nombre, motivo, fecha_hora_atencion, id_estado_cita, id_usuario)
     VALUES
         (?, ?, ?, ?, ?, )
     `;
@@ -14,6 +14,15 @@ export default class CitaQuery {
         SET id_estado_cita = ?
     WHERE
         cita.id = ?
+    `;
+
+    static lastAppointmentDate = `
+    SELECT ct.id, ct.fecha_hora_atencion 
+    FROM cita ct
+    WHERE
+        TIME(ct.fecha_hora_atencion) >= ? AND TIME(ct.fecha_hora_atencion) <= ?
+    ORDER BY ct.fecha_hora_atencion DESC
+    LIMIT 1
     `;
 
     static agendaCitasHoy = `
@@ -43,7 +52,9 @@ export default class CitaQuery {
     JOIN
         estado_cita std_ct on std_ct.id = ct.id_estado_cita
     WHERE
-        ct.id_estado_cita = ${EstadoCita.ESTADO.AGENDADA} OR ${EstadoCita.ESTADO.CONFIRMADA}
+        ( ct.id_estado_cita = ${EstadoCita.ESTADO.AGENDADA}
+          OR ${EstadoCita.ESTADO.CONFIRMADA}
+        )
         AND ct.id_usuario = ?
     `;
 
@@ -90,23 +101,24 @@ export default class CitaQuery {
     /* Agendar Cita Medica SQL Transaccion */
     static agendarCitaByUserId = `
     INSERT INTO
-        cita(titulo, motivo, fecha_hora_atencion, id_tipo_atencion_medica, id_espcialidad, id_estado_cita, id_usuario)
+        cita(titulo, motivo, fecha_hora_atencion, id_espcialidad, id_estado_cita, id_usuario)
     VALUES
-        (?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?)
     `;
 
+    // ejec
     static citaSignosByCitaID = `
     INSERT INTO
         cita_signos(id_cita, id_signo)
     VALUES
-        (?, ?)
+        ?
     `;
 
     static citaSintomasByCitaID = `
     INSERT INTO
-        cita_signos(id_cita, id_signo)
+        cita_sintomas(id_cita, id_sintoma)
     VALUES
-        (?, ?)
+        ?
     `;
     
 

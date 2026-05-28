@@ -19,6 +19,7 @@ adminRouter.post("/search-user-form",
 
 adminRouter.post("/create-user-sys",
     verifyAuthJWT,
+    adminValidations.createUserSysAccountValidations,
     adminCtrl.createUserSysAccountCtrl    
 );
 
@@ -36,6 +37,12 @@ adminRouter.post("/delete-normal-user-account",
 adminRouter.post("/delete-user-system-account",
     verifyAuthJWT,
     adminCtrl.deleteUserSysAccountCtrl    
+);
+
+adminRouter.post("/update-user-account",
+    verifyAuthJWT,
+    adminValidations.updateUserAccountValidations,
+    adminCtrl.updateUserAccountCtrl
 );
 
 adminRouter.get("/get-info-table/:tableName",

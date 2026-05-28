@@ -10,17 +10,15 @@ import { TableDbEntity } from "../../database/centro_salud_db/query/tables-db.en
 
 export async function deletelUserSysAccountSvc(form) {
     let conn = await mysqlConnPool.getConnection();
-    const PROCESS_RESULT = {success: false, message: "No se pudo Eliminar el usuario"};
+    const PROCESS_RESULT = {success: false, message: "No se pudo Eliminar el Usuario del Sistema"};
     try {
+        console.log("ELIMINANDO");
         console.log(form);
-        
-        const deletedAccount = await SystemUserEntity.deleteUserSysByEmail(conn, form.email)
-        console.log(deletedAccount);
-        
+        const deletedAccount = await SystemUserEntity.deleteUserSysByEmail(conn, form.email);       
         if (!deletedAccount) { return PROCESS_RESULT }
                 
         PROCESS_RESULT.success = true;
-        PROCESS_RESULT.message = "Usuario eliminado correctamente";
+        PROCESS_RESULT.message = "Usuario del Sistema ha eliminado correctamente";
         return PROCESS_RESULT;
 
     } catch (error) {
@@ -146,18 +144,45 @@ export async function userSysAccountDataSvc(idUsuario) {
 
 export async function createUserSysAccountSvc(form) {
     let conn = await mysqlConnPool.getConnection();
-    const PROCESS_RESULT = {success: false, message: "No se ha encontrado informacion", usuarioAccountInfo: {}};
+    const PROCESS_RESULT = {success: false, message: "No se pudo crear el USUARIO"};
     try {
-        const userInfo = await SystemUserEntity.accountInfoById(conn, idUsuario);
-        if (!userInfo) {
-            return PROCESS_RESULT;
-        }
+        const emailIsAvaliable = await SystemUserEntity.findUserSysByEmail(conn, form.email); 
+        console.log(form);
+        
+        if (!emailIsAvaliable) {return PROCESS_RESULT}
 
+        conn.beginTransaction();
+
+        const pass_hash = await PasswordSecurity.getPasswordHash(form.pass1);
+        const valuesUser = [form.dui, form.nombre, form.apellido, form.email,pass_hash, form.fecha_nacimiento, form.zona_residencia];
+        console.log(valuesUser);
+        
+        const userCreated = await SystemUserEntity.createUserSysAccount(conn, valuesUser);
+        console.log("USER  " + userCreated);
+
+
+        if (userCreated === null) { conn.rollback(); return PROCESS_RESULT; }
+
+        const rolesAdded = await SystemUserEntity.createRolUserSysAccount(conn, [userCreated.insertId, Number(form.id_rol)]);
+        console.log( [userCreated.insertId, form.id_rol]);
+        console.log("ROLES: " + rolesAdded);
+        if (rolesAdded === null) { conn.rollback(); return PROCESS_RESULT }
+console.log("OK 2");
+
+        const idsPrivilegios = form.ids_privilegios.map(id => [userCreated.insertId, Number(id)]);
+        console.log(idsPrivilegios);
+        
+const privilegioAdded = await SystemUserEntity.createPrivilegioUserSysAccount(conn, idsPrivilegios);
+console.log("OK 3");
+console.log("priv " + privilegioAdded);
+if (idsPrivilegios == null) { conn.rollback(); return PROCESS_RESULT }
+
+console.log("OK 4");
+        conn.commit();
         PROCESS_RESULT.success = true;
         PROCESS_RESULT.message = "Informacion cuenta de usuario."
-        PROCESS_RESULT.usuarioAccountInfo = userInfo;
-
         return PROCESS_RESULT;
+
     } catch (error) {
         throw error;
     } finally { conn?.release(); }

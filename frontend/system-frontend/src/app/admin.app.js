@@ -19,8 +19,18 @@ export class AdminApp {
         return data;
     }
 
+    static async updateUserSysAccount(form) {
+        const data = await ApiAdmin.updateUserSysAccountRequest(form);
+        return data;
+    }
+
     static async disableUserSysAccount(form) {
         const data = await ApiAdmin.disableUserSysAccountRequest(form);
+        return data;
+    }
+
+    static async createUserSysAccount(form) {
+        const data = await ApiAdmin.createUserSysAccountRequest(form);
         return data;
     }
 
@@ -74,7 +84,6 @@ export class AdminApp {
         const data = await ApiAdmin.getTableEspecialidad(tableName);
         return data;
     }
-
 
     // tables for admin
     static async tableRoles(tableName) {

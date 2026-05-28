@@ -1,5 +1,5 @@
 import { mysqlConnPool } from "../../config/databases/mysql.js"
-import { SignosEntity, SintomasEntity } from "../../database/centro_salud_db/entity/signos-sintomas.entity.js";
+import { SignosEntity, SintomasEntity } from "../../database/centro_salud_db/entity/especialidad-signos-sintomas.entity.js";
 import DepartamentoEntity from '../../database/centro_salud_db/entity/departamento.entity.js'
 import CondicionEntity from '../../database/centro_salud_db/entity/condiciones.entity.js'
 import OcupacionEntity from '../../database/centro_salud_db/entity/ocupacion.entity.js'

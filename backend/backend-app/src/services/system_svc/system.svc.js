@@ -1,10 +1,32 @@
 import { mysqlConnPool } from "../../config/databases/mysql.js"
-import { SignosEntity, SintomasEntity } from "../../database/centro_salud_db/entity/signos-sintomas.entity.js";
+import { SignosEntity, SintomasEntity } from "../../database/centro_salud_db/entity/especialidad-signos-sintomas.entity.js";
 import { RolesEntity, PrivilegiosEntity } from "../../database/centro_salud_db/entity/roles-permisos.entity.js";
 import CondicionEntity from '../../database/centro_salud_db/entity/condiciones.entity.js'
 import OcupacionEntity from '../../database/centro_salud_db/entity/ocupacion.entity.js'
 import { SystemUserEntity } from "../../database/centro_salud_db/entity/system-user.entity.js";
 
+export const updateUserSysAccount = async (form) => {
+    const PROCESS_RESULT = {success: false, message: 'Ocurrio un error, la cuenta no se actualizo, intentelo de nuevo más tarde.'}
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        const values = [form.nombre, form.apellido, form.fecha_nacimiento, form.zona_residencia, form.email];
+        console.log(values);
+        
+        const result = SystemUserEntity.updateUserSysByEmail(conn, values);
+        
+        if (result) {
+            PROCESS_RESULT.success = true;
+            PROCESS_RESULT.message = "La cuenta del usuario se actualizo correctamente.";
+            return PROCESS_RESULT;
+        }
+        
+        return PROCESS_RESULT;
+    } catch (error) {
+        throw error;
+    } finally {
+        conn?.release();
+    }
+};
 
 export async function userCurrentProfileSvc(id) {
     const PROCESS_RESULT = {success: false, message: "", userProfile: {}};

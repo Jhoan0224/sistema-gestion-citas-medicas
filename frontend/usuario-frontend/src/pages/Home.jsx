@@ -48,7 +48,7 @@ function NavbarHome() {
         </div>
         </nav>
     )
-}
+};
 
 function FooterHome() {
 
@@ -58,4 +58,4 @@ function FooterHome() {
 
     </footer>
     )
-}
+};

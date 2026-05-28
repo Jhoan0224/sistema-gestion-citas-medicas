@@ -1,4 +1,3 @@
-
 export function LoadingSpinner() {
 
     return(
@@ -9,4 +8,4 @@ export function LoadingSpinner() {
         <h5 className="fs-5">Cargando...</h5>
     </div>
     )
-}
+};

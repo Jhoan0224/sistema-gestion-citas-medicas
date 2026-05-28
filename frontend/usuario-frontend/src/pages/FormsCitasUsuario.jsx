@@ -1,51 +1,85 @@
 import { useEffect, useState } from "react"
-import App from "../application/app.js";
 import { useNavigate } from "react-router-dom";
+import App from "../application/app.js";
+import { ID_USER } from "../api/usuario-api.js";
+import { agendarCitaUserAccount } from "../api/usuario-account.api.js";
+import { ToastAlert, ToastDanger, ToastSuccess } from "../componentes/Notifications.jsx";
 
 
 export function AgendarCitaUsuario() {
     const navigate = useNavigate();
+    const [showAlert, setShowAlert] = useState({show: true, type: "", message: ""});
     const [formAgendarCita, setFormAgendarCita] = useState({
-        titulo: '', motivo: '', tipoAtencion: '', horarioPreferido: '', signosIds: [], sintomasIds: []
+        id_usuario: "", titulo: '', motivo: '', tipoAtencion: '', horarioPreferido: '', signosIds: [], sintomasIds: []
     });
     const [listSignosSintomas, setListSignosSintomas] = useState({signos: [], sintomas: [], departamentos: [], ocupaciones: [], condiciones: []});
 
     useEffect(() => {
+        let isMounted = true;
         const loadData = async () => {
             const data = await App.loadDataAgendarCita();            
-            if (data.success) {
+            if (isMounted && data.success) {
                 setListSignosSintomas(({signos: data.signosList, sintomas: data.sintomasList}));
             }
         };
         loadData();
+        return () => {isMounted = false}
     }, []);
-    
-    const updateForm = (e) => {
-        setFormAgendarCita(prev => ({...prev, [e.target.name]: e.target.value}));
-    };
+
+    useEffect(() => {
+        let isMounted = true;
+        if (isMounted) {
+            const idUsuario = ID_USER();
+            setFormAgendarCita(prev => ({...prev, id_usuario: idUsuario}));
+        }
+        return () => {isMounted = false}
+    }, []);
+
+    const updateForm = (e) => setFormAgendarCita(prev => ({...prev, [e.target.name]: e.target.value}));
 
     const updateFormIds = (e) => {
         const {name, id, checked } = e.target;      
         setFormAgendarCita(prev => {
             const listActual = prev[name] || [];
-            console.log(listActual);
             
             return {
                 ...prev,
                 [name]: checked
                 ? [...listActual, id.split('-')[1]]
                 : listActual.filter(ids => ids !== id.split('-')[1])
-            };
+            }
         });
-        console.log(formAgendarCita);
     };
+
+    useEffect(() => {
+        if (showAlert.type !== "SUCCESS") {return}
+        let isMounted = true;
+        if (isMounted) {
+            setTimeout(() => navigate("/user/home"), 1800);
+        }
+        return () => {isMounted = false}
+    }, [showAlert.type]);
 
     const sendForm = async (e) => {
         e.preventDefault();
         console.log(formAgendarCita);
+        setShowAlert({show: false, type: "", message: ""});
+        const resp = await agendarCitaUserAccount(formAgendarCita);
+        resp.success
+            ? setShowAlert({show: true, type: "SUCCESS", message: resp.message})
+            : setShowAlert({show: true, type: "ALERT", message: resp.message}); 
+        
     }
     return(
     <>
+    { showAlert.show === true && showAlert.type == "SUCCESS"
+        ? <ToastSuccess message={showAlert.message} />
+        : null
+    }
+    { showAlert.show === true && showAlert.type == "ALERT"
+        ? <ToastAlert message={showAlert.message} />
+        : null
+    }
     <div className="d-flex flex-column align-items-center p-3">
         <div className="d-flex justify-content-between w-75 py-2">
             <h5 className="fs-5">Formulario de Agenda de Cita Médica</h5>
@@ -88,7 +122,6 @@ export function AgendarCitaUsuario() {
                         <label htmlFor="controlMedico" className="form-check-label">Control Médico</label>
                     </div>
                 </div>
-
             </div>
 
             <div className="col-md-6">
@@ -180,5 +213,4 @@ export function AgendarCitaUsuario() {
     </div>
     </>
     )
-}
-
+};

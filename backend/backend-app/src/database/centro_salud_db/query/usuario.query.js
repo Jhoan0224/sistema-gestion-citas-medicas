@@ -101,6 +101,14 @@ export default class UsuarioQuery {
     WHERE
         user.id = ?
     `;
+
+    static updateUsuarioAccountByEmail = `
+    UPDATE usuario user
+        SET user.nombre = ?, user.apellido = ?, user.fecha_nacimiento = ?,
+        user.zona_residencia = ?, user.id_condicio = ?n, user.id_ocupacion = ?
+    WHERE
+        user.email = ?
+    `;
 }
 
 export class UsuarioSecurityQuery {
@@ -140,5 +148,9 @@ export class UsuarioSecurityQuery {
 
     static deleteAccountByEmail = `
     DELETE FROM usuario WHERE email = ?
+    `;
+
+    static deleteCitaByUserId = `
+    DELETE FROM cita ct WHERE ct.id_usuario = ?
     `;
 }

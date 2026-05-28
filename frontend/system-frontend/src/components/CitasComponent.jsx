@@ -38,10 +38,10 @@ export function AgendarCita({setRenderView}) {
     const sendForm = async (e) => {
       e.preventDefault();      
       if (formAgendarCita.dui !== formAgendarCita.dui_usuario) {
-        alert("no")
+        alert("El DUI no coincide")
       }
-
-    }
+      const resp = await PersonalMedApp.agendarCitaUsuario(formAgendarCita);
+    };
 
     return(
       <>

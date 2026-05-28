@@ -21,6 +21,12 @@ export default class CitaEntity {
 
 
     // metodos staticos
+
+    static async getLastAppointmentDate(conn, values) {
+        const [rows] = await conn.execute(CitaQuery.lastAppointmentDate, values);
+        return rows.length > 0 ? rows[0] : null;
+    }
+
     static async getAgendaCitasHoy(conn, currentDate, tomorrowDate) {
         const [result] = await conn.execute(CitaQuery.agendaCitasHoy, [currentDate, tomorrowDate]);
         return result;
@@ -28,7 +34,7 @@ export default class CitaEntity {
 
     static async citaPendienteByUsuarioId(conn, idUsuario) {
         const [result] = await conn.execute(CitaQuery.citaPendienteUsuarioById, [idUsuario]);
-        return result[0] ?? null;
+        return result.length > 0 ? result : false;
     }
 
     static async historialCitasAsistidasByUsuarioId(conn, idUsuario) {
@@ -53,13 +59,13 @@ export default class CitaEntity {
         return result;
     }
 
-    static async citaSintomasByCitaId(conn, valuesMatriz) {
-        const [result] = await conn.execute(CitaQuery.historialCitasPerdidasByUserId, valuesMatriz);       
+    static async addCitaSintomasByCitaId(conn, valuesMatriz) {
+        const [result] = await conn.query(CitaQuery.citaSintomasByCitaID, [valuesMatriz]);       
         return result;
     }
 
-    static async citaSignosByCitaId(conn, valuesMatriz) {
-        const [result] = await conn.execute(CitaQuery.historialCitasPerdidasByUserId, valuesMatriz);       
+    static async addCitaSignosByCitaId(conn, valuesMatriz) {
+        const [result] = await conn.query(CitaQuery.citaSignosByCitaID, [valuesMatriz]);       
         return result;
     }
 }

@@ -1,19 +1,11 @@
-
 export function HistorialCitas({listaCitas, citaMessage}) {
     if (listaCitas.length === 0) {
-        return(
-        <>
-        <h1 className="fs-5 fw-normal p-2 text-center text-body-secondary">{citaMessage}</h1>
-        </>
-        )
+        return (<h1 className="fs-5 fw-normal p-2 text-center text-body-secondary">{citaMessage}</h1>)
     }
-    const options = {
-        year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true
-    }
-    const formatDate = (dateTime) =>{
-        return new Date(dateTime).toLocaleString(undefined, options);
-    }
-
+    const options = {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true};
+    
+    const formatDate = (dateTime) => { return new Date(dateTime).toLocaleString(undefined, options) };
+    
     return(
     <>
     <table className="table table-striped table-hover">
@@ -40,4 +32,4 @@ export function HistorialCitas({listaCitas, citaMessage}) {
     </table>
     </>
     )
-}
+};

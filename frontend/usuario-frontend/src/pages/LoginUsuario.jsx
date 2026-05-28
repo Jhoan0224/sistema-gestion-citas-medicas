@@ -22,7 +22,7 @@ export function LoginUsuario() {
 
         if (resp.success) {
             setAlertSuccess({show: true, message: `${resp.message} Espera un momento...`});
-            await delay(3000)
+            await delay(3000);
             return navigate("/user/home");
 
         } else if (!resp.success) {
@@ -45,18 +45,13 @@ export function LoginUsuario() {
             <form onSubmit={(e) => sendForm(e)} className="d-flex flex-column gap-3">
                 <div>
                     <label htmlFor="email" className="form-label">Email</label>
-                    {/* <input type="text" name="dui" className="form-control" id="dui" pattern="^[0-9]{8}-[0-9]{1}$" */}
                     <input type="email" name="email" className="form-control" id="email"
-                        value={formLogin.email}
-                        onChange={updateForm}
-                        />
+                        value={formLogin.email} onChange={updateForm} />
                 </div>
                 <div>
                     <label htmlFor="pass" className="form-label">Password</label>
                     <input type="text" name="pass" className="form-control" id="pass" maxLength="20"
-                        value={formLogin.pass}
-                        onChange={updateForm}
-                        />
+                        value={formLogin.pass} onChange={updateForm} />
                 </div>
                 <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-primary">Acceder</button>
@@ -67,4 +62,4 @@ export function LoginUsuario() {
     </div>
     </>
     )
-}
+};

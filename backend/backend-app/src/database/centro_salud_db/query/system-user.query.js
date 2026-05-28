@@ -58,21 +58,29 @@ export class SystemUserSecQuery {
     
     static createUserSysAccount = `
     INSERT INTO 
-        usuario_sistema(dui, nombre, apellido, email, fecha_nacimiento, zona_residencia)
+        usuario_sistema(dui, nombre, apellido, email, pass_hash, fecha_nacimiento, zona_residencia)
     VALUES 
-        (?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?)
     `;
 
+    static updateUserSysAccount = `
+    UPDATE usuario_sistema su
+        SET su.nombre = ?, su.apellido = ?, su.fecha_nacimiento = ?, su.zona_residencia = ?
+    WHERE
+        su.email = ?
+    `;
+
+    // utiliza la sintaxis de mysql2 query
     static privilgiosUserSytem = `
     INSERT INTO 
-        privilegio_usuario_sistema(id_privilegio, id_usuario_sistema)
+        privilegio_usuario_sistema(id_usuario_sistema, id_privilegio)
     VALUES 
-        (?, ?)
+        ?
     `;
 
     static rolUserSytem = `
     INSERT INTO 
-        rol_usuario_sistema(id_rol, id_usuario_sistema)
+        rol_usuario_sistema(id_usuario_sistema, id_rol)
     VALUES 
         (?, ?)
     `;
@@ -88,6 +96,10 @@ export class SystemUserSecQuery {
 
     static deleteByEmail = `
     DELETE FROM usuario_sistema us WHERE us.email = ?
+    `;
+
+    static userSysByEmail = `
+    SELECT us.id  FROM usuario_sistema us WHERE us.email = ?
     `;
 
     static currentUserProfileById = `

@@ -6,58 +6,77 @@ import UsuarioVerficication from "./user_verifcations_svc/usuario-verification.s
 import CitaEntity from "../../database/centro_salud_db/entity/cita.entity.js";
 import { log } from "console";
 import JwtToken from "../security_svc/jwt-token.svc.js";
+import { AppointmentScheduleEngine, SpecialityAppointmentEngine } from "../../utils/appointment-schedule.engine.js";
 
-export const agendarCitaUsuario = async (form, idUsuario) => {
-    const PROCESS_RESULT = {success: false, message: 'Al parecer no tienes historial de citas medicas Asistidas.', historialCitas: {}};
+export const agendarCitaUsuario = async (form) => {
+    const PROCESS_RESULT = {success: false, message: 'Ocurrio un error al Agendar la Cita Medica', citaInfo: {}};
     let conn = await mysqlConnPool.getConnection();
     try {
         const DEFAULT_ID_ESTADO_CITA = 1; /* ESTADO_CITA AGENDADA */ 
         
+        console.log("OKI 0")
+        const idUsuario = form.id_usuario
+            ? form.id_usuario
+            : await UsuarioEntity.findIdUsuarioByDui(conn, form.dui);
+
+        console.log(idUsuario)
         /* Verifcicar que el Usuario actual no tenga ninguna Cita Medica en estado Agendada o Confirmada */
-        const userCanScheduleAppoitment = false;
-
+        console.log("OKI 0.1")
+        const userHasScheduleAppoitment = await CitaEntity.citaPendienteByUsuarioId(conn, idUsuario);
+        
+        console.log("OKI 1")
         /* Notificar la usuario que no puede agendar cita */ 
-        if (userCanScheduleAppoitment === false) {
+        if (userHasScheduleAppoitment === true) {
+            PROCESS_RESULT.message = "El usuario tiene una Cita Agendada o Confirmada."
+            return PROCESS_RESULT;
         }
-
-
 
         /* Analisis de Agenda de Cita utilizando el Motor de Regla
         - El Analisis se basa en: signosIds, sintomasIds, horarioPreferido y tipoAtencion
         - El Analisis devolvera: id_especialidad, fecha_hora_atencion
         */
+
+        console.log("OKI 2")
+
+        const newDateAppintment = await AppointmentScheduleEngine(form);
+        if (newDateAppintment == null) {return PROCESS_RESULT}
+
+        const IdSpecialityAppointment = await SpecialityAppointmentEngine(form);
+console.log("OKI 2.22 >> " + IdSpecialityAppointment)
         
-        const fecha_hora_atencion = '10 am'
-        const id_espcialidad = "medica general"
+console.log("OKI 2.2")
+  console.log(newDateAppintment)
 
-        const valuesCita = [form.titulo, form.motivo, fecha_hora_atencion, form.tipoAtencion,
-            id_espcialidad, DEFAULT_ID_ESTADO_CITA, idUsuario
-        ];
-        
-        /* Iniciar Transaccion SQL */
-        conn.beginTransaction();
+    console.log("OKI 22")
+    const valuesCita = [form.titulo, form.motivo, newDateAppintment, IdSpecialityAppointment, DEFAULT_ID_ESTADO_CITA, idUsuario];
+    
+    /* Iniciar Transaccion SQL */
+    conn.beginTransaction();
+    
+    const resultAgendarCita = await CitaEntity.agendarCitaUsuarioById(conn, valuesCita);
+    const idCitaAgendada = resultAgendarCita.insertId;
+    console.log("cita agendada ", resultAgendarCita.insertId)
 
-        const resultAgendarCita = await CitaEntity.agendarCitaUsuarioById(conn, valuesCita);
-        const idCitaAgendada = resultAgendarCita.insertId;
-
-        if (idCitaAgendada == 0) {
+        if (idCitaAgendada <= 0) {
             /* Cancelar la Transaccion*/
             conn.rollback();
+            return PROCESS_RESULT;
         }
 
         const valuesMatrizCitaSintomas = form.sintomasIds.map(idSintoma => [idCitaAgendada, idSintoma]);
         const valuesMatrizCitaSignos = form.signosIds.map(idSigno => [idCitaAgendada, idSigno]);
         
         /* Insertar IDs de sintomas y signos basados en ID de la cita agendada */
-        const resultCitaSintomas = await CitaEntity.citaSintomasByCitaId(conn, valuesMatrizCitaSintomas);
-        const resultCitaSignos = await CitaEntity.citaSignosByCitaId(conn, valuesMatrizCitaSignos);
+        const resultCitaSintomas = await CitaEntity.addCitaSintomasByCitaId(conn, valuesMatrizCitaSintomas);
+        const resultCitaSignos = await CitaEntity.addCitaSignosByCitaId(conn, valuesMatrizCitaSignos);
+console.log(resultCitaSignos);
+console.log(resultCitaSintomas);
 
         /* Verifcicar registros de Signos y Sintomas */
-        if (resultCitaSintomas.affectedRows !== valuesMatrizCitaSintomas.length
-            && resultCitaSignos.affectedRows !== valuesMatrizCitaSignos.length) {
-            
+        if (resultCitaSintomas.affectedRows === 0 || resultCitaSignos.affectedRows === 0) {
             /* Hacer rollback ya que algo fallo en el registro correcto de datos */
             conn.rollback();
+            return PROCESS_RESULT;
         }
 
         /* Finalmente podemos informal al Usuario que su cita se agendo correctamente 
@@ -66,8 +85,8 @@ export const agendarCitaUsuario = async (form, idUsuario) => {
         conn.commit();
 
         PROCESS_RESULT.success = true;
-        PROCESS_RESULT.message = "Historial de citas medicas Asistidas."
-        PROCESS_RESULT.historialCitas = result;
+        PROCESS_RESULT.message = "La Cita Medica se agendo extisosamente."
+        PROCESS_RESULT.citaInfo = {id_cita: resultAgendarCita.insertId};
 
         return PROCESS_RESULT;
 
@@ -147,18 +166,15 @@ export const citaPendienteUsuario = async (idUsuario) => {
     const PROCESS_RESULT = {success: false, userHasCita: false, message: 'Al parecer no tienes ninguna cita medica pendiente.', citaInfo: {}};
     let conn = await mysqlConnPool.getConnection();
     try {
-        console.log("data");
-        
+                
         const result = await CitaEntity.citaPendienteByUsuarioId(conn, idUsuario);
-        if (!result) {
-            PROCESS_RESULT.success = true;
-            return PROCESS_RESULT;
-        }
 
+        if (!result) {return PROCESS_RESULT}
+
+        PROCESS_RESULT.userHasCita = true;
         PROCESS_RESULT.success = true;
+        PROCESS_RESULT.citaInfo = result[0];   
         PROCESS_RESULT.message = "Tienes una cita medica pendiente."
-        PROCESS_RESULT.citaInfo = result;
-        PROCESS_RESULT.userHasCita = result;
 
         return PROCESS_RESULT;
 
@@ -279,6 +295,29 @@ export const createUserAccount = async (form) => {
     }
 };
 
+export const updateUserNormalAccount = async (form) => {
+    const PROCESS_RESULT = {success: false,  message: 'Ocurrio un error, la cuenta del usuario no se actualizo, intentelo de nuevo más tarde.'}
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        
+        const values = [form.nombre, form.apellido, form.fecha_nacimiento, form.zona_residencia, form.idOcupacion , form.idCondicion, form.email];
+        const result = await UsuarioEntity.accountInfoById(values);
+        
+        if (result) {
+            PROCESS_RESULT.success = true;
+            PROCESS_RESULT.message = "La cuenta de usuario se actulizo correctamente."
+            return PROCESS_RESULT;
+        }
+        
+        return PROCESS_RESULT;
+
+    } catch (error) {
+        throw error;
+    } finally {
+        conn?.release();
+    }
+};
+
 export const userUpdateDataAccount = async (form) => {
     const PROCESS_RESULT = {success: false, message: 'Ocurrio un error, no se pudo actualizar la informacion de la cuenta, intentelo de nuevo más tarde.'}
     let conn = await mysqlConnPool.getConnection();
@@ -377,6 +416,28 @@ export const userUpdateSecurityAccount = async (form) => {
             PROCESS_RESULT.message = "Ocurrio un error al actualizar las credeciales de seguridad."
             return PROCESS_RESULT;   
         }
+
+    } catch (error) {
+        throw error;
+    } finally {
+        conn?.release();
+    }
+};
+
+export const userDeleteCitaAgendada = async (idUsuario) => {
+    const PROCESS_RESULT = {success: false, message: 'Ocurrio un error, al eliminar la Cita, intentelo de nuevo o comunicate con soporte.'}
+    let conn = await mysqlConnPool.getConnection();
+    try {       
+        console.log(idUsuario);
+        
+        const accountDeleted = await UsuarioEntity.userDeleteCita(conn, idUsuario);
+            
+        if (accountDeleted) {
+            PROCESS_RESULT.success = true;
+            PROCESS_RESULT.message = "Tu Cita ha sido eliminada correctamente."
+            return PROCESS_RESULT;   
+        }        
+        return PROCESS_RESULT; 
 
     } catch (error) {
         throw error;

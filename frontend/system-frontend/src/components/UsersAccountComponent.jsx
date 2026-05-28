@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { PersonalMedApp } from "../app/personal-med.app.js";
 import { getListOcupacionesCondiciones } from "../api/api-system.js";
 import { ImageCitaAgendadaSave } from "../utils/img-cita-agendada.js";
+import { PersonalMedApp } from "../app/personal-med.app.js";
 import { AdminApp } from "../app/Admin.app.js";
 
 export function UsuarioAccount({loadUserInfo, setLoadUserInfo}) { // El objeto setLoadUserInfo contiene: {idUsuario: "", show: false}
@@ -18,10 +18,8 @@ export function UsuarioAccount({loadUserInfo, setLoadUserInfo}) { // El objeto s
         let isMounted = true;
         const loadData = async () => {
             const resp = await PersonalMedApp.userAccountData(loadUserInfo.idUsuario);            
-            if (isMounted && resp.success) {
-                setUserData(resp.usuarioAccountInfo);
-            }
-        };
+            if (isMounted && resp.success) { setUserData(resp.usuarioAccountInfo)}
+        }
         loadData();
         return () => { isMounted = false }
     }, []);
@@ -31,20 +29,22 @@ export function UsuarioAccount({loadUserInfo, setLoadUserInfo}) { // El objeto s
         "HISTORIAL_CITAS_CANCELADAS": () => PersonalMedApp.historialCitasInasistidas(userData.id_usuario),
         "HISTORIAL_CITAS_ASISTIDAS": () => PersonalMedApp.historialCitasInasistidas(userData.id_usuario),
         "CITA_PENDIENTE": () => PersonalMedApp.userCitaPendiente(userData.id_usuario),
-    };
+    };    
 
     const RenderAccountConfig = {
         "HISTORIAL_CITAS_INASISTIDAS": <HistorialCitas historialCitas={historialCitas} />,
-        "HISTORIAL_CITAS_CANCELADAS": <HistorialCitas historialCitas={historialCitas} />,
+        "HISTORIAL_CITAS_CANCELADAS": <HistorialCitas  historialCitas={historialCitas} />,
         "HISTORIAL_CITAS_ASISTIDAS": <HistorialCitas historialCitas={historialCitas} />,
-        "CITA_PENDIENTE": <UserCitaPendiente citaPendiente={citaPendiente} />,
+        "CITA_PENDIENTE": <UserCitaPendiente userData={userData} citaPendiente={citaPendiente} />,
         "USER_INFO_CONFIG": <FormPersonalInfo userData={userData} setCancelar={setAccountConfig} />,
     };
 
     useEffect(() => {
         if (accountConfig === "") { return }
+
         const typeConfig = accountConfig.split("_")[0];
         if ( !["HISTORIAL", "CITA"].some(type => type == typeConfig) ) { return } ;
+
         let isMounted = true;
         const loadAccountConfig = async () => {           
             const resp = await getAccountConfig[accountConfig]();
@@ -53,6 +53,7 @@ export function UsuarioAccount({loadUserInfo, setLoadUserInfo}) { // El objeto s
             else if (typeConfig == "CITA") { setCitaPendiente(resp.citaInfo) }
         };
         loadAccountConfig();
+        
         return () => {isMounted = false}
     }, [accountConfig]);
 
@@ -77,9 +78,9 @@ export function UsuarioAccount({loadUserInfo, setLoadUserInfo}) { // El objeto s
         </div>
         <h5 className="fs-5 fw-normal py-2">Configuración de Cuenta</h5>
         <div className="d-flex gap-3 mb-3 mx-2">
-            <button onClick={() => setAccountConfig("HISTORIAL_CITAS_CANCELADAS")} className="btn btn-outline-warning ms-0 me-2">Citas canceladas</button>
-            <button onClick={() => setAccountConfig("HISTORIAL_CITAS_ASISTIDAS")} className="btn btn-outline-warning ms-0 me-2">Citas asistidas</button>
-            <button onClick={() => setAccountConfig("HISTORIAL_CITAS_INASISTIDAS")} className="btn btn-outline-warning ms-0 me-2">Citas inasistidas</button>
+            <button onClick={() => {setAccountConfig("HISTORIAL_CITAS_CANCELADAS"); setTypeCita("Canceldas")}} className="btn btn-outline-warning ms-0 me-2">Citas canceladas</button>
+            <button onClick={() => {setAccountConfig("HISTORIAL_CITAS_ASISTIDAS"); setTypeCita("Asistidas")}} className="btn btn-outline-warning ms-0 me-2">Citas asistidas</button>
+            <button onClick={() => {setAccountConfig("HISTORIAL_CITAS_INASISTIDAS"); setTypeCita("Inasistidas")}} className="btn btn-outline-warning ms-0 me-2">Citas inasistidas</button>
             <button onClick={() => setAccountConfig("CITA_PENDIENTE")} className="btn btn-outline-warning ms-0 me-auto">Citas Pendiente</button>
             <button onClick={() => setAccountConfig("USER_INFO_CONFIG")} className="btn btn-outline-primary">Act. infomarción</button>
         </div>
@@ -95,21 +96,28 @@ export function UsuarioAccount({loadUserInfo, setLoadUserInfo}) { // El objeto s
     )
 }
 
-function UserCitaPendiente({citaPendiente}) {
+function UserCitaPendiente({userData, userHasCita, citaPendiente}) {
     const optionsDate = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true}
 
     const saveImageCita = () => {
-        ImageCitaAgendadaSave(citaPendiente);
+        ImageCitaAgendadaSave(userData, citaPendiente);
     };
 
     return(
     <>
+    {userHasCita === false &&
+        <div className="d-flex p-2">
+            <span className="fs-5 fw-medium m-auto text-secondary">El usuario no tiene Cita Agendada.</span>
+        </div>
+    }
+    {userHasCita === true &&
+    <> 
     <div className="d-flex">
         <button onClick={() => saveImageCita()} className="btn btn-outline-primary ms-auto me-2">
             <i className="bi bi-file-earmark-arrow-down me-1" />Guardar
         </button>
     </div>
-    <div>
+    <div>       
         <h5 className="fs-5">Cita Medica {citaPendiente?.estado_cita}</h5>
         <div className="ps-3 mb-3">
             <p className="fs-6"><b>Cita:</b> {citaPendiente?.titulo}</p>
@@ -138,12 +146,15 @@ function UserCitaPendiente({citaPendiente}) {
         </div> 
     </div>
     </>
+    }
+    </>
     )
 }
 
-function HistorialCitas({historialCitas}) {
-    if (historialCitas.length === 0) {
-        return ( <h1 className="fs-5 fw-normal p-2 text-center text-body-secondary">Mensage cita</h1> );
+function HistorialCitas({historialCitas}) {   
+
+    if (historialCitas || historialCitas.length === 0) {
+        return ( <h1 className="fs-5 fw-normal p-2 text-center text-body-secondary">El usuario no tiene historial de citas.</h1> );
     }
     const options = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }
     const formatDate = (dateTime) => new Date(dateTime).toLocaleString(undefined, options);
@@ -181,11 +192,15 @@ function FormPersonalInfo({userData, setCancelar}) {
         nombre: '', apellido: '', fecha_nacimiento: '', dui: '', email: '',
         zona_residencia: '', idOcupacion: '', idCondicion: ''
     });
+
+    const [userData2, setUserData2] = useState({
+        nombre: '', apellido: '', fecha_nacimiento: '', dui: '', email: '',
+        zona_residencia: '', idOcupacion: '', idCondicion: ''
+    });
     const [dataUserCuenta, setDataUserCuenta] = useState({ocupaciones: [], condiciones: []});
 
-    useEffect(() => {
-        setFormPersonalInfo(userData);
-    }, [userData]);
+    useEffect(() => { setUserData2(userData) }, [userData]);
+    
     useEffect(() => {
         let isMounted = true;
         const loadDataAccountConfig = async () => {
@@ -193,10 +208,11 @@ function FormPersonalInfo({userData, setCancelar}) {
             if (isMounted && resp.success) {
                 setDataUserCuenta({ocupaciones: resp.ocupacionesList, condiciones: resp.condicionesList});
             }
-        };
+        }
         loadDataAccountConfig();
         return () => {isMounted = false;}
     }, []);
+
     const updateForm = (e) => setFormPersonalInfo(prev => ({...prev, [e.target.name]: e.target.value}));
 
     const changeAlertBg = (orignal, change) => {
@@ -205,9 +221,13 @@ function FormPersonalInfo({userData, setCancelar}) {
               
     const sendForm = async (event) => {
         event.preventDefault();
-        const resp = await updateInfoAccount(formPersonalInfo);
+
+        console.log("formPersonalInfo");
+        console.log(formPersonalInfo);
+        
+        const resp = await PersonalMedApp.updateUserAccount(formPersonalInfo);
         console.log(resp);
-    };
+    }
 
     return(
     <>
@@ -225,12 +245,6 @@ function FormPersonalInfo({userData, setCancelar}) {
                     value={formPersonalInfo.apellido} onChange={updateForm} />
             </li>
            
-            <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.dui, userData.dui)}>
-                 <span className="fw-medium ms-0 me-auto m-sm-0">DUI:</span>
-                <input type="text" name="dui" id="dui" className="form-control w-auto"
-                    value={formPersonalInfo.dui} onChange={updateForm} />
-            </li>
-
             <li className="list-group-item d-flex align-items-center gap-3" style={changeAlertBg(formPersonalInfo.fecha_nacimiento.split("T")[0], userData.fecha_nacimiento.split("T")[0])}>
                  <span className="fw-medium ms-0 me-auto m-sm-0">Fecha de nacimiento:</span>
                 <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" className="form-control w-auto"
@@ -272,6 +286,7 @@ function FormPersonalInfo({userData, setCancelar}) {
 export function UsuarioNormalAccount({loadUserInfo, setLoadUserInfo}) { // El objeto setLoadUserInfo contiene: {idUsuario: "", show: false}
     const [historialStatus, setHistorialStatus] = useState({isOpen: false, show: false});
     const [historialCitas, setHistorialCitas] = useState([]);
+    const [userHasCita, setUserHasCita] = useState(null);
     const [citaPendiente, setCitaPendiente] = useState({id_usuario: "", estado_cita: "", titulo: "", motivo: "", fecha_hora_atencion: "", especialidad: ""});
     const [accountConfig, setAccountConfig] = useState("");
     const [userData, setUserData] = useState({
@@ -283,9 +298,7 @@ export function UsuarioNormalAccount({loadUserInfo, setLoadUserInfo}) { // El ob
         let isMounted = true;
         const loadData = async () => {
             const resp = await PersonalMedApp.userAccountData(loadUserInfo.idUsuario);            
-            if (isMounted && resp.success) {
-                setUserData(resp.usuarioAccountInfo);
-            }
+            if (isMounted && resp.success) { setUserData(resp.usuarioAccountInfo) }
         };
         loadData();
         return () => { isMounted = false }
@@ -302,23 +315,30 @@ export function UsuarioNormalAccount({loadUserInfo, setLoadUserInfo}) { // El ob
         "HISTORIAL_CITAS_INASISTIDAS": <HistorialCitas historialCitas={historialCitas} />,
         "HISTORIAL_CITAS_CANCELADAS": <HistorialCitas historialCitas={historialCitas} />,
         "HISTORIAL_CITAS_ASISTIDAS": <HistorialCitas historialCitas={historialCitas} />,
-        "CITA_PENDIENTE": <UserCitaPendiente citaPendiente={citaPendiente} />,
+        "CITA_PENDIENTE": <UserCitaPendiente userHasCita={userHasCita} citaPendiente={citaPendiente} />,
         "DELETE_ACCOUNT": <FormDeleteAccount userData={userData} setCancelar={setAccountConfig} />,
         "USER_INFO_CONFIG": <FormPersonalInfo userData={userData} setCancelar={setAccountConfig} />,
     };
 
     useEffect(() => {
         if (accountConfig === "") { return }
+
         const typeConfig = accountConfig.split("_")[0];
         if ( !["HISTORIAL", "CITA"].some(type => type == typeConfig) ) { return } ;
+
         let isMounted = true;
         const loadAccountConfig = async () => {           
             const resp = await getAccountConfig[accountConfig]();
             if (!isMounted || !resp.success) { return }
             if (typeConfig == "HISTORIAL") { setHistorialCitas(resp.historialCitas) }
-            else if (typeConfig == "CITA") { setCitaPendiente(resp.citaInfo) }
+            else if (typeConfig == "CITA") {
+                resp.userHasCita
+                    ? () => {setCitaPendiente(resp.citaInfo); setUserHasCita(true)}
+                    : setUserHasCita(false);
+            }
         };
         loadAccountConfig();
+
         return () => {isMounted = false}
     }, [accountConfig]);
 
@@ -362,23 +382,20 @@ export function UsuarioNormalAccount({loadUserInfo, setLoadUserInfo}) { // El ob
     )
 }
 
-
 export function FormDeleteAccount({userData, setCancelar}) {
     const securityCheck = {securityWord: "Si Eliminar Cuenta", inputWord: "w"}
     const [formDeleteAccount, setFormDeleteAccount] = useState({email: ''});
 
-    useEffect(() => {
-        setFormDeleteAccount(prev => ({...prev, email: userData.email}));
-    }, [userData]);
+    useEffect(() => { setFormDeleteAccount(prev => ({...prev, email: userData.email})) }, [userData]);
 
     const sendForm = async (event) => {
         event.preventDefault();
         const securityIsChecked = securityCheck.inputWord === securityCheck.securityWord ? true : false;
         if (securityIsChecked) {
             const resp = await AdminApp.deleteNormalUserAccount(formDeleteAccount);
-            console.log(resp);            
+            alert(resp);            
         }   
-    }
+    };
 
     return(
     <>
