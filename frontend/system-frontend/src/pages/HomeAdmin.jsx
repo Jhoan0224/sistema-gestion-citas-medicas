@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { CreateSystemUser, CurrentSystemUserProfile, NormalUserProfile, SystemUserProfile } from "../components/SystemUser.jsx";
-import { SystemDataBase, SystemVariables } from "../components/SystemConfig.jsx";
 import { AuthApp } from "../app/auth.app.js";
+import { AdminApp } from "../app/Admin.app.js";
+import { SystemDataBase, SystemVariables } from "../components/SystemConfig.jsx";
+import { CreateSystemUser, CurrentSystemUserProfile, NormalUserProfile, SystemUserProfile } from "../components/SystemUser.jsx";
 
 export function HomeAdmin() {
     const [renderView, setRenderView] = useState("PANEL_MAIN");
+    const [renderUserData, setRenderUserData] = useState({nombre: "", apellido: ""})
 
     const RenderContent = {
         "CURRECT_SYSTEM_USER_PROFILE": <CurrentSystemUserProfile />,
@@ -15,6 +17,15 @@ export function HomeAdmin() {
         "NORMAL_USERS" : <NormalUserProfile setRenderView={setRenderView} />,
     };
 
+    useEffect(() => {
+        let isMounted = true;
+        const loadRenderUserData = async () => {
+        const resp = await AdminApp.currentUserProfile();
+        if (isMounted && resp.success) { setRenderUserData(resp.userProfile) }
+        }
+        loadRenderUserData();
+        return () => {isMounted = false}
+    }, []);
 
     return(
     <>
@@ -24,7 +35,7 @@ export function HomeAdmin() {
         </div>
         <div className="col-sm-10 d-flex flex-column p-0 h-100">
             <div className="d-flex bg-body-secondary p-2">
-                <PanelTop />
+                <PanelTop renderUserData={renderUserData} />
             </div>
             <div className="m-2 flex-grow-1 d-flex flex-column h-100" style={{ minHeight: 0 }}>
                 { 
@@ -35,9 +46,9 @@ export function HomeAdmin() {
     </div>
     </>
     )
-};
+}
 
-function PanelTop() {
+function PanelTop({renderUserData}) {
   const dtOptions = {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true};
   const [dateTime, setDateTime] = useState("");
 
@@ -45,23 +56,21 @@ function PanelTop() {
     const interval = setInterval(() => {
       const date = new Date();
       setDateTime(date.toLocaleDateString(undefined, dtOptions));
-    }, 1000);
-    
+    }, 1000);    
     return () => clearInterval(interval);
   }, []);
   
   return (
     <>
       <a className="fw-bold text-decoration-none" href="home">SGCM</a>
-      <span className="ms-5">Jhoan Alberto</span>
+      <span className="ms-5">{renderUserData.nombre} {renderUserData.apellido}</span>
       <span className="ms-auto me-2"><b>Cambiar tema</b> {dateTime}</span>
     </>
   )
 }
 
 function PanelLeft({setRenderView}) {
-
-
+    
     return(
     <>
     <div className="d-inline-flex flex-column mt-2 mx-auto">

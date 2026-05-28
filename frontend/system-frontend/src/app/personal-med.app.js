@@ -13,6 +13,11 @@ export class PersonalMedApp {
         return data;
     }
 
+    static async updateUserAccount(form) {
+        const data = await ApiPersonalMed.updateUserAccountRequest(form);
+        return data;
+    }
+
     static async agendarCitaData() {
         const data = await ApiSystem.getListSignosSintomas();
         return data;
@@ -22,7 +27,6 @@ export class PersonalMedApp {
         const data = await ApiSystem.getListOcupacionesCondiciones();
         return data;
     }
-
 
     /* ---------- */
     static async searchUserForm(form) {

@@ -10,17 +10,15 @@ const HEADER_USUARIO = () => ({
     }
 });
 
-const ID_USER = () => {
+export const ID_USER = () => {
     return localStorage.getItem(ID_NAME);
 };
-
 
 export async function getUsuarioBasicInfo(){
     try {
         const httpResquest = `${URL_USER_ACCOUNT}/basic-info/user-id/${ID_USER()}`;
         const resp = await axios.get(httpResquest, HEADER_USUARIO());
-        return resp.data;
-        
+        return resp.data;        
     } catch (error) {
         return false;
     }
@@ -30,7 +28,6 @@ export async function  getCitaPendienteUsuario(){
     try {
         const resp = await axios.get(`${URL_USER_ACCOUNT}/cita-pendiente/user-id/${ID_USER()}`, HEADER_USUARIO());
         return resp.data;
-        
     } catch (error) {
         return false;
     }
@@ -62,4 +59,3 @@ export async function  getHistoriaCitasInasistidasUsuario(){
         return false;
     }
 };
-

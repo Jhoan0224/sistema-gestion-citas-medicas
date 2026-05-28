@@ -13,6 +13,11 @@ userAccountRouter.post('/agendar-cita-user',
     userAccountCtrl.agendarCitaUsuarioCtrl
 );
 
+userAccountRouter.delete('/delete-cita-agendada',
+    userAccountMiddleWare.verifyAuthValidation,
+    userAccountCtrl.userDeleteCitaAgendadaCtrl
+);
+
 userAccountRouter.post('/delete-user-account',
     userAccountMiddleWare.verifyAuthValidation,
     userAccountMiddleWare.userDeleteAccountValidations,

@@ -1,40 +1,33 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Outlet, Navigate, useLocation, useNavigate, replace } from 'react-router-dom'
-import { Home } from './pages/Home.jsx'
+import { AuthApp } from './app/auth.app.js'
+import { SpinerLoading } from './components/UiComponent.jsx'
 import { HomePersonalMed } from './pages/HomePersonalMed.jsx'
 import { HomeAdmin } from './pages/HomeAdmin.jsx'
 import { LoginHome } from './pages/Login.jsx'
-import { SpinerLoading } from './components/UiComponent.jsx'
-import { AuthApp } from './app/auth.app.js'
 
-function App() {
+export default function App() {
 
 	return (
-		<>
-		<Routes>
-			<Route path="/" element={<Home />}/>
-			<Route path="/spiner" element={<SpinerLoading />}/>
-			<Route index element={<Home />}/>
-			<Route path='/login' element={<LoginHome />} />
+	<>
+	<Routes>
+		<Route index element={<LoginHome />}/>
+		<Route path='/login' element={<LoginHome />} />
 
-			<Route path='/personal-med' element={<TemplatePersonalMedico />} >
-				<Route index element={<HomePersonalMed />} />
-				<Route path='home' element={<HomePersonalMed />} />
+		<Route path='/personal-med' element={<TemplatePersonalMedico />} >
+			<Route index element={<HomePersonalMed />} />
+			<Route path='home' element={<HomePersonalMed />} />
 
-			</Route>
+		</Route>
 
-			<Route path='/system-admin' element={<TemplateAdmin />} >
-				<Route index element={<HomeAdmin />} />
-				<Route path='home' element={<HomeAdmin />} />
-
-			</Route>
-
-
-		</Routes>
-		</>
+		<Route path='/system-admin' element={<TemplateAdmin />} >
+			<Route index element={<HomeAdmin />} />
+			<Route path='home' element={<HomeAdmin />} />
+		</Route>
+	</Routes>
+	</>
 	)
 }
-
 
 function TemplateAdmin() {
 	const navigate = useNavigate();
@@ -85,5 +78,3 @@ function TemplatePersonalMedico() {
 
 	return ( <div className='d-flex vh-100'> <Outlet /> </div> );
 }
-
-export default App;

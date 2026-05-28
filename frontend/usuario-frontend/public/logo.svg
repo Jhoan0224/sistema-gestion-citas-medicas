@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -2 34 26" width="3840" height="3388">
+  <rect x="-4" y="-2" width="34" height="28" rx="1" ry="1" fill="none" stroke="#000080" stroke-width="0.5" />
+
+  <g transform="translate(-4 -3)">
+    <polyline points="6 7 2 12 6 17" fill="none" stroke="#000080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+    <polyline points="28 7 32 12 28 17" fill="none" stroke="#000080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <line x1="25" y1="6.4" x2="22" y2="17.5" stroke="#000080" stroke-width="2" stroke-linecap="round" />
+
+    <circle cx="14" cy="12" r="6.5" fill="#000080" />
+
+    <path d="M 14 9.5 L 14 14.5 M 11.5 12 L 16.5 12" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="square" />
+
+    <text x="50%" y="95%" 
+      dominant-baseline="middle" 
+      text-anchor="middle"
+      fill="#000000" 
+      font-weight="600"
+      font-family="'JetBrains Mono', Fira Code, Consolas, monospace" 
+      font-size="5">
+      SGCM
+    </text>
+  </g>
+</svg>

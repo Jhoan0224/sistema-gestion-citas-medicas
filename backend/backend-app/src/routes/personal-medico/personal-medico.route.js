@@ -2,6 +2,7 @@ import express from 'express';
 import * as persMedMiddleware from '../../middleware/personal-med.middleware.js'
 import * as persMedCtrl from '../../controller/personal_medico_ctrl/personal-med.controller.js'
 import { verifyAuthJWT } from '../../services/security_svc/token.svc.js';
+import { agendarCitaUsuarioCtrl } from '../../controller/usuario_ctrl/user-account.controller.js';
 
 
 const personalMedRouter = express.Router();
@@ -19,10 +20,17 @@ personalMedRouter.post("/create-user-account",
     persMedCtrl.createUserAccountCtrl
 );
 
+personalMedRouter.post("/update-user-normal",
+    verifyAuthJWT,
+    persMedMiddleware.updateUserAccountValidations,
+    persMedCtrl.updateUserNormalAccountCtrl
+);
+
+
 personalMedRouter.post("/agendar-cita-user",
     verifyAuthJWT,
     persMedMiddleware.agendarCitaUserValidations,
-    persMedCtrl.createUserAccountCtrl
+    agendarCitaUsuarioCtrl
 );
 
 personalMedRouter.get("/agenda-citas-hoy",

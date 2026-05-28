@@ -32,6 +32,24 @@ export async function deleteUserSysAccountRequest(form) {
     }
 }
 
+export async function updateUserSysAccountRequest(form) {
+    try {
+        const resp = await axios.post(`${API_ADMIN}/update-user-account`, form, HTTP_HEADERS());
+        return resp.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export async function createUserSysAccountRequest(form) {
+    try {
+        const resp = await axios.post(`${API_ADMIN}/create-user-sys`, form, HTTP_HEADERS());
+        return resp.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
 export async function disableUserSysAccountRequest(form) {
     try {
         const resp = await axios.post(`${API_ADMIN}/disable-normal-user-system`, form, HTTP_HEADERS());

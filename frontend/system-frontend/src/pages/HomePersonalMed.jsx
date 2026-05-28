@@ -1,24 +1,23 @@
 import { useEffect, useState } from "react";
+import { AuthApp } from "../app/auth.app.js";
+import { PersonalMedApp } from "../app/personal-med.app.js";
+import { SystemUserProfile, CurrentSystemUserProfile } from "../components/SystemUser.jsx";
 import { CreateUser, SearchUser } from "../components/UsersComponent.jsx";
 import { UsuarioAccount } from "../components/UsersAccountComponent.jsx";
 import { AgendarCita } from "../components/CitasComponent.jsx";
-import { SystemUserProfile, CurrentSystemUserProfile } from "../components/SystemUser.jsx";
-import { AuthApp } from "../app/auth.app.js";
-import { PersonalMedApp } from "../app/personal-med.app.js";
-
 
 export function HomePersonalMed() {
   const [renderView, setRenderView] = useState("PANEL_MAIN");
   const [renderUserData, setRenderUserData] = useState({nombre: "", apellido: ""})
 
   useEffect(() => {
+    let isMounted = true;
     const loadRenderUserData = async () => {
       const resp = await PersonalMedApp.currentUserProfile();
-      if (resp.success) {
-        setRenderUserData(resp.userProfile);
-      }
+      if (isMounted && resp.success) { setRenderUserData(resp.userProfile) }
     }
     loadRenderUserData();
+    return () => {isMounted = false}
   }, []);
 
   const RenderContent = {
@@ -36,17 +35,15 @@ export function HomePersonalMed() {
       <div className="col-sm-2 d-flex flex-column p-0 border-end border-2 border-secondary-subtle">
         <PanelLeft setRenderView={setRenderView} />
       </div>
-
       <div className="col-10 d-flex flex-column h-100 p-0">
         <div className="d-flex bg-body-secondary p-2 rounded-bottom-2">
-          <PanelTop renderUserData= {renderUserData}/>
+          <PanelTop renderUserData= {renderUserData} />
         </div>
          <div className="m-2 flex-grow-1 d-flex flex-column" style={{ minHeight: 0 }}>
           {          
             RenderContent[renderView]
           }
         </div>
-        
       </div>
     </div>
     </>
@@ -62,7 +59,6 @@ function PanelTop({renderUserData}) {
       const date = new Date();
       setDateTime(date.toLocaleDateString(undefined, dtOptions));
     }, 1000);
-    
     return () => clearInterval(interval);
   }, []);
   
@@ -80,8 +76,7 @@ function PanelLeft({setRenderView}) {
   return(
   <>
     <div className="d-inline-flex flex-column mt-2 mx-auto">
-      <img className="img-fluid w-auto" src="/image1.webp" alt="Logo del sistema." />
-      <span className="mx-auto">SGCM</span>
+      <img className="img-fluid w-75 mx-auto" src="/logo.svg" alt="Logo del sistema." />
     </div>
     <hr className="border-3 border-secondary m-2"/>
 
@@ -154,14 +149,16 @@ function PanelMain() {
   };
 
   useEffect(() => {
+    let isMounted = true;
     const loadUserAgendaCitaHoy = async () => {
       const resp = await PersonalMedApp.userCitaAgendaHoy();
-      if (resp.success) {
+      if (isMounted && resp.success) {
         setUserListCitas(resp.listCitas)
         setUserListCitasMain(resp.listCitas);
       }
     }
     loadUserAgendaCitaHoy();
+    return () => {isMounted = false}
   },[]);
 
   useEffect(() => {
@@ -171,7 +168,8 @@ function PanelMain() {
   }, [userListCitasMain]);
 
   const updateForm = (e) => setFormSearch(prev => ({...prev, [e.target.name]: e.target.value}));
-  const clearFilter = () => { setUserListCitas(userListCitasMain) };
+
+  const clearFilter = () => setUserListCitas(userListCitasMain);
 
   const sendForm = (e) => {
     e.preventDefault();
@@ -181,7 +179,7 @@ function PanelMain() {
       ? userListCitasMain.filter(user => user.dui_usuario.includes(textSearch))
       : userListCitasMain.filter(user => user.usuario.toLowerCase().includes(textSearch));
     setUserListCitas(listFiltered);
-  }
+  };
 
   return(
   <>
@@ -230,12 +228,10 @@ function PanelMain() {
               : <>
                   <strong>Siguiente:</strong> No hay ningún paciente en espera.
                 </>
-            }
-            
+            }            
           </span>
         </div>
       </div>
-
       <div className="">
         <form onSubmit={(e) => sendForm(e)} className="row align-items-end border-bottom border-top py-2 mx-2">
           <div className="col-auto p-0">
@@ -261,7 +257,6 @@ function PanelMain() {
           </div>
         </form>
       </div>
-
       <div className="flex-grow-1 overflow-y-auto mx-2" style={{ minHeight: '0' }}>
         <table className="table table-striped table-hover">
           <thead className="sticky-top">

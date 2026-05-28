@@ -1,17 +1,14 @@
-import { useEffect, useState } from 'react'
-import { Routes, Route, Outlet } from 'react-router-dom'
-import { LoginUsuario } from './pages/LoginUsuario'
-import { HomeUsuario } from './pages/HomeUsuario'
-import { LoadingSpinner } from './componentes/LoadingTmpls'
-import { validarSesionUsuario, } from './application/Authentication'
-import { Navbar, Footer } from './componentes/NavbarFooter'
-import { CrearCuentaUsuario } from './pages/CrearCuentaUsuario'
-import { AgendarCitaUsuario } from './pages/FormsCitasUsuario'
-import { UsuarioAccount } from './pages/UsuarioAccount'
-import { LoginCs } from './pages_cs/LoginCs.jsx'
-import { PersonalOfficeCs } from './pages_cs/PersonalCs.jsx'
-import { useLocation } from 'react-router-dom';
-import { Home } from './pages/Home.jsx'
+import { useEffect, useState } from 'react';
+import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
+import { validarSesionUsuario, } from './application/Authentication';
+import { LoginUsuario } from './pages/LoginUsuario';
+import { HomeUsuario } from './pages/HomeUsuario';
+import { Home } from './pages/Home.jsx';
+import { CrearCuentaUsuario } from './pages/CrearCuentaUsuario';
+import { AgendarCitaUsuario } from './pages/FormsCitasUsuario';
+import { UsuarioAccount } from './pages/UsuarioAccount';
+import { LoadingSpinner } from './componentes/LoadingTmpls';
+import { Navbar, Footer } from './componentes/NavbarFooter';
 
 export default function App() {
 
@@ -29,28 +26,9 @@ export default function App() {
             <Route path='agendar-cita' element={<AgendarCitaUsuario />} />
             <Route path='user-account' element={<UsuarioAccount />} />
         </Route>
-
-        <Route path='/cs-admin' element={<TempalteAdminCs />} >
-            <Route index element={<LoginCs />}/>
-            <Route path='home' element={<PersonalOfficeCs />}/>
-            
-
-        </Route>
-
-
     </Routes>
     </>
   )
-}
-
-
-function TempalteAdminCs() {
-
-    return(
-        <div className='d-flex flex-grow-1 '>
-            <Outlet />
-        </div>  
-    )
 }
 
 function TemplateUsuario() {

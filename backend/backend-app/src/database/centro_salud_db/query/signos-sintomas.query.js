@@ -2,7 +2,7 @@
 export class SignosQuery {
 
     static signosList = `
-        SELECT sig.id, sig.nombre FROM signos sig
+        SELECT sig.id, sig.nombre, sig.nivel_triage FROM signos sig
     `;
 
 };
@@ -10,7 +10,7 @@ export class SignosQuery {
 export class SintomasQuery {
     
     static sintomasList = `
-        SELECT sint.id, sint.nombre FROM sintomas sint
+        SELECT sint.id, sint.nombre, sint.nivel_triage FROM sintomas sint
     `;
 
 };

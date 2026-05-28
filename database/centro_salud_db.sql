@@ -14,7 +14,8 @@ create table condiciones(
 
 create table especialidad(
 	id int auto_increment primary key,
-	nombre varchar(50)
+	nombre varchar(50),
+	capacidad_atencion_diaria int
 );
 
 create table estado_cita(
@@ -24,12 +25,29 @@ create table estado_cita(
 
 create table signos(
 	id int auto_increment primary key,
-	nombre varchar(50)
+	nombre varchar(50),
+	nivel_triage int, -- valores entre 1 y 5 NIVEL 1 mas urgentes y 5 menos urgente
+	constraint check_levelTriageSignos check (nivel_triage between 1 and 5)
 );
 
 create table sintomas(
 	id int auto_increment primary key,
-	nombre varchar(50)
+	nombre varchar(50),
+	nivel_triage int, -- valores entre 1 y 5 NIVEL 1 mas urgentes y 5 menos urgente
+	constraint check_levelTriageSintomas check (nivel_triage between 1 and 5)	
+);
+
+create table especialidad_signos_sintomas(
+	id int auto_increment primary key,
+	id_especialidad int,
+	id_signo int,
+	id_sintoma int,
+	constraint fkEspecialidad_EspecialidadSigSint foreign key (id_especialidad) references especialidad(id)
+		on delete cascade,
+	constraint fkSigno_EspecialidadSigSint foreign key (id_signo) references signos(id)
+		on delete cascade,
+	constraint fkSintoma_EspecialidadSigSint foreign key (id_sintoma) references sintomas(id)
+		on delete cascade	
 );
 
 create table usuario(
@@ -51,7 +69,7 @@ create table usuario(
 
 create table cita(
 	id int auto_increment primary key,
-	titulo varchar(30),
+	titulo varchar(128),
 	motivo varchar(255),
 	fecha_hora_atencion datetime,
 	fecha_hora_registro timestamp default CURRENT_TIMESTAMP(),
@@ -72,7 +90,7 @@ create table cita_signos(
 	id_signo int,
 	constraint fkCita_CitaSignos foreign key (id_cita) references cita(id)
 		on delete cascade,
-	constraint fkSigno_CitaSignos foreign key (id_signo) references cita_signos(id)
+	constraint fkSigno_CitaSignos foreign key (id_signo) references signos(id)
 		on delete cascade
 );
 
@@ -82,7 +100,7 @@ create table cita_sintomas(
 	id_sintoma int,
 	constraint fkSintoma_CitaSintomas foreign key (id_sintoma) references sintomas(id)
 		on delete cascade,
-	constraint fkCita_CitaSintomas foreign key (id_cita) references cita_sintomas(id)
+	constraint fkCita_CitaSintomas foreign key (id_cita) references sintomas(id)
 		on delete cascade
 );
 
@@ -128,3 +146,4 @@ create table privilegio_usuario_sistema(
 	constraint fkUsuarioSistema_PrivilegioUsuarioSistema foreign key (id_usuario_sistema) references usuario_sistema(id)
 		on delete cascade
 );
+

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
-import { FormSecurityUserAccount, FormPersonalInfo, FormDeleteAccount } from "../componentes/FormUserAccount"
 import { getUserAccountData } from "../api/usuario-account.api.js";
+import { FormSecurityUserAccount, FormPersonalInfo, FormDeleteAccount } from "../componentes/FormUserAccount"
 import UsuarioAccountData from "../componentes/UserAccountInfo.jsx";
 
 export function UsuarioAccount() {
@@ -13,11 +13,13 @@ export function UsuarioAccount() {
     });
 
     useEffect(() => {
+        let isMounted = true;
         const loadData = async () => {
-            const resp = await getUserAccountData();            
-            if (resp.success) { setUserData(resp.usuarioAccountInfo); }
+            const resp = await getUserAccountData();
+            if (isMounted && resp.success) { setUserData(resp.usuarioAccountInfo)}
         };
         loadData();
+        return () => {isMounted = false}
     }, []);
 
     const RenderAccountConfig = {
@@ -26,7 +28,7 @@ export function UsuarioAccount() {
         DeleteAccount: <FormDeleteAccount userData={userData} setCancelar={setCurrentConfig}/>
     };
 
-    return(
+    return (
     <>
     <div className="container">
         <div className="d-flex justify-content-between py-2">
@@ -43,16 +45,11 @@ export function UsuarioAccount() {
             <button onClick={() => setCurrentConfig("DeleteAccount")} className="btn btn-outline-danger ms-auto me-0">Eliminar mi cuenta</button>
         </div>
         {
-            setCurrentConfig && RenderAccountConfig[currentConfig] ? 
-            (
-                <div className="border rounded-2 p-3">
-                    { 
-                        RenderAccountConfig[currentConfig]
-                    }
-                </div>
-            ): null
+        setCurrentConfig && RenderAccountConfig[currentConfig]
+            ? (<div className="border rounded-2 p-3"> { RenderAccountConfig[currentConfig] } </div>)
+            : null
         }
     </div>
     </>
     )
-}
+};

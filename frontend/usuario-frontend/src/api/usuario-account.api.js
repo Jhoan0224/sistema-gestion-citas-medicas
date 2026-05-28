@@ -14,24 +14,37 @@ const ID_USER = () => {
     return localStorage.getItem(ID_NAME);
 };
 
+export async function agendarCitaUserAccount(formData){
+    try {    
+        const resp = await axios.post(`${URL_USER_ACCOUNT}/agendar-cita-user`, formData, HEADER_USUARIO());
+        return resp.data;        
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
+export async function deleteCitaAgendada(){
+    try {    
+        const resp = await axios.delete(`${URL_USER_ACCOUNT}/delete-cita-agendada`, HEADER_USUARIO());
+        return resp.data;        
+    } catch (error) {
+        return error.response.data;
+    }
+};
 
 export async function deleteUserAccount(formData){
-    try {
-        console.log(formData);        
+    try {    
         const resp = await axios.post(`${URL_USER_ACCOUNT}/delete-user-account`, formData, HEADER_USUARIO());
-        return resp.data;
-        
+        return resp.data;        
     } catch (error) {
         return false;
     }
 };
 
 export async function updateInfoAccount(formData){
-    try {
-        console.log(formData);        
+    try {     
         const resp = await axios.post(`${URL_USER_ACCOUNT}/update-info-account`, formData, HEADER_USUARIO());
-        return resp.data;
-        
+        return resp.data;        
     } catch (error) {
         return false;
     }
@@ -39,23 +52,17 @@ export async function updateInfoAccount(formData){
 
 export async function updateSecurityAccount(formData){
     try {
-        console.log(formData);
-        
         const resp = await axios.post(`${URL_USER_ACCOUNT}/update-security-account`, formData, HEADER_USUARIO());
-        return resp.data;
-        
-    } catch (error) {
-        return false;
+        return resp.data;        
+    } catch (error) {        
+        return error.response.data || false;
     }
 };
 
 export async function createAccount(formData){
     try {
-        console.log(formData);
-        
         const resp = await axios.post(`${URL_USER_ACCOUNT}/create-account`, formData);
         return resp.data;
-        
     } catch (error) {
         return error.response.data;
     }
@@ -64,7 +71,6 @@ export async function createAccount(formData){
 export async function getInfoUpdadeAccount(){
     try {
         const resp = await axios.get(`${URL_USER_ACCOUNT}/info-update-account/user-id/${ID_USER()}`, HEADER_USUARIO());
-        
         return resp.data;
     } catch (error) {
         return false;
@@ -74,10 +80,8 @@ export async function getInfoUpdadeAccount(){
 export async function getUserAccountData(){
     try {
         const resp = await axios.get(`${URL_USER_ACCOUNT}/account-info/user-id/${ID_USER()}`, HEADER_USUARIO());
-        
         return resp.data;
     } catch (error) {
         return false;
     }
 };
-

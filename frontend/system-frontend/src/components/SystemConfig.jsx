@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { AdminApp } from "../app/Admin.app.js";
 
-
 export function SystemVariables() {
 
     return(
@@ -11,7 +10,6 @@ export function SystemVariables() {
     </>
     )
 }
-
 
 export function SystemDataBase() {
     const [configTable, setConfigTable] = useState("");

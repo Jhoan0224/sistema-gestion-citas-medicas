@@ -8,11 +8,13 @@ export default function UsuarioAccountData() {
     });
 
     useEffect(() => {
+        let isMounted = true;
         const loadData = async () => {
             const resp = await getUserAccountData();           
-            if (resp.success) { setUserData(resp.usuarioAccountInfo); }
+            if (isMounted && resp.success) { setUserData(resp.usuarioAccountInfo) }
         };
         loadData();
+        return () => {isMounted = false}
     }, []);
 
     return(
@@ -29,4 +31,4 @@ export default function UsuarioAccountData() {
     </ul>
     </>
     )
-}
+};

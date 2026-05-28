@@ -12,15 +12,4 @@ export function UsuarioSinCita() {
     </div>
     </>
     )
-}
-
-export function FormAgendarCita() {
-
-    return(
-    <>
-    <div>
-        <h5>Agendar cita form</h5>
-    </div>
-    </>
-    )
-}
+};

@@ -18,15 +18,15 @@ export function formAgendarCitaUsuario(form) {
         return VALIDATION_RESULT;
     }
         
-    if (!idIsValid(form.tipoAtencion)) {
-        VALIDATION_RESULT.message = 'Ha ocurrido un error en el formulario (Tipo de atencion).';
-        return VALIDATION_RESULT; 
-    }
+    // if (!idIsValid(form.tipoAtencion)) {
+    //     VALIDATION_RESULT.message = 'Ha ocurrido un error en el formulario (Tipo de atencion).';
+    //     return VALIDATION_RESULT; 
+    // }
 
-    if (!idIsValid(form.horarioPreferido)) {
-        VALIDATION_RESULT.message = 'Ha ocurrido un error en el formulario (Horario preferido).';
-        return VALIDATION_RESULT; 
-    }
+    // if (!idIsValid(form.horarioPreferido)) {
+    //     VALIDATION_RESULT.message = 'Ha ocurrido un error en el formulario (Horario preferido).';
+    //     return VALIDATION_RESULT; 
+    // }
 
     if (!form.signosIds.every(id => idIsValid(id))) {
         VALIDATION_RESULT.message = 'Ha ocurrido un error en el formulario (Signos Ids).';
@@ -202,6 +202,96 @@ export function formCrearCuenta(form) {
     return VALIDATION_RESULT;
 };
 
+export function formUpdateUserNormalCuenta(form) {
+    const VALIDATION_RESULT = {success: false, message: ''};
+    
+
+    if (hayNombresNoValidos(form.nombre)) {
+        VALIDATION_RESULT.message = 'El nombre solo puede incluir Letras.';
+        return VALIDATION_RESULT;
+    }
+
+    if (hayNombresNoValidos(form.apellido)) {
+        VALIDATION_RESULT.message = 'El nombre solo puede incluir Letras.';
+        return VALIDATION_RESULT;
+    }
+    
+    if (!duiIsValid(form.dui)) {
+        VALIDATION_RESULT.message = 'El DUI debe tener el formato 00000000-0.';
+        return VALIDATION_RESULT; 
+    }
+    
+    if (!esMayorDeEdad(form.fecha_nacimiento)) {
+        VALIDATION_RESULT.message = 'La Edad minima debe ser 18 años.';
+        return VALIDATION_RESULT; 
+    }
+        
+    if (!emailIsValid(form.email)) {
+        VALIDATION_RESULT.message = 'El formato del Email no es valido.';
+        return VALIDATION_RESULT;  
+    }
+
+    if (!textZonaResidenciaIsValid(form.zona_residencia)) {
+        VALIDATION_RESULT.message = 'La Zona de Residencia solo puede contener: letras, numeros y guiones.';
+        // VALIDATION_RESULT.message = 'El departamento seleccionado no es valido.';
+        return VALIDATION_RESULT; 
+    }
+    
+    if (!idIsValid(form.idOcupacion)) {
+        // VALIDATION_RESULT.message = 'El estado laboral debe ser booleano.';
+        VALIDATION_RESULT.message = 'La ocupacion seleccionada no es valida.';
+        return VALIDATION_RESULT;      
+    }
+    
+    if (!idIsValid(form.idCondicion)) {
+        // VALIDATION_RESULT.message = 'El campo condicion medica debe ser booleano';
+        VALIDATION_RESULT.message = 'La condicion seleccionada no es valida.';
+        return VALIDATION_RESULT; 
+    }
+
+    VALIDATION_RESULT.success = true;
+    VALIDATION_RESULT.message = "EL Formulario es valido.";
+    return VALIDATION_RESULT;
+};
+
+export function formUpdateCuenta(form) {
+    const VALIDATION_RESULT = {success: false, message: ''};
+
+    if (hayNombresNoValidos(form.nombre)) {
+        VALIDATION_RESULT.message = 'El nombre solo puede incluir Letras.';
+        return VALIDATION_RESULT;
+    }
+
+    if (hayNombresNoValidos(form.apellido)) {
+        VALIDATION_RESULT.message = 'El nombre solo puede incluir Letras.';
+        return VALIDATION_RESULT;
+    }
+    
+    if (!duiIsValid(form.dui)) {
+        VALIDATION_RESULT.message = 'El DUI debe tener el formato 00000000-0.';
+        return VALIDATION_RESULT; 
+    }
+    
+    if (!esMayorDeEdad(form.fecha_nacimiento)) {
+        VALIDATION_RESULT.message = 'La Edad minima debe ser 18 años.';
+        return VALIDATION_RESULT; 
+    }
+        
+    if (!emailIsValid(form.email)) {
+        VALIDATION_RESULT.message = 'El formato del Email no es valido.';
+        return VALIDATION_RESULT;  
+    }
+
+    if (!textZonaResidenciaIsValid(form.zona_residencia)) {
+        VALIDATION_RESULT.message = 'La Zona de Residencia solo puede contener: letras, numeros y guiones.';
+        // VALIDATION_RESULT.message = 'El departamento seleccionado no es valido.';
+        return VALIDATION_RESULT; 
+    }
+    
+    VALIDATION_RESULT.success = true;
+    VALIDATION_RESULT.message = "EL Formulario es valido.";
+    return VALIDATION_RESULT;
+};
 
 function inputIsBoolean(input) {
     return typeof input === 'boolean';

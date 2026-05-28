@@ -74,7 +74,7 @@ export default class UsuarioEntity {
     static async findIdUsuarioByDui(conn, dui) {
         console.log(dui);        
         const [result] = await conn.execute(UsuarioQuery.findIdByDui, [dui]);
-        return result;
+        return result[0]?.id ?? null;
     }
 
     static async infoBasicaById(conn, id) {
@@ -93,6 +93,11 @@ export default class UsuarioEntity {
         const [result] = await conn.execute(UsuarioQuery.usuarioAccountInfo, [id]);
         
         return result[0] ?? null;
+    }
+
+    static async updateAccountByEmail(conn, values) {
+        const [result] = await conn.execute(UsuarioQuery.updateUsuarioAccountByEmail, values);
+        return result.affectedRows > 0;
     }
 
     static async credentialsAccountVerifyByEmail(conn, email) {
@@ -128,6 +133,10 @@ export default class UsuarioEntity {
         return result.affectedRows > 0;
     }
 
+    static async userDeleteCita(conn, userId) {
+        const [result] = await conn.execute(UsuarioSecurityQuery.deleteCitaByUserId , [userId]);
+        return result.affectedRows > 0;
+    }
 
 
 };

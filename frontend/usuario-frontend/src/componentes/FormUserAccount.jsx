@@ -1,27 +1,48 @@
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import {updateSecurityAccount, getUserAccountData, updateInfoAccount, deleteUserAccount} from '../api/usuario-account.api.js'
+import { ToastAlert, ToastDanger, ToastSuccess } from "./Notifications.jsx";
 import App from "../application/app.js";
 
 export function FormSecurityUserAccount({userData, setCancelar}) {
+    const [showAlert, setShowAlert] = useState({show: false, type: "", message: ""});
     const [updateEmail, setUpdateEmail] = useState(false);
     const [formUpdSecurity, setFormUpdSecurity] = useState({
        isEmailModified: false, email: '', newEmail: '', pass: '', newPassCheck1: '', newPassCheck2: ''
     });
 
-    const updateForm = (e) => {
-        setFormUpdSecurity(prev => ({...prev, [e.target.name]: e.target.value}));
-    };
+    const updateForm = (e) => setFormUpdSecurity(prev => ({...prev, [e.target.name]: e.target.value}));
+
+    useEffect(() => {
+        if (showAlert.type !== "SUCCESS") {return}
+        let isMounted = true;
+        if (isMounted) {
+            setTimeout(() => {window.location.reload()}, 1800);
+        }
+        return () => {isMounted = false}
+    }, [showAlert.type]);
 
     const sendForm = async (event) => {
         event.preventDefault();
         const formSecurity = {...formUpdSecurity};
         formSecurity.email = userData.email;
         if (updateEmail) {formSecurity.isEmailModified = true}
+        setShowAlert({show: false, type: "", message: ""})
         const resp = await updateSecurityAccount(formSecurity);
+        resp.success
+            ? setShowAlert({show: true, type: "SUCCESS", message: resp.message})
+            : setShowAlert({show: true, type: "ALERT", message: resp.message}); 
     };
     
     return(
     <>
+    { showAlert.show === true && showAlert.type == "SUCCESS"
+        ? <ToastSuccess message={showAlert.message} />
+        : null
+    }
+    { showAlert.show === true && showAlert.type == "ALERT"
+        ? <ToastAlert message={showAlert.message} />
+        : null
+    }
     <h5 className="fs-6">Actualizando seguridad de la cuenta</h5>
     <form onSubmit={(e) => sendForm(e)} className="m-3">
         <div className="d-flex gap-3 flex-wrap flex-md-nowrap mb-3">
@@ -39,8 +60,7 @@ export function FormSecurityUserAccount({userData, setCancelar}) {
                 <div>
                     <label htmlFor="newEmail" className="form-label">Nuevo Email</label>
                     <input type="email" id="newEmail" name="newEmail" className="form-control w-auto" autoComplete="on"
-                        value={formUpdSecurity.newEmail} onChange={updateForm}
-                    />
+                        value={formUpdSecurity.newEmail} onChange={updateForm} />
                 </div>
             }
         </div>
@@ -49,20 +69,17 @@ export function FormSecurityUserAccount({userData, setCancelar}) {
             <div>
                 <label htmlFor="pass" className="form-label">Contrasena</label>
                 <input type="text" id="pass" name="pass" className="form-control" required 
-                    value={formUpdSecurity.pass} onChange={updateForm}
-                />
+                    value={formUpdSecurity.pass} onChange={updateForm} />
             </div>
             <div>
                 <label htmlFor="newPassCheck1" className="form-label">Nueva contrasena</label>
                 <input type="text" id="newPassCheck1" name="newPassCheck1" className="form-control" required 
-                    value={formUpdSecurity.newPassCheck1} onChange={updateForm}
-                />
+                    value={formUpdSecurity.newPassCheck1} onChange={updateForm} />
             </div>
             <div>
                 <label htmlFor="newPassCheck2" className="form-label">Confirmar nueva contrasena</label>
                 <input type="text" id="newPassCheck2" name="newPassCheck2" className="form-control" required 
-                    value={formUpdSecurity.newPassCheck2} onChange={updateForm}
-                />
+                    value={formUpdSecurity.newPassCheck2} onChange={updateForm} />
             </div>
         </div>
 
@@ -73,9 +90,10 @@ export function FormSecurityUserAccount({userData, setCancelar}) {
     </form>
     </>
     )
-}
+};
 
 export function FormPersonalInfo({setCancelar}) {
+    const [showAlert, setShowAlert] = useState({show: false, type: "", message: ""});
     const [userData, setUserData] = useState({
         nombre: 'Andrea', apellido: '', fecha_nacimiento: '', dui: '',
         idOcupacion: '', zonaResidencia: 'Santa Ana', idCondicion: ''
@@ -86,34 +104,55 @@ export function FormPersonalInfo({setCancelar}) {
     });
     const [dataUserCuenta, setDataUserCuenta] = useState({ocupaciones: [], condiciones: []});
 
-    const updateForm = (e) => {
-        setFormPersonalInfo(prev => ({...prev, [e.target.name]: e.target.value}));
-    };
+    const updateForm = (e) => setFormPersonalInfo(prev => ({...prev, [e.target.name]: e.target.value}));
 
     const changeAlertBg = (orignal, change) => {       
         return {"backgroundColor": orignal == change ? "transparent" : "rgb(248, 215, 218)"};
-    }
+    };
 
     useEffect(() => {
+        let isMounted = true;
         const loadData = async () => {
             const resp = await App.loadDataUpdateCuenta();
-            if (resp.success) {
+            if (isMounted && resp.success) {
                 setFormPersonalInfo(resp.usuarioInfo);
                 setUserData(resp.usuarioInfo);
                 setDataUserCuenta(prev => ({...prev, ocupaciones: resp.ocupacionesList, condiciones: resp.condicionesList}))
             }
         };
         loadData();
+        return () => {isMounted = false}
     }, []);
-              
+
+    useEffect(() => {
+        if (showAlert.type !== "SUCCESS") {return}
+        let isMounted = true;
+        if (isMounted) {
+            setTimeout(() => {window.location.reload()}, 1800);
+        }
+        return () => {isMounted = false}
+    }, [showAlert.type]);
+
     const sendForm = async (event) => {
         event.preventDefault();
+        setShowAlert({show: false, type: "", message: ""});
         const resp = await updateInfoAccount(formPersonalInfo);
-        console.log(resp);
+
+        resp.success
+            ? setShowAlert({show: true, type: "SUCCESS", message: resp.message})
+            : setShowAlert({show: true, type: "ALERT", message: resp.message});
     };
 
     return(
     <>
+    { showAlert.show === true && showAlert.type == "SUCCESS"
+        ? <ToastSuccess message={showAlert.message} />
+        : null
+    }
+    { showAlert.show === true && showAlert.type == "ALERT"
+        ? <ToastAlert message={showAlert.message} />
+        : null
+    }
     <h5 className="fs-6">Actualizando información personal</h5>
     <form onSubmit={(e) => sendForm(e)} className="ms-0">
         <ul className="list-group list-group-flush ">
@@ -172,8 +211,7 @@ export function FormPersonalInfo({setCancelar}) {
     </form>
     </>
     )
-}
-
+};
 
 export function FormDeleteAccount({userData, setCancelar}) {
     const securityCheck = {securityWord: "Si Eliminar Cuenta", inputWord: "w"}
@@ -186,15 +224,11 @@ export function FormDeleteAccount({userData, setCancelar}) {
     const sendForm = async (event) => {
         event.preventDefault();
         const securityIsChecked = securityCheck.inputWord === securityCheck.securityWord ? true : false;
-        console.log(securityIsChecked );
         if (securityIsChecked) {
-            console.log(formDeleteAccount);
             const resp = await deleteUserAccount(formDeleteAccount);
             console.log(resp);
-            
-        }
-                
-    }
+        }              
+    };
 
     return(
     <>
@@ -207,7 +241,7 @@ export function FormDeleteAccount({userData, setCancelar}) {
         <form onSubmit={(e) => sendForm(e)} className="border border-danger rounded-2 px-4 py-2 mx-auto">
             <div className="form-floating my-3">
                 <input type="text" name="check1" id="check1" className="form-control fw-medium" placeholder="Frase de seguridad"
-                    onChange={(e) => {securityCheck.inputWord = e.target.value}}   />
+                    onChange={(e) => {securityCheck.inputWord = e.target.value}} />
                 <label htmlFor="check1">Frase de seguridad</label>
             </div>
 
@@ -219,4 +253,4 @@ export function FormDeleteAccount({userData, setCancelar}) {
     </div>
     </>
     )
-}
+};

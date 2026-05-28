@@ -29,7 +29,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => { res.send("Centro de salud");});
-
 app.use('/public', publicRouter);
 app.use('/user', userAccountRouter);
 app.use('/user', userAuthRouter);

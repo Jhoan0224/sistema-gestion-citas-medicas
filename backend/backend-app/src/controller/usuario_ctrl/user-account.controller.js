@@ -1,9 +1,14 @@
 import {FORBIDDEN_STATUS, SERVER_ERROR} from '../../utils/http-status-messages.js'
-import { citaPendienteUsuario, createUserAccount, usuarioAccountInfo, usuarioBasicInfo, userUpdateSecurityAccount, usuarioInfoUpdateAccount, userUpdateDataAccount, userDeleteAccount, historialCitasAsistidasUsuario, historialCitasCanceladasUsuario, historialCitasInasistidasUsuario, agendarCitaUsuario } from '../../services/usuario_svc/user-account.svc.js';
+import { citaPendienteUsuario, userDeleteCitaAgendada, createUserAccount, usuarioAccountInfo, usuarioBasicInfo, userUpdateSecurityAccount, usuarioInfoUpdateAccount, userUpdateDataAccount, userDeleteAccount, historialCitasAsistidasUsuario, historialCitasCanceladasUsuario, historialCitasInasistidasUsuario, agendarCitaUsuario } from '../../services/usuario_svc/user-account.svc.js';
 
 export const agendarCitaUsuarioCtrl = async (req, res) => {
     try {
+console.log("req.body");
+console.log(req.body);
         const processResult = await agendarCitaUsuario(req.body);
+        console.log("processResult");
+        console.log(processResult);
+        
         if (processResult.success) {
             return res.status(200).json(processResult);
         }
@@ -70,6 +75,20 @@ export const userDeleteAccountCtrl = async (req, res) => {
 
     } catch (error) {
         console.error("Error en controller userUpdateInfoAccountCtrl >> " + error);
+        return res.status(500).json(SERVER_ERROR);
+    }
+};
+
+export const userDeleteCitaAgendadaCtrl = async (req, res) => {
+    try {
+        const processResult = await userDeleteCitaAgendada(req.params.userData.id);
+        if (processResult.success) {
+            return res.status(200).json(processResult);
+        }
+        return res.status(400).json(processResult);
+
+    } catch (error) {
+        console.error("Error en controller userDeleteCitaAgendadaCtrl >> " + error);
         return res.status(500).json(SERVER_ERROR);
     }
 };
@@ -221,8 +240,6 @@ export const userAccountInfoCtrl = async (req, res) => {
         return res.status(500).json(SERVER_ERROR);
     }
 };
-
-
 
 function hasRolesRequeridos(rolesUsuario, rolesRequeridos) {
 
