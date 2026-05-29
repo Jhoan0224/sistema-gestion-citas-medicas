@@ -22,8 +22,7 @@ export function HomePersonalMed() {
 
   const RenderContent = {
     "PANEL_MAIN": <PanelMain />,
-    //"CREATE_USER" : <UsuarioAccount setRenderView={setRenderView}/>,
-    "CREATE_USER" : <CreateUser setRenderView={setRenderView} />,
+    "CREATE_USER" : <CreateUser setRenderView={setRenderView}/>,
     "AGENDAR_CITA": <AgendarCita setRenderView={setRenderView} />,
     "SEARCH_USER": <SearchUser setRenderView={setRenderView} />,
     "SYSTEM_USER_PROFILE": <CurrentSystemUserProfile setRenderView={setRenderView} />,
@@ -32,7 +31,7 @@ export function HomePersonalMed() {
   return(
     <>
     <div className="row w-100 vh-100 m-0">
-      <div className="col-sm-2 d-flex flex-column p-0 border-end border-2 border-secondary-subtle">
+      <div className="col-sm-2 bg-body-secondary d-flex flex-column p-0 border-end border-2 border-secondary-subtle">
         <PanelLeft setRenderView={setRenderView} />
       </div>
       <div className="col-10 d-flex flex-column h-100 p-0">
@@ -81,11 +80,11 @@ function PanelLeft({setRenderView}) {
     <hr className="border-3 border-secondary m-2"/>
 
     <div className="d-inline-flex flex-column gap-2 align-items-start mt-5 m-auto">
+      <button onClick={() => setRenderView("PANEL_MAIN")} type="button" className="btn btn-outline-primary border-0">
+        <i className="bi bi-calendar-week"></i> Home
+      </button>
       <button onClick={() => setRenderView("AGENDAR_CITA")} type="button" className="btn btn-outline-primary border-0">
         <i className="bi bi-card-checklist"></i> Agendar Cita 
-      </button>
-      <button onClick={() => setRenderView("CREATE_USER")} type="button" className="btn btn-outline-primary border-0">
-        <i className="bi bi-calendar-week"></i> Agenda del dia
       </button>
       <button onClick={() => setRenderView("SEARCH_USER")} type="button" className="btn btn-outline-primary border-0">
         <i className="bi bi-people-fill"></i> Usuarios
@@ -181,6 +180,8 @@ function PanelMain() {
     setUserListCitas(listFiltered);
   };
 
+  console.log("loadUserInfo >> " + loadUserInfo.idUsuario);
+  
   return(
   <>
     {
@@ -280,7 +281,7 @@ function PanelMain() {
                 <td>{new Date(user.fecha_hora_atencion).toLocaleString(undefined, dateOptions)}</td>
                 <td>Confirmada</td>
                 <td>
-                  <button onClick={() => setLoadUserInfo({idUsuario: user.id, show: true}) } type="button" className="btn btn-outline-primary">Info.</button>
+                  <button onClick={() => setLoadUserInfo({idUsuario: user.id_usuario, show: true}) } type="button" className="btn btn-outline-primary">Info.</button>
                 </td>
               </tr>
             ))}

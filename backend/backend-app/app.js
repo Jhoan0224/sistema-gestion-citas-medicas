@@ -1,10 +1,12 @@
 import express from 'express';
+import * as dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import cors from 'cors';
 
+dotenv.config();
 // rutas de la API
 import publicRouter from './src/routes/public-routes.js'
 import userAccountRouter from './src/routes/usuario/usuario-account.js';

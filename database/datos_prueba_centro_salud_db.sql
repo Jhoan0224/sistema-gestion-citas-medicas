@@ -220,3 +220,13 @@ insert into estado_cita(nombre) values
 
 insert into rol(nombre) values
 ('USUARIO'), ('PERSONAL_MEDICO'), ('ADMIN'), ('AUDITOR');
+
+insert into privilegio(nombre) values
+('CREATE_USERS'),
+('READ_USERS'),
+('UPDATE_USERS'),
+('DELETE_USERS'),
+('VIEW_REPORTS'),
+('MANAGE_SETTINGS'),
+('EXPORT_DATA'),
+('AUDIT_LOGS');

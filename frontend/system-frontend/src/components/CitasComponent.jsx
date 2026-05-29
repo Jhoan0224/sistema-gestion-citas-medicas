@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { PersonalMedApp } from "../app/personal-med.app.js";
-
+import { ToastAlert, ToastDanger, ToastSuccess } from "../components/Notifications.jsx";
 
 export function AgendarCita({setRenderView}) {
+    const [showAlert, setShowAlert] = useState({show: true, type: "", message: ""});
     const [listSignosSintomas, setListSignosSintomas] = useState({signos: [], sintomas: [], departamentos: [], ocupaciones: [], condiciones: []});
     const [formAgendarCita, setFormAgendarCita] = useState({
      dui: "", dui_usuario: "", titulo: '', motivo: '', tipoAtencion: '', horarioPreferido: '', signosIds: [], sintomasIds: []
@@ -35,16 +36,37 @@ export function AgendarCita({setRenderView}) {
       });
     };
 
+    useEffect(() => {
+        if (showAlert.type !== "SUCCESS") {return}
+        let isMounted = true;
+        if (isMounted) {
+            setTimeout(() => setRenderView("PANEL_MAIN"), 1800);
+        }
+        return () => {isMounted = false}
+    }, [showAlert.type]);
+
     const sendForm = async (e) => {
-      e.preventDefault();      
+      e.preventDefault();
+      setShowAlert({show: true, type: "", message: ""});
       if (formAgendarCita.dui !== formAgendarCita.dui_usuario) {
-        alert("El DUI no coincide")
+        setShowAlert({show: true, type: "ALERT", message: "El DUI no coincide"});
       }
       const resp = await PersonalMedApp.agendarCitaUsuario(formAgendarCita);
+      resp.success
+        ? setShowAlert({show: true, type: "SUCCESS", message: resp.message})
+        : setShowAlert({show: true, type: "ALERT", message: resp.message}); 
     };
 
     return(
       <>
+      { showAlert.show === true && showAlert.type == "SUCCESS"
+          ? <ToastSuccess message={showAlert.message} />
+          : null
+      }
+      { showAlert.show === true && showAlert.type == "ALERT"
+          ? <ToastAlert message={showAlert.message} />
+          : null
+      }
       <div className="container d-flex flex-column">
         <span className="fs-5 mb-3 mx-4">Agendando nueva cita</span>
         <form onSubmit={(e) => sendForm(e)} className="form-control border-2 w-auto mx-4">

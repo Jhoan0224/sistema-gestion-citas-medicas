@@ -144,7 +144,7 @@ export async function userSysAccountDataSvc(idUsuario) {
 
 export async function createUserSysAccountSvc(form) {
     let conn = await mysqlConnPool.getConnection();
-    const PROCESS_RESULT = {success: false, message: "No se pudo crear el USUARIO"};
+    const PROCESS_RESULT = {success: false, message: "Ocurrio un error, no se pudo crear la cuenta de usuario."};
     try {
         const emailIsAvaliable = await SystemUserEntity.findUserSysByEmail(conn, form.email); 
         console.log(form);
@@ -180,7 +180,7 @@ if (idsPrivilegios == null) { conn.rollback(); return PROCESS_RESULT }
 console.log("OK 4");
         conn.commit();
         PROCESS_RESULT.success = true;
-        PROCESS_RESULT.message = "Informacion cuenta de usuario."
+        PROCESS_RESULT.message = "La cuenta de usuario se creo correctamente."
         return PROCESS_RESULT;
 
     } catch (error) {
