@@ -10,7 +10,7 @@ export function HomeAdmin() {
 
     const RenderContent = {
         "CURRECT_SYSTEM_USER_PROFILE": <CurrentSystemUserProfile />,
-        "SYSTEM_VARIABLES": <SystemVariables />,
+        "PANEL_MAIN": <SystemUserProfile setRenderView={setRenderView} />,
         "SYSTEM_DATABASE": <SystemDataBase />,
         "CREATE_SYSTEM_USER": <CreateSystemUser setRenderView={setRenderView} />,
         "SYSTEM_USERS" : <SystemUserProfile setRenderView={setRenderView} />,
@@ -30,7 +30,7 @@ export function HomeAdmin() {
     return(
     <>
     <div className="row w-100 vh-100 m-0">
-        <div className="col-sm-2 d-flex flex-column h-100 p-0">
+        <div className="col-sm-2 d-flex flex-column h-100 p-0 bg-body-secondary">
            <PanelLeft setRenderView={setRenderView} />
         </div>
         <div className="col-sm-10 d-flex flex-column p-0 h-100">
@@ -74,18 +74,19 @@ function PanelLeft({setRenderView}) {
     return(
     <>
     <div className="d-inline-flex flex-column mt-2 mx-auto">
-        <img src="/image1.webp" alt="Logo del sistema." />
+        <img className="img-fluid w-75 mx-auto" src="/logo.svg" alt="Logo del sistema." />
+        {/* <img src="/image1.webp" alt="Logo del sistema." /> */}
         <span className="mx-auto">SGCM</span>
     </div>
 
     <hr className="border-2 border-secondary m-2"/>
     <div className="d-inline-flex flex-column gap-2 align-items-start mt-5 m-auto">
-        <button onClick={() => setRenderView("SYSTEM_VARIABLES")} type="button" className="btn btn-outline-primary border-0">
-            <i className="bi bi-gear" /> Variables del Sistema
+        <button onClick={() => setRenderView("SYSTEM_USERS")} type="button" className="btn btn-outline-primary border-0">
+            <i className="bi bi-gear" /> Home/Usuarios Sis.
         </button>
-        <button type="button" onClick={() => setRenderView("SYSTEM_USERS")} className="btn btn-outline-primary border-0">
+        {/* <button type="button" onClick={() => setRenderView("SYSTEM_USERS")} className="btn btn-outline-primary border-0">
             <i className="bi bi-person-vcard" /> Usuarios del Sistema
-        </button>
+        </button> */}
         <button onClick={() => setRenderView("SYSTEM_DATABASE")} type="button" className="btn btn-outline-primary border-0">
             <i className="bi bi-database" /> DataBase del Sistema
         </button>

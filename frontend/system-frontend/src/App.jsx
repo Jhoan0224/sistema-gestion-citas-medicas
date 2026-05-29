@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Outlet, Navigate, useLocation, useNavigate, replace } from 'react-router-dom'
 import { AuthApp } from './app/auth.app.js'
-import { SpinerLoading } from './components/UiComponent.jsx'
+import { SpinerLoading, NotFound } from './components/UiComponent.jsx'
 import { HomePersonalMed } from './pages/HomePersonalMed.jsx'
 import { HomeAdmin } from './pages/HomeAdmin.jsx'
 import { LoginHome } from './pages/Login.jsx'
@@ -11,6 +11,8 @@ export default function App() {
 	return (
 	<>
 	<Routes>
+		
+		<Route path='*' element={<NotFound />} />
 		<Route index element={<LoginHome />}/>
 		<Route path='/login' element={<LoginHome />} />
 

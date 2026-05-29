@@ -87,6 +87,8 @@ export async function getUserCitasCanceladas(idUsuario) {
 
 export async function getUserCitaPendiente(idUsuario) {
     try {
+        console.log("idUsuario >> " +  idUsuario);
+        
         const resp = await axios.get(`${API_PERSONAL_MED}/usuario-cita-pendiente/${idUsuario}`, HTTP_HEADERS());
         return resp.data;
     } catch (error) {

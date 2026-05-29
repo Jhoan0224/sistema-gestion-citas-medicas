@@ -53,7 +53,7 @@ export default class CitaQuery {
         estado_cita std_ct on std_ct.id = ct.id_estado_cita
     WHERE
         ( ct.id_estado_cita = ${EstadoCita.ESTADO.AGENDADA}
-          OR ${EstadoCita.ESTADO.CONFIRMADA}
+          OR ct.id_estado_cita = ${EstadoCita.ESTADO.CONFIRMADA}
         )
         AND ct.id_usuario = ?
     `;

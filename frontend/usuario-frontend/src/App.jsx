@@ -3,7 +3,7 @@ import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import { validarSesionUsuario, } from './application/Authentication';
 import { LoginUsuario } from './pages/LoginUsuario';
 import { HomeUsuario } from './pages/HomeUsuario';
-import { Home } from './pages/Home.jsx';
+import { Home, CentroSalud, GuiaUso } from './pages/Home.jsx';
 import { CrearCuentaUsuario } from './pages/CrearCuentaUsuario';
 import { AgendarCitaUsuario } from './pages/FormsCitasUsuario';
 import { UsuarioAccount } from './pages/UsuarioAccount';
@@ -17,6 +17,8 @@ export default function App() {
     <Routes>
         <Route index element={<Home />} />
         <Route path='/' element={<Home />} />
+        <Route path='/centro-salud' element={<CentroSalud />} />
+        <Route path='/guia-de-uso' element={<GuiaUso />} />
         <Route path='/login' element={<LoginUsuario />} />
         <Route path='/crear-cuenta' element={<CrearCuentaUsuario />}/>
         

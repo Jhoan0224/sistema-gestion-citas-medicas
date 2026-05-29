@@ -105,7 +105,7 @@ export default class UsuarioQuery {
     static updateUsuarioAccountByEmail = `
     UPDATE usuario user
         SET user.nombre = ?, user.apellido = ?, user.fecha_nacimiento = ?,
-        user.zona_residencia = ?, user.id_condicio = ?n, user.id_ocupacion = ?
+        user.zona_residencia = ?, user.id_condicion = ?, user.id_ocupacion = ?
     WHERE
         user.email = ?
     `;

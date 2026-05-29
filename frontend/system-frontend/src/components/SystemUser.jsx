@@ -36,7 +36,7 @@ export function CurrentSystemUserProfile({setRenderView}) {
             <li className="list-group-item"><span className="fw-medium">ID:</span> {userProfile.id} </li>
             <li className="list-group-item"><span className="fw-medium">Nombres:</span> {userProfile.nombre} </li>
             <li className="list-group-item"><span className="fw-medium">Apellidos:</span> {userProfile.apellido} </li>
-            <li className="list-group-item"><span className="fw-medium">Fecha de nacimiento:</span> {userProfile.fecha_nacimiento} </li>
+            <li className="list-group-item"><span className="fw-medium">Fecha de nacimiento:</span> {userProfile.fecha_nacimiento.split("T")[0]} </li>
             <li className="list-group-item"><span className="fw-medium">DUI:</span> {userProfile.dui} </li>
             <li className="list-group-item"><span className="fw-medium">EMAIL:</span> {userProfile.email} </li>
             <li className="list-group-item"><span className="fw-medium">Roles de usuario:</span> {userProfile.roles} </li>
@@ -369,7 +369,8 @@ export function SystemUserProfile({setRenderView}) {
     )
 }
 
-export function CreateSystemUser() {
+export function CreateSystemUser({setRenderView}) {
+    const [showAlert, setShowAlert] = useState({show: true, type: "", message: ""});
     const [listRolesPrivilegios, setListRolePrivilegios] = useState({roles: [], privilegios: []});
     const [formUserSys, setFormUserSys] = useState({nombre: "", apellido: "", dui: "", fecha_nacimiento: "",
         email: "", pass1: "", pass2: "", zona_residencia: "", id_rol: "", ids_privilegios: []
@@ -386,10 +387,23 @@ export function CreateSystemUser() {
         })
     };
 
+    useEffect(() => {
+        if (showAlert.type !== "SUCCESS") {return}
+        let isMounted = true;
+        if (isMounted) {
+            setTimeout(() => setRenderView("SYSTEM_USERS"), 1800);
+        }
+        return () => {isMounted = false}
+    }, [showAlert.type]);
+
     const sendForm = async (e) => {
         e.preventDefault();
+        setShowAlert({show: true, type: "", message: ""});      
         const resp = await AdminApp.createUserSysAccount(formUserSys);
-        console.log(resp);        
+        console.log(resp);
+        resp.success
+            ? setShowAlert({show: true, type: "SUCCESS", message: resp.message})
+            : setShowAlert({show: true, type: "ALERT", message: resp.message});    
     };
     
     useEffect(() => {
@@ -406,6 +420,14 @@ export function CreateSystemUser() {
 
     return(
     <>
+    { showAlert.show === true && showAlert.type == "SUCCESS"
+        ? <ToastSuccess message={showAlert.message} />
+        : null
+    }
+    { showAlert.show === true && showAlert.type == "ALERT"
+        ? <ToastAlert message={showAlert.message} />
+        : null
+    }
     <div className="container d-flex flex-column">
         <span className="fs-5 mb-3">Creando Usuario del Sistema</span>
         <form onSubmit={(e) => sendForm(e)} className="d-grid gap-3  border border-2 rounded-2 p-3 m-0">

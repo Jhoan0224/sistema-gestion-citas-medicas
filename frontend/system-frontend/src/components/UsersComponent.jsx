@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { PersonalMedApp } from "../app/personal-med.app.js";
 import { UsuarioAccount } from "./UsersAccountComponent.jsx";
+import { ToastAlert, ToastDanger, ToastSuccess } from "../components/Notifications.jsx";
+
 
 export function CreateUser({setRenderView}) {
+  const [showAlert, setShowAlert] = useState({show: true, type: "", message: ""});
   const [dataCrearCuenta, setDataCrearCuenta] = useState({ocupaciones: [], condiciones: []});
   const [formCreateUser, setFormCreateUser] = useState({
         nombre: '', apellido: '', dui: '', fechaNacimiento: '', email: '', pass1: '', pass2: '',
@@ -20,16 +23,34 @@ export function CreateUser({setRenderView}) {
   }, []);
 
   const updateForm = (e) => setFormCreateUser(prev => ({...prev, [e.target.name]: e.target.value}));
-  
+  useEffect(() => {
+      if (showAlert.type !== "SUCCESS") {return}
+      let isMounted = true;
+      if (isMounted) {
+          setTimeout(() => setRenderView("PANEL_MAIN"), 1800);
+      }
+      return () => {isMounted = false}
+  }, [showAlert.type]);
+
   const sendForm = async (e) => {
-    e.preventDefault();    
+    e.preventDefault();
+    setShowAlert({show: true, type: "", message: ""});   
     const resp = await PersonalMedApp.createUserAccount(formCreateUser);
-    alert(resp.message);
-    
+    resp.success
+      ? setShowAlert({show: true, type: "SUCCESS", message: resp.message})
+      : setShowAlert({show: true, type: "ALERT", message: resp.message});  
   };
 
   return(
     <>
+    { showAlert.show === true && showAlert.type == "SUCCESS"
+        ? <ToastSuccess message={showAlert.message} />
+        : null
+    }
+    { showAlert.show === true && showAlert.type == "ALERT"
+        ? <ToastAlert message={showAlert.message} />
+        : null
+    }
     <div className="container d-flex flex-column h-100">
       <span className="fs-5 mb-2 mx-4">Registrando nuevo usuario</span>
 
@@ -117,7 +138,7 @@ export function CreateUser({setRenderView}) {
 }
 
 export function SearchUser({setRenderView}) {
-  const [loadUserInfo, setLoadUserInfo] = useState({isOpen: false, show: false});
+  const [loadUserInfo, setLoadUserInfo] = useState({idUsuario: "", isOpen: false, show: false});
   const [userList, setUserList] = useState([]);
   const [formSearchUser, setFormSearchUser] = useState({filterSearch: "DUI", textSearch: "", aproxAge: "ALL_AGE"});
   
@@ -131,10 +152,12 @@ export function SearchUser({setRenderView}) {
     resp.success
       ? setUserList(resp.userList)
       : setUserList([]);
-    
-    alert(resp);
   };
 
+  const runUserInfo = async (idUsuario) => {
+
+  }
+    console.log("test de loaduserinfo fuera >> " + loadUserInfo);
   return(
     <>
     {
@@ -169,7 +192,13 @@ export function SearchUser({setRenderView}) {
           </form>
 
           <div className="flex-grow-1 overflow-y-auto" style={{ minHeight: '0' }}>
-            <table className="table table-striped table-hover">
+            { userList.length === 0 && 
+              <div className="d-flex p-4">
+                <span className="fs-4 fw-medium m-auto text-secondary">No hay resultados para esta busqueda</span>
+              </div>
+            }
+            {userList.length > 0 &&         
+              <table className="table table-striped table-hover">
               <thead className="sticky-top">
                 <tr>
                   <th>DUI</th>
@@ -181,12 +210,6 @@ export function SearchUser({setRenderView}) {
                 </tr>
               </thead>
               <tbody>
-                {
-                  userList.length === 0 && 
-                  <div>
-                    <span className="fs-6">No hay resultados para esta busqueda</span>
-                  </div>
-                }
                 {userList.map((user, index) => (
                   <tr key={index}>
                       <td>{user.dui}</td>
@@ -194,14 +217,16 @@ export function SearchUser({setRenderView}) {
                       <td>{user.apellido}</td>
                       <td>{new Date(Date.parse(user?.fecha_nacimiento)).toLocaleDateString(undefined, {year: "numeric", month: "2-digit", day: "2-digit"})}</td>
                       <td>{user.email}</td>
-                      <td>
-                        <button onClick={() => setLoadUserInfo({idUsuario: user.id, show: true})} type="button" className="btn btn-outline-primary">Info.</button>
+                      <td>                        
+                        <button onClick={() => runUserInfo({idUsuario: user.id_usuario, show: true})} type="button" className="btn btn-outline-primary">Info.</button>
+                        {/* <button onClick={() => setLoadUserInfo({idUsuario: user.id_usuario, show: true})} type="button" className="btn btn-outline-primary">Info.</button> */}
                       </td>
                   </tr>
                 ))
                 }
               </tbody>
             </table>
+              }
           </div>
         </div>
       </>

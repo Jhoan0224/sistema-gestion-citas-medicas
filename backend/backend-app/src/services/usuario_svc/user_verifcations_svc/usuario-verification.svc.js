@@ -12,7 +12,7 @@ export default class UsuarioVerficication {
 
     static async duiIsAvailable(conn, duiCheck) {
         const result = await UsuarioEntity.findIdUsuarioByDui(conn, duiCheck);
-        return result.length === 0;
+        return result;
     }
 
 

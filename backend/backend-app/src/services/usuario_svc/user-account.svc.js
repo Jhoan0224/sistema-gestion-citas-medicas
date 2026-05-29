@@ -22,7 +22,7 @@ export const agendarCitaUsuario = async (form) => {
         console.log(idUsuario)
         /* Verifcicar que el Usuario actual no tenga ninguna Cita Medica en estado Agendada o Confirmada */
         console.log("OKI 0.1")
-        const userHasScheduleAppoitment = await CitaEntity.citaPendienteByUsuarioId(conn, idUsuario);
+        const userHasScheduleAppoitment = await CitaEntity.citaPendienteByUsuarioId2(conn, idUsuario);
         
         console.log("OKI 1")
         /* Notificar la usuario que no puede agendar cita */ 
@@ -295,13 +295,57 @@ export const createUserAccount = async (form) => {
     }
 };
 
+export const createUserAccountFromPersMed = async (form) => {
+    const PROCESS_RESULT = {success: false, id: "", message: 'Ocurrio un error al registrar la cuenta, intentelo de nuevo.'}
+    let conn = await mysqlConnPool.getConnection();
+    try {
+        
+        if (form.pass1 !== form.pass2) {return BAD_REQUEST;}  
+        console.log('Verificando email');
+        if (await UsuarioVerficication.emailIsAvailable(conn, form.email) === false) {
+            return EMAIL_NOT_AVAILABLE;
+        }
+
+        if (await UsuarioVerficication.duiIsAvailable(conn, form.dui) === false) {
+            return DUI_NOT_AVAILABLE;
+        }
+
+        const passwordHash = await PasswordSecurity.getPasswordHash(form.pass1);
+
+        const values = [form.dui, form.nombre, form.apellido, form.fechaNacimiento,
+            form.email, passwordHash, form.zonaResidencia, form.ocupacionId , form.condicionId
+        ];
+        
+        const usuarioDb = new UsuarioEntity(conn);
+        const result = await usuarioDb.createAccount(values);
+        
+        if (result.insertId) {
+
+            PROCESS_RESULT.success = true;
+            PROCESS_RESULT.id = result.insertId;
+            PROCESS_RESULT.message = "La cuenta de usuario se registo correctamente."
+            
+            return PROCESS_RESULT;
+        }
+        
+        return PROCESS_RESULT;
+
+    } catch (error) {
+        throw error;
+    } finally {
+        conn?.release();
+    }
+};
+
+
 export const updateUserNormalAccount = async (form) => {
     const PROCESS_RESULT = {success: false,  message: 'Ocurrio un error, la cuenta del usuario no se actualizo, intentelo de nuevo más tarde.'}
     let conn = await mysqlConnPool.getConnection();
     try {
         
-        const values = [form.nombre, form.apellido, form.fecha_nacimiento, form.zona_residencia, form.idOcupacion , form.idCondicion, form.email];
-        const result = await UsuarioEntity.accountInfoById(values);
+        const fecha_nacimiento = form?.fecha_nacimiento.split("T")[0];
+        const values = [form.nombre, form.apellido, fecha_nacimiento, form.zona_residencia, form.idOcupacion , form.idCondicion, form.email];
+        const result = await UsuarioEntity.updateAccountByEmail(conn, values);
         
         if (result) {
             PROCESS_RESULT.success = true;

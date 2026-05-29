@@ -96,10 +96,10 @@ export async function userCitaPendienteSvc(idUsuario) {
             return PROCESS_RESULT;
         }
 
-        PROCESS_RESULT.success = true;
         PROCESS_RESULT.message = "Tiene una cita medica pendiente."
+        PROCESS_RESULT.success = true;
+        PROCESS_RESULT.userHasCita = true;
         PROCESS_RESULT.citaInfo = result;
-        PROCESS_RESULT.userHasCita = result;
 
         return PROCESS_RESULT;
     } catch (error) {

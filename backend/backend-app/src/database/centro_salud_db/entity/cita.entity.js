@@ -33,8 +33,19 @@ export default class CitaEntity {
     }
 
     static async citaPendienteByUsuarioId(conn, idUsuario) {
+        console.log("idUsuario >> " + idUsuario);
+        
         const [result] = await conn.execute(CitaQuery.citaPendienteUsuarioById, [idUsuario]);
+        console.log(result);
         return result.length > 0 ? result : false;
+    }
+
+    static async citaPendienteByUsuarioId2(conn, idUsuario) {
+        console.log("idUsuario >> " + idUsuario);
+        
+        const [result] = await conn.execute(CitaQuery.citaPendienteUsuarioById, [idUsuario]);
+        console.log(result);
+        return result.length > 0 ? true : false;
     }
 
     static async historialCitasAsistidasByUsuarioId(conn, idUsuario) {
